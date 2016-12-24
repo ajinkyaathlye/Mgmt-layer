@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8">
+		<title>VM Management</title>
+		{% load staticfiles %}
+		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
+		<link href='https://fonts.googleapis.com/css?family=Slabo+27px' rel='stylesheet' type='text/css'>
+		<link rel="stylesheet" type="text/css" href="{% static 'backup/tableview.css' %}"/>
+		<script src="https://ajax.googleapis.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+		<script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+	</head>
+
+	<nav class="navbar navbar-inverse">
+		<div class="container-fluid">
+
+		<!--Header-->
+		<div class="navbar-header">
+			<button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#topNavBar">
+				<span class="icon-bar"></span>
+				<span class="icon-bar"></span>
+				<span class="icon-bar"></span>
+			</button>
+			<a class="navbar-brand" href="#">VM Management</a>
+		</div>
+
+		<!--Items-->
+		<div class="collapse navbar-collapse" id="topNavBar">
+			<ul class="nav navbar-nav">
+				<li class="active">
+					<a href="#">
+						<span class="glyphicon glyphicon-cloud-upload" aria-hidden="true"></span>&nbsp; Backup
+					</a>
+				</li>
+				<li class="active">
+					<a href="#">
+						<span class="glyphicon glyphicon-cloud-download" aria-hidden="true"></span>&nbsp; Restore
+					</a>
+				</li>
+			</ul>
+
+			<form class="navbar-form navbar-left" role="search" method="get" action="#">
+				<div class="form-group">
+					<input type="text" class="form-control" name="q" value="">
+				</div>
+				<button type="submit" class="btn btn-default">Search</button>
+			</form>
+
+			<ul class="nav navbar-nav navbar-right">
+				<li class="active">
+					<a href="#">
+						<span class="glyphicon glyphicon-edit" aria-hidden="true"></span>&nbsp; Configure
+					</a>
+				</li>
+				<li class="active">
+					<a href="#">
+						<span class="glyphicon glyphicon-off" aria-hidden="true"></span>&nbsp; Logout
+					</a>
+				</li>
+			</ul>
+		</div>
+		</div>
+	</nav>
+
+	<body>
+		<div style="overflow-x:auto;">
+			<table id="vms">
+			  <tr>
+			    <th>VM Name</th>
+			    <th>State</th>
+			    <th>Guest OS Name</th>
+			 
+			  </tr>
+			  <tr>
+			    <td>Alfreds Futterkiste</td>
+			    <td>Maria Anders</td>
+			    <td>Germany</td>
+			  </tr>
+			  <tr>
+			    <td>Berglunds snabbköp</td>
+			    <td>Christina Berglund</td>
+			    <td>Sweden</td>
+			  </tr>
+			  <tr>
+			    <td>Centro comercial Moctezuma</td>
+			    <td>Francisco Chang</td>
+			    <td>Mexico</td>
+			  </tr>
+			  <tr>
+			    <td>Ernst Handel</td>
+			    <td>Roland Mendel</td>
+			    <td>Austria</td>
+			  </tr>
+			  <tr>
+			    <td>Island Trading</td>
+			    <td>Helen Bennett</td>
+			    <td>UK</td>
+			  </tr>
+			  <tr>
+			    <td>Königlich Essen</td>
+			    <td>Philip Cramer</td>
+			    <td>Germany</td>
+			  </tr>
+			  <tr>
+			    <td>Laughing Bacchus Winecellars</td>
+			    <td>Yoshi Tannamuri</td>
+			    <td>Canada</td>
+			  </tr>
+			  <tr>
+			    <td>Magazzini Alimentari Riuniti</td>
+			    <td>Giovanni Rovelli</td>
+			    <td>Italy</td>
+			  </tr>
+			  <tr>
+			    <td>North/South</td>
+			    <td>Simon Crowther</td>
+			    <td>UK</td>
+			  </tr>
+			  <tr>
+			    <td>Paris spécialités</td>
+			    <td>Marie Bertrand</td>
+			    <td>France</td>
+			  </tr>
+			</table>
+		</div>
+		<!--<h3>The VM with backup ID: {{backup_id}} has been restored</h3>-->
+	</body>
+</html>

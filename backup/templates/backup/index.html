@@ -1,0 +1,14 @@
+{% extends 'backup/base.html' %}
+{% block title %}VM Management{%endblock%}
+
+{%block body%}
+<ul>
+	{% for vm in all_vm %}
+		{% for i in vm %}
+			{{i}}
+			<br>
+		{%endfor%}
+		<br>
+	{%endfor%}
+</ul>
+{% endblock %}
