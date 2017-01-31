@@ -173,11 +173,11 @@ def list_snapshot(vm, vm_name):
 #==================================================================MAIN====================================================================
  
 
-def main(vm_name, snap_name):
+def main(ip, password, user, vm_name, snap_name):
     string = ""
-    inputs = {'vcenter_ip': '192.168.32.98',
-          'vcenter_password': 'gsLab123',
-          'vcenter_user': 'sumitt@ad2lab.com',
+    inputs = {'vcenter_ip': ip,
+          'vcenter_password': password,
+          'vcenter_user': user,
           'vm_name' : vm_name, #'test_TSAM',
           #create, remove,info,snap info or list
           'operation' : 'create',
@@ -214,7 +214,7 @@ def main(vm_name, snap_name):
     
     #==================================================CREATE==================================================================================     
     if operation == 'create':
-        description = "Test snapshot"
+        description = "VM Snapshot"
         dumpMemory = False
         quiesce = True
         try:

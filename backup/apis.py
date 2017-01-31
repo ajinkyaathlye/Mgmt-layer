@@ -1,7 +1,6 @@
 from .models import VM, Backup
 from .serializers import VMSerializer, BackupSerializer
 from django.contrib.auth.models import User
-#from .serializers import UserSerializer
 from rest_framework import permissions
 from rest_framework import generics
 from .permissions import IsOwnerOrReadOnly
@@ -14,15 +13,18 @@ from django.shortcuts import render
 from rest_framework.authentication import SessionAuthentication, BasicAuthentication
 from rest_framework.permissions import IsAuthenticated
 from . import models, utils, utilsH, utilsK, utilsKB, utilsEB, utilsHB, backup_kvm, backup_hyperv, backup_esx, restore_esx, restore_kvm, restore_hyperv
-import pdb
+from . import global_variables as gv
+import pdb, datetime
+
 
 @api_view(['GET', 'POST'])
-def vm_list(request, hv, util, format=None):
+def vm_list(request, hv, util, ip, password, user, vname, format=None):
     if util == 'backup':
         if request.method == 'GET':
        	    if hv == "kvm":
+                gv.kvm_ip=ip
        	    	vms=VM()
-    	        list_VM = utilsK.main()
+    	        list_VM = utilsK.main(ip)
     	    	for vm in list_VM:
     	    		vm = VM(VM_name=vm[1],
     	    			VM_id=vm[0],
@@ -30,7 +32,7 @@ def vm_list(request, hv, util, format=None):
     	    			state=vm[2],
     	    			disk_location="",
     	    			guest_name="",
-    	    			ip="",
+    	    			ip=ip,
     	    			backup_content="",
     	    			).save()
     	    	vms = VM.objects.filter(hyper_type="KVM")
@@ -38,10 +40,20 @@ def vm_list(request, hv, util, format=None):
     	    	return Response(serializer.data)
 
     	    elif hv=="esx":
-    	    	list_VM = utils.main()
+                gv.esx_ip=ip
+                gv.esx_password=password
+                gv.esx_username=user
+                gv.esx_vmname=vname
+                #ip="192.168.32.98"
+                #password="gsLab123"
+                #user="sumitt@ad2lab.com"
+                #vname="test_TSAM"
+    	    	list_VM = utils.main(ip, password, user, vname)
+                #print "IN VMLIST"
     	    	for vm in list_VM:
     	    		if vm is not None:
-    		    		VM(VM_name=vm[0], 
+    		    		VM(VM_id=vm[0],
+                        VM_name=vm[0], 
     	    			hyper_type="ESX",
     	    			disk_location=vm[1],
     	    			guest_name=vm[2],
@@ -54,10 +66,11 @@ def vm_list(request, hv, util, format=None):
     	        return Response(serializer.data)
 
     	    elif hv=="hyperv":
-    	    	list_VM = utilsH.main()
+    	    	list_VM = utilsH.main(ip, user, password)
     	    	for vm in list_VM:
     	    		if vm is not None:
-    		    		VM(VM_name=vm[0], 
+    		    		VM(VM_name=vm[0],
+                        VM_id=vm[0], 
     	    			hyper_type="HyperV",
     	    			disk_location="",
     	    			guest_name="",
@@ -72,15 +85,17 @@ def vm_list(request, hv, util, format=None):
         elif request.method == 'POST':
             if hv == "kvm":
                 bkupserializer = BackupSerializer(data=request.data)
+                #print request.data
                 if bkupserializer.is_valid():
-                    vm=VM.objects.get(VM_name=str(request.data['VM_name']))
-                    bkuplist=backup_kvm.main(str(request.data['backup_name']))
+                    vm=VM.objects.get(VM_id=vname)
+                    bkuplist=backup_kvm.main(ip, request.data['backup_name'], request.data['VM_name'])
                     Backup(vm=vm,
-        	    	backup_name=str(bkuplist[0]),
+        	    	backup_name=request.data['backup_name'],
         	    	#backup_id=str(bkuplist[1]),
-                    #VM_name=str(request.data['VM_name']),
+                    VM_name=str(request.data['VM_name']),
         	    	#status=str(bkuplist[2]),
         	    	).save()
+                    #print request.data
                     return Response(bkupserializer.data, status=status.HTTP_201_CREATED)
                 else:
                     return Response(bkupserializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -88,10 +103,11 @@ def vm_list(request, hv, util, format=None):
             if hv == "esx":
                 bkupserializer = BackupSerializer(data=request.data)
                 if bkupserializer.is_valid():
-                    vm=VM.objects.get(VM_name=str(request.data['VM_name']))
-                    backup_esx.main(str(request.data['VM_name']), str(request.data['backup_name']))
+                    vm=VM.objects.get(VM_id=vname)
+                    backup_esx.main(ip,password,user,vname,request.data['backup_name'])
                     Backup(vm=vm,
-                    backup_name=str(request.data['backup_name']),
+                    backup_name=request.data['backup_name'],
+                    VM_name=request.data['VM_name'],
                     ).save()
                     return Response(bkupserializer.data, status=status.HTTP_201_CREATED)
                 else:
@@ -100,7 +116,7 @@ def vm_list(request, hv, util, format=None):
             if hv == "hyperv":
                 bkupserializer = BackupSerializer(data=request.data)
                 if bkupserializer.is_valid():
-                    vm=VM.objects.get(VM_name=str(request.data['VM_name']))
+                    vm=VM.objects.get(VM_id=str(request.data['VM_name']))
                     backup_hyperv.main(str(request.data['VM_name']))
                     Backup(vm=vm,
                     backup_name="",
@@ -196,8 +212,7 @@ def vm_detail(request, hv, name, format=None):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
-
-
+#def set_policy(request):
 """
 string=""
 @api_view(['GET', 'POST'])
@@ -272,4 +287,3 @@ class VMViewSet(viewsets.ModelViewSet):
 class UserViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = User.objects.all()
     serializer_class = UserSerializer"""
-

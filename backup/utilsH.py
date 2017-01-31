@@ -20,10 +20,10 @@ def listVm(splitvm):
 				#print wordsvm[1]
 		a.append(l)
 
-def main():
-	rmtip = "10.136.60.2"
-	usernm = "Administrator"
-	passwd = "gsLab1234"
+def main(rmtip, usernm, passwd):
+	#rmtip = "10.136.60.2"
+	#usernm = "Administrator"
+	#passwd = "gsLab1234"
 	currSession = winrm.Session(rmtip,auth=(usernm,passwd))
 	getvm = currSession.run_cmd('wbadmin get virtualmachines')
 	splitvm = getvm.std_out.split('\r\n\r\n')	#get individual vm tuples

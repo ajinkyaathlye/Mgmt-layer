@@ -3,16 +3,16 @@ from django.db import models
 
 
 class Profile(models.Model):
-	vm=models.OneToOneField('VM',on_delete=models.CASCADE)
-	full_count=models.IntegerField()
-	diff_count=models.IntegerField()
-	full_del_count=models.IntegerField()
+	start_date=models.DateTimeField()
+	end_date=models.DateTimeField()
+	freq_count=models.IntegerField()
+	del_count=models.IntegerField()
 	def __str__(self):
 		return str(self.id)
 
 class VM(models.Model):
-	VM_name=models.CharField(max_length=1000, primary_key=True)
-	VM_id=models.CharField(max_length=500, blank=True)
+	VM_name=models.CharField(max_length=1000, blank=True)
+	VM_id=models.CharField(max_length=500, blank=True, primary_key=True)
 	hyper_type=models.CharField(max_length=1000,blank=True)
 	state=models.CharField(max_length=5000,blank=True)
 	backup_content=models.FileField(blank=True,null=True)
@@ -32,8 +32,8 @@ class VM(models.Model):
 
 
 class Backup(models.Model):
-	vm=models.ForeignKey('VM', on_delete=models.CASCADE, )
-	VM_name=models.CharField(max_length=1000, )
+	vm=models.ForeignKey('VM', on_delete=models.CASCADE,)
+	VM_name=models.CharField(max_length=1000, blank=True)
 	backup_name=models.CharField(max_length=1000, primary_key=True)
 	status=models.CharField(max_length=1000, blank=True)
 	#vm_ID=models.IntegerField()
