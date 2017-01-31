@@ -66,6 +66,9 @@ def vm_list(request, hv, util, ip, password, user, vname, format=None):
     	        return Response(serializer.data)
 
     	    elif hv=="hyperv":
+                gv.hyperv_ip=ip
+                gv.hyperv_password=password
+                gv.hyperv_username=user
     	    	list_VM = utilsH.main(ip, user, password)
     	    	for vm in list_VM:
     	    		if vm is not None:
@@ -117,9 +120,9 @@ def vm_list(request, hv, util, ip, password, user, vname, format=None):
                 bkupserializer = BackupSerializer(data=request.data)
                 if bkupserializer.is_valid():
                     vm=VM.objects.get(VM_id=str(request.data['VM_name']))
-                    backup_hyperv.main(str(request.data['VM_name']))
+                    backup_hyperv.main(gv.hyperv_ip, gv.hyperv_password, gv.hyperv_username, request.data['VM_name'])
                     Backup(vm=vm,
-                    backup_name="",
+                    backup_name=request.data['backup_name'],
                     ).save()
                     return Response(bkupserializer.data, status=status.HTTP_201_CREATED)
                 else:

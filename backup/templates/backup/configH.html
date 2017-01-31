@@ -1,0 +1,275 @@
+{% extends 'backup/base.html' %}
+{% block title %}VM Management{%endblock%}
+
+{%block body%}
+
+<style>
+
+    form {
+            margin: 0 0 0 43%; 
+            padding: 10px;
+            width: 20%;
+          }
+          
+    input {
+        padding: 5px;
+        width: 90%;
+    }
+    table, th, td {
+        border:1px solid black !important;
+        padding: 10px !important;
+        text-align: center; 
+        border-width: 2px !important;
+        border-spacing: 10px !important;
+    }
+
+    .modal {
+    display: none; /* Hidden by default */
+    position: fixed; /* Stay in place */
+    z-index: 1; /* Sit on top */
+    padding-top: 100px; /* Location of the box */
+    left: 0;
+    top: 0;
+    width: 100%; /* Full width */
+    height: 100%; /* Full height */
+    overflow: auto; /* Enable scroll if needed */
+    background-color: rgb(0,0,0); /* Fallback color */
+    background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+    font-family: verdana;
+    }
+
+/* Modal Content */
+.modal-content {
+    background-color: #fefefe;
+    margin: auto;
+    padding: 20px;
+    border: 1px solid #888;
+    width: 20%;
+    font-size: 12px;
+}
+
+/* The Close Button */
+.close {
+    color: #aaaaaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+}
+
+.close:hover,
+.close:focus {
+    color: #000;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+
+</style>
+
+<script type = "text/javascript">
+   var myList = [];
+    function list() {
+        var xmlhttp = new XMLHttpRequest();
+        xmlhttp.open("GET", "http://127.0.0.1:8000/vm/hyperv/list/servip=" + document.getElementById("servip").value + "&servpaswd=" + document.getElementById("servpaswd").value + "&servuser=" + document.getElementById("servuser").value, true);
+        xmlhttp.onreadystatechange = function() 
+        {
+            if (this.readyState == 4 && this.status == 200) 
+            {
+                myList=xmlhttp.responseText;
+                //alert(myList);
+                //alert(myList.substring(1,myList.length-1));
+                myList=myList.substring(1,myList.length-1);
+                gg=myList.split("},");
+                myList=[];
+                for(var i=0;i<gg.length;i++)
+                {
+                    if(i==gg.length-1)
+                    {
+                        myList.push(JSON.parse(gg[i]));
+                    }
+                    else
+                    myList.push(JSON.parse(gg[i]+'}'));
+                    
+                }
+
+                //document.write(myList);
+                buildHtmlTable('#excelDataTable');
+                //xmlResponse=xmlhttp.responseXML;
+                //xmlDE=xmlResponse.documentElement;
+                //message = xmlDE.firstChild.data;
+            }
+        };
+
+        xmlhttp.send(null);
+    }
+
+    function takeBackup() {
+        var xmlhttp = new XMLHttpRequest();
+        xmlhttp.open("POST", "http://127.0.0.1:8000/vm/hyperv/backup/vmID=" + document.getElementById("VMName").value, true);
+        xmlhttp.setRequestHeader("Content-Type", "application/json");
+        //alert(JSON.stringify({VM_name: document.getElementById("VMName").value, backup_name: "ajinkya"}));
+        //xmlhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+        xmlhttp.onreadystatechange = function()     
+        {
+            if (this.readyState == 4 && this.status == 200) 
+            {
+                alert(xmlhttp.responseText);
+
+                //xmlResponse=xmlhttp.responseXML;
+                //xmlDE=xmlResponse.documentElement;
+                //message = xmlDE.firstChild.data;
+            }
+        };
+
+        //var csrftoken = getCookie('csrftoken');
+        var now=new Date();
+        //JSON.stringify({"csrfmiddlewaretoken":csrftoken})
+        xmlhttp.send(JSON.stringify({VM_name: document.getElementById("VMName").value, backup_name: now.toString()}));
+    }
+    
+
+    function buildHtmlTable(selector) {
+  var columns = addAllColumnHeaders(myList, selector);
+    var k=0;
+  for (var i = 0; i < myList.length; i++) {
+    var row$ = $('<tr/>');
+    var flag=0;
+    
+    var msg="";
+    for (var colIndex = 0; colIndex < columns.length; colIndex++) {
+      var cellValue = myList[i][columns[colIndex]];
+      
+      
+      if(flag==0)
+      {
+        msg=cellValue;
+        //alert(msg);
+        flag=1;
+      }
+      if (cellValue == null) cellValue = "";
+      row$.append($('<td/>').html(cellValue));
+    }
+    var string="<button onclick=\"myFunction('"+msg+"')\">Backup</button>";
+    //alert(string);
+    //<button onclick="myFunction()">Click me</button>
+    row$.append($('<td/>').html(string));
+    $(selector).append(row$);
+  }
+}
+
+
+// Adds a header row to the table and returns the set of columns.
+// Need to do union of keys from all records as some records may not contain
+// all records.
+function addAllColumnHeaders(myList, selector) {
+  var columnSet = [];
+  var headerTr$ = $('<tr/>');
+  var k=0;
+  for (var i = 0; i < myList.length; i++) {
+    var rowHash = myList[i];
+    
+    for (var key in rowHash) {
+      if ($.inArray(key, columnSet) == -1) {
+        columnSet.push(key);
+        
+        headerTr$.append($('<th/>').html(key));
+      }
+    }
+  }
+  headerTr$.append($('<th/>').html('Action'));
+  $(selector).append(headerTr$);
+
+  return columnSet;
+}
+
+
+function myFunction(msg)
+{
+//alert(msg);
+var modal = document.getElementById('myModal');
+var span = document.getElementsByClassName("close")[0];
+modal.style.display = "block";
+document.getElementById('VMName').value = msg;
+/*span.onclick = function() {
+    modal.style.display = "none";
+}*/
+
+}
+
+
+
+</script>
+
+
+<form>
+    <fieldset>
+        <legend style="color:#337ab7">HyperV Configuration Details:</legend>
+            <p><b>Server IP:</b></p>
+            <input type="text" id="servip" value="10.136.60.33"><br><br>
+            <p><b>Server Username:</b></p>
+            <input type="text" id="servuser" value="Administrator"><br><br>
+            <p><b>Server Password:</b></p>
+            <input type="text" id="servpaswd" value="gsLab@123"><br><br>
+            <button type="button" onclick="list()" style="width:90%">Submit</button>
+    </fieldset>
+</form> 
+
+
+<br>
+<br>
+<table id="excelDataTable" border="1"></table>
+
+<div id="myModal" class="modal">
+
+  <!-- Modal content -->
+  <div class="modal-content">
+    <span class="close">&times;</span>
+    <p>Backup VM: </p>
+    <form,>
+        <fieldset>
+            <legend style="color:#337ab7"> Options: </legend>
+                <p><b>VM Name:</b></p>
+                <input type="text" id="VMName" value=VMName style="width:80%" readonly><br><br>
+                <p><b>Policy:</b></p>
+                <select name="policyList" style="width:80%">
+                    <option>Populate</option>
+                    <option>Policy</option>
+                    <option>Names</option>
+                    <option>Here</option>
+                </select><br><br><br>
+                <button type="button" onclick="takeBackup()" style="width:80%">Submit</button>
+        </fieldset>
+    </form> 
+  </div>
+
+</div>
+
+<script>
+// Get the modal
+var modal = document.getElementById('myModal');
+
+// Get the button that opens the modal
+//var btn = document.getElementById("myBtn");
+
+// Get the <span> element that closes the modal
+var span = document.getElementsByClassName("close")[0];
+
+// When the user clicks the button, open the modal 
+/*btn.onclick = function() {
+    modal.style.display = "block";
+}*/
+
+// When the user clicks on <span> (x), close the modal
+span.onclick = function() {
+    modal.style.display = "none";
+}
+
+// When the user clicks anywhere outside of the modal, close it
+window.onclick = function(event) {
+    if (event.target == modal) {
+        modal.style.display = "none";
+    }
+}
+</script>
+
+{% endblock %}

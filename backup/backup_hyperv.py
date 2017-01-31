@@ -1,8 +1,8 @@
 import winrm	#install library by: pip install pywinrm
 
-rmtip = "10.136.60.2"
-usernm = "Administrator"
-passwd = "gsLab1234"
+#rmtip = "10.136.60.2"
+#usernm = "Administrator"
+#passwd = "gsLab1234"
 
 #print "\nRemote machine :: 10.136.60.2\nUsername :: Administrator"
 #print "Can modify auth details as needed\n"
@@ -11,8 +11,9 @@ passwd = "gsLab1234"
 	#allowUnencrypted = True
 
 
-def backup(VMname):
-	currSession = winrm.Session(rmtip,auth=(usernm,passwd))
+def backup(rmtip, passwd, usernm, VMname):
+	#print rmtip
+	currSession = winrm.Session(rmtip[0],auth=(usernm[0],passwd[0]))
 	#vvdUb = vmname
 
 	#vmname = raw_input("Enter VM name to backup: ")
@@ -30,11 +31,11 @@ def backup(VMname):
 	#print runcmd.std_out
 
 	if(runcmd.status_code == 4294967293):		#error wrong name
-		return "VM: \""+vmname+"\" not found"
+		print "VM: \""+vmname+"\" not found"
 	if(runcmd.status_code == 4294967294):		#error wrong dest
-		return "Destination: \""+bckdest+"\" not found"
+		print "Destination: \""+bckdest+"\" not found"
 	if(runcmd.status_code == 0):		#correct exec
-		return "VM: \""+vmname+"\" has been backed up"
+		print "VM: \""+vmname+"\" has been backed up"
 
-def main(VMname):
-	return backup(VMname)
+def main(rmtip, passwd, usernm, VMname):
+	backup(rmtip, passwd, usernm, VMname)

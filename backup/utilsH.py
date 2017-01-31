@@ -21,13 +21,15 @@ def listVm(splitvm):
 		a.append(l)
 
 def main(rmtip, usernm, passwd):
-	#rmtip = "10.136.60.2"
+	#rmtip = "10.136.60.33"
 	#usernm = "Administrator"
-	#passwd = "gsLab1234"
-	currSession = winrm.Session(rmtip,auth=(usernm,passwd))
+	#passwd = "gsLab@123"
+	print rmtip[0], usernm[0], passwd[0]	
+	currSession = winrm.Session(rmtip[0],auth=(usernm[0],passwd[0]))
 	getvm = currSession.run_cmd('wbadmin get virtualmachines')
 	splitvm = getvm.std_out.split('\r\n\r\n')	#get individual vm tuples
 	listVm(splitvm)
 	global a
 	a=filter(None,a)
+	print a
 	return a

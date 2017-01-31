@@ -78,7 +78,7 @@ def backupESX(request):
 def config(request, hyper):
     if hyper == "hyperv":
         print "ONLY CONFIG"
-        return render(request, 'backup/config.html')
+        return render(request, 'backup/configH.html')
 
     if hyper == "esx":
         print "ONLY CONFIG"
@@ -95,13 +95,16 @@ def configShow(request, hyper, values):
     parsed=urlparse.urlparse(temp)
     parsed_dict = urlparse.parse_qs(parsed.query)
     if hyper == 'hyperv':
-        apis.vm_list(request, hyper, "backup", parsed_dict['servip'], parsed_dict['servuser'], parsed_dict['servpaswd'], " ")
-        return HttpResponse("<h1>" + values + "</h1>")
-    elif hyper == 'esx':
-        #print parsed_dict['vmname'][0].strip('/')
-        #print str(parsed_dict['servip'][0]), str(parsed_dict['servpaswd']), str(parsed_dict['servuser']), str(parsed_dict['vmname'])
         if request.method == 'GET':
-            print "sfsdfsdf"
+            #print parsed_dict['servip'], parsed_dict['servuser'], parsed_dict['servpaswd']
+            var=apis.vm_list(request, hyper, "backup", parsed_dict['servip'], parsed_dict['servpaswd'], parsed_dict['servuser'], "")
+            return HttpResponse(json.dumps(var.data))
+        elif request.method == 'POST':
+            gv.hyperv_vmID=parsed_dict['vmID'][0].strip('/')
+            apis.vm_list(request, hyper, "backup", gv.hyperv_ip, gv.hyperv_password, gv.hyperv_username, gv.hyperv_vmID) 
+    elif hyper == 'esx':
+        if request.method == 'GET':
+            print parsed_dict['servip'][0], parsed_dict['servpaswd'][0], parsed_dict['servuser'][0].strip('/')
             var=apis.vm_list(request, hyper, "backup", parsed_dict['servip'][0], parsed_dict['servpaswd'][0], parsed_dict['servuser'][0].strip('/'), "")
             return HttpResponse(json.dumps(var.data))
         elif request.method == 'POST':
@@ -109,14 +112,10 @@ def configShow(request, hyper, values):
             apis.vm_list(request, hyper, "backup", gv.esx_ip, gv.esx_password, gv.esx_username, gv.esx_vmID)
     elif hyper == 'kvm':
         if request.method == 'GET':
-            #print "adad "
             var=apis.vm_list(request, hyper, "backup", parsed_dict['servip'][0].strip('/'), "", "", "")
-           # print var
             return HttpResponse(json.dumps(var.data))
         elif request.method == 'POST':
             gv.kvm_vmID=parsed_dict['vmID'][0].strip('/')
-            #print gv.kvm_vmID
-            #print gv.esx_ip, gv.esx_password, gv.esx_username, gv.esx_vmname
             apis.vm_list(request, hyper, "backup", gv.kvm_ip, "", "", gv.kvm_vmID)
             return HttpResponse("")
 

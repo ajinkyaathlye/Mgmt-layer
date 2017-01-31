@@ -1,10 +1,10 @@
 import winrm	#install library by: pip install pywinrm
 
 
-def main(bckDest):
-	rmtip = "10.136.60.2"
-	usernm = "Administrator"
-	passwd = "gsLab1234"
+def main(rmtip, usernm, passwd, bckDest):
+	#rmtip = "10.136.60.2"
+	#usernm = "Administrator"
+	#passwd = "gsLab1234"
 
 	#print "\nRemote machine :: 10.136.60.2\nUsername :: Administrator"
 	#print "Can modify auth details as needed\n"
