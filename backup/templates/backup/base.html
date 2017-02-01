@@ -67,7 +67,25 @@
 
 				// When the user clicks the button, open the modal 
 				modal.style.display = "block";
-            }
+            	}
+
+	       function createPolicy() {
+	        var xmlhttp = new XMLHttpRequest();
+	        //alert("http://127.0.0.1:8000/policy/create/startDay=" + document.getElementById("startDay").value + "&startMonth=" + document.getElementById("startMonth").value + "&startYear=" + document.getElementById("startYear").value + "&endDay=" + document.getElementById("endDay").value + "&endMonth=" + document.getElementById("endMonth").value+ "&endYear=" + document.getElementById("endYear").value + "&bckrotation=" + document.getElementById("bckrotation").value );
+
+
+	        xmlhttp.open("GET", "http://127.0.0.1:8000/policy/create/startDay=" + document.getElementById("startDay").value + "&startMonth=" + document.getElementById("startMonth").value + "&startYear=" + document.getElementById("startYear").value + "&endDay=" + document.getElementById("endDay").value + "&endMonth=" + document.getElementById("endMonth").value + "&endYear=" + document.getElementById("endYear").value + "&bckrotation=" + document.getElementById("bckrotation").value, true);
+
+	        xmlhttp.onreadystatechange = function() 
+	        {
+	            if (this.readyState == 4 && this.status == 200) 
+	            {
+	               
+	            }
+	        };
+
+        	xmlhttp.send(null);
+    }
     </script>
 
 <body>
@@ -133,14 +151,11 @@
 				<fieldset>
 					<legend style="color:#337ab7"> Policy Parameters: </legend>
 						<p><b>Start Date:</b></p>
-							<input type="text" name="startDay" value="#day" style="width:25%"> - <input type="text" name="startMonth" value="#mnth" style="width:25%"> - <input type="text" name="startYear" value="#year" style="width:40%"><br><br>
+							<input type="text" id="startDay" value="1" style="width:25%"> - <input type="text" id="startMonth" value="1" style="width:25%"> - <input type="text" id="startYear" value="1" style="width:40%"><br><br>
 						<p><b>End Date:</b></p>
-							<input type="text" name="endDay" value="#day" style="width:25%"> - <input type="text" name="endMonth" value="#mnth" style="width:25%"> - <input type="text" name="endYear" value="#year" style="width:40%"><br><br>
-						<p><b>Backup Type:</b></p>
-							<input type="radio" name="bckType" value="full" checked>Full &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-							<input type="radio" name="bckType" value="diff">Differential<br><br>
+							<input type="text" id="endDay" value="2" style="width:25%"> - <input type="text" id="endMonth" value="2" style="width:25%"> - <input type="text" id="endYear" value="2" style="width:40%"><br><br>
 						<p><b>Backup Rotation Count:</b></p>
-							<input type="text" name="bckrotation" value="<someNumber>"><br><br>
+							<input type="text" id="bckrotation" value="3"><br><br>
 						<button type="button" onclick="createPolicy()" style="width:90%">Submit</button>
 				</fieldset>
 			</form> 
@@ -164,7 +179,7 @@
 	}
 	</script>
 
-	<div class="col-md-3 column margintop20">
+	<div class="col-md-3 column margintop20" style="margin-top: 50px">
 	    <ul class="nav nav-pills nav-stacked">
 		  <li class="active" ><a><strong>Hypervisors</strong></a></li>
 		  <li><a href="http://127.0.0.1:8000/config/esx/"><span class="glyphicon glyphicon-chevron-right"></span> ESX</a></li>
@@ -172,6 +187,8 @@
 		  <li><a href="http://127.0.0.1:8000/config/hyperv/"><span class="glyphicon glyphicon-chevron-right"></span> HyperV</a></li>
 		 </ul>
 	</div>
+
+
 
 	{% block body %}
 	{% endblock %}

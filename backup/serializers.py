@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import VM, Backup
+from .models import VM, Backup, Profile
 from django.contrib.auth.models import User
 
 """class VMSerializer(serializers.HyperlinkedModelSerializer):
@@ -28,3 +28,8 @@ class BackupSerializer(serializers.ModelSerializer):
     class Meta:
         model = Backup
         fields = ('VM_name','backup_name')
+
+class ProfileSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Profile
+        fields = "__all__"

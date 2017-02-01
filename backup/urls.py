@@ -16,6 +16,9 @@ router.register('users', views.UserViewSet)"""
 urlpatterns = [
     url(r'^api/(?P<util>[a-z]+)/(?P<hv>[a-z]+)/list/', apis.vm_list),
     url(r'^api/(?P<util>[a-z]+)/(?P<hv>[a-z]+)/list/(?P<name>[A-Za-z0-9._@-]+)/', apis.vm_detail),
+    url(r'^api/policy/', apis.createPolicy),
+    url(r'^policy/list/', views.listPolicies, name='listPolicies'),
+    url(r'^policy/create/(?P<values>[A-Za-z0-9._@&%=:/,?-]+)', views.createPolicy),
     url(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework')),
     url(r'^vm/listesx/', views.listESX, name='listESX'),
     url(r'^vm/listkvm/', views.listKVM, name='listKVM'),

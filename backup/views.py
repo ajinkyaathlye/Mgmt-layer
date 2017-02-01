@@ -1,5 +1,5 @@
 from .models import VM
-from .serializers import VMSerializer
+from .serializers import VMSerializer, ProfileSerializer
 from django.contrib.auth.models import User
 #from .serializers import UserSerializer
 from rest_framework import permissions
@@ -90,6 +90,7 @@ def config(request, hyper):
 
 @csrf_exempt
 def configShow(request, hyper, values):
+    """Stuff."""
     temp="http://www.dbz.com/goku?"
     temp=temp + values
     parsed=urlparse.urlparse(temp)
@@ -119,4 +120,18 @@ def configShow(request, hyper, values):
             apis.vm_list(request, hyper, "backup", gv.kvm_ip, "", "", gv.kvm_vmID)
             return HttpResponse("")
 
-        
+def createPolicy(request, values):
+    temp="http://www.dbz.com/goku?"
+    temp=temp + values
+    parsed=urlparse.urlparse(temp)
+    parsed_dict = urlparse.parse_qs(parsed.query)
+    if request.method == 'GET':
+        var=apis.createPolicy(request, parsed_dict['startDay'][0],parsed_dict['startMonth'][0],parsed_dict['startYear'][0], parsed_dict['endDay'][0], parsed_dict['endMonth'][0],parsed_dict['endYear'][0], parsed_dict['bckrotation'][0])
+        return HttpResponse(json.dumps(var.data))
+
+def listPolicies(request):
+    """Fetches policies as a JSON list from the database and returns a list"""
+    policies=models.Profile.objects.all()
+    ord_dict = ProfileSerializer(policies, many=True)
+    JSON = json.dumps(ord_dict.data)
+    return HttpResponse(JSON)

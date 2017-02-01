@@ -27,12 +27,13 @@ def backupvm(ip, backup_name, vm_id):
     'X-Auth-Token': get_token(ip),
 	}
 
-	data = '{"createBackup": {"backup_type": "daily", "rotation": "10", "name":' + '"' + backup_name + '"' + '}}'
+	data = '{"createBackup": {"backup_type": "weekly", "rotation": "100", "name":' + '"' + backup_name + '"' + '}}'
 
 	response=requests.post('http://'+ip+':8774/v2.1/'+getProjectID(ip)+'/servers/'+ vm_id +'/action', headers=headers, data=data)
 	print data
 	print response.text
 	print response
+	return str(response.headers['Location']).split('/')[-1]
 	
 
 def getProjectID(ip):
@@ -59,4 +60,4 @@ def getProjectID(ip):
 			return ll['id']
 
 def main(ip, backup_name, vm_id):
-	backupvm(ip, backup_name, vm_id)
+	return backupvm(ip, backup_name, vm_id)

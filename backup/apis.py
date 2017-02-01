@@ -1,5 +1,5 @@
 from .models import VM, Backup
-from .serializers import VMSerializer, BackupSerializer
+from .serializers import VMSerializer, BackupSerializer, ProfileSerializer
 from django.contrib.auth.models import User
 from rest_framework import permissions
 from rest_framework import generics
@@ -91,10 +91,12 @@ def vm_list(request, hv, util, ip, password, user, vname, format=None):
                 #print request.data
                 if bkupserializer.is_valid():
                     vm=VM.objects.get(VM_id=vname)
-                    bkuplist=backup_kvm.main(ip, request.data['backup_name'], request.data['VM_name'])
+                    bkupID=backup_kvm.main(ip, request.data['backup_name'], request.data['VM_name'])
+                    print bkupID
+                    print "AFA"
                     Backup(vm=vm,
         	    	backup_name=request.data['backup_name'],
-        	    	#backup_id=str(bkuplist[1]),
+        	    	bkupid=bkupID,
                     VM_name=str(request.data['VM_name']),
         	    	#status=str(bkuplist[2]),
         	    	).save()
@@ -192,6 +194,18 @@ def vm_list(request, hv, util, ip, password, user, vname, format=None):
                 restore_hyperv.main('D', str(request.data['backup_name']), str(request.data['VM_name']))  
                 return Response(status=status.HTTP_201_CREATED)
 
+def createPolicy(request, startDay, startMonth, startYear, endDay, endMonth, endYear, bckrotation, format=None):
+    if request.method == 'GET':
+        d=models.Profile()
+        d.start_date=datetime.date(int(startYear), int(startMonth), int(startDay))
+        d.end_date=datetime.date(int(endYear), int(endMonth), int(endDay))
+        d.freq_count=int(bckrotation)
+        d.del_count=4
+        d.save()
+        serializer = ProfileSerializer(d)
+        return Response(serializer.data)
+
+
 @api_view(['GET', 'PUT', 'DELETE'])
 def vm_detail(request, hv, name, format=None):
     try:
@@ -213,6 +227,7 @@ def vm_detail(request, hv, name, format=None):
     elif request.method == 'DELETE':
         vm.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
+
 
 
 #def set_policy(request):

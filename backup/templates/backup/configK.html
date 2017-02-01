@@ -196,6 +196,36 @@ var modal = document.getElementById('myModal');
 var span = document.getElementsByClassName("close")[0];
 modal.style.display = "block";
 document.getElementById('VMName').value = msg;
+var xmlhttp = new XMLHttpRequest();
+//alert("HI");
+xmlhttp.open("GET", "http://127.0.0.1:8000/policy/list/", true);
+xmlhttp.onreadystatechange = function() 
+{
+   if (this.readyState == 4 && this.status == 200) 
+    {
+        myList=xmlhttp.responseText;
+        myList=myList.substring(1,myList.length-1);
+        gg=myList.split("},");
+        myList=[];
+        for(var i=0;i<gg.length;i++)
+        {
+            if(i==gg.length-1)
+            {
+                myList.push(JSON.parse(gg[i]));
+            }
+            else
+                myList.push(JSON.parse(gg[i]+'}'));
+        }
+        var select = document.getElementById('policyList');
+        for(var i=0; i<myList.length; i++)
+        {
+            select.options[select.length] = new Option(str(myList[i]['id']), str(myList[i]['id']);    
+        }
+        
+
+    }
+}
+xmlhttp.send(null);
 /*span.onclick = function() {
     modal.style.display = "none";
 }*/
@@ -203,14 +233,13 @@ document.getElementById('VMName').value = msg;
 }
 
 
-
 </script>
 
 
-<form class="details"> 
+<form class="details" style="margin-top: 50px"> 
     <fieldset>
        <legend style="color:#337ab7">KVM Configuration Details:</legend>
-		<p><b>KVM IP:</b></p>
+		<p><b>OpenStack IP:</b></p>
 		<input type="text" id="servip" value="10.136.60.38"><br><br>
 		<button type="button" onclick="list()" style="width:90%">Submit</button>
     </fieldset>
@@ -233,11 +262,7 @@ document.getElementById('VMName').value = msg;
                 <p><b>VM Name:</b></p>
                 <input type="text" id="VMName" value=VMName style="width:80%" readonly><br><br>
                 <p><b>Policy:</b></p>
-                <select name="policyList" style="width:80%">
-                    <option>Populate</option>
-                    <option>Policy</option>
-                    <option>Names</option>
-                    <option>Here</option>
+                <select id="policyList" style="width:80%">
                 </select><br><br><br>
                 <button type="button" onclick="takeBackup()" style="width:80%">Submit</button>
         </fieldset>

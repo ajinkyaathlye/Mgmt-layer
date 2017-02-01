@@ -3,8 +3,8 @@ from django.db import models
 
 
 class Profile(models.Model):
-	start_date=models.DateTimeField()
-	end_date=models.DateTimeField()
+	start_date=models.DateField()
+	end_date=models.DateField()
 	freq_count=models.IntegerField()
 	del_count=models.IntegerField()
 	def __str__(self):
@@ -35,10 +35,11 @@ class Backup(models.Model):
 	vm=models.ForeignKey('VM', on_delete=models.CASCADE,)
 	VM_name=models.CharField(max_length=1000, blank=True)
 	backup_name=models.CharField(max_length=1000, primary_key=True)
+	bkupid=models.CharField(max_length=1000, blank=True)
 	status=models.CharField(max_length=1000, blank=True)
 	#vm_ID=models.IntegerField()
 	metadata=models.FileField(blank=True,)
-	#timestamp=models.TimeField(auto_now_add=True,blank=True)	
+	timestamp=models.TimeField(auto_now_add=True,blank=True)	
 	image=models.FileField(blank=True)
 
 	def __str__(self):
