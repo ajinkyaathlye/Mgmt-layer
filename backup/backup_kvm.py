@@ -64,7 +64,9 @@ def backupvm(ip, backup_name, vm_id):
 	print response.text
 	print response
 
-	db=models.Backup.objects.all();
+	
+	VM=models.VM.objects.filter(hyper_type='KVM', VM_id=vm_id)
+	db=models.Backup.objects.filter(vm=VM)
 	if(len(db)>3):
 		id=getBackupIDbyName(str(db[0]),ip)
 		deleteBackup(id,ip)
