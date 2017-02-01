@@ -1,7 +1,7 @@
 import os
 import requests
 import json
-
+from backup import models
 #ip="10.136.60.38"
 
 def get_token(ip):
@@ -17,7 +17,37 @@ def get_token(ip):
 
 	#print token
 	return token
+
+def getBackupIDbyName(bkupname,ip):
+	headers = {
+    'User-Agent': 'python-novaclient',
+    'Accept': 'application/json',
+    'X-OpenStack-Nova-API-Version': '2.25',
+    'X-Auth-Token': get_token(ip),
+	}
+	string='http://'+ip+':8774/v2.1/'+str(getProjectID(ip))+'/images/detail'
+	#print string
+	response=requests.get(string, headers=headers)
+	parsed_json_response=json.loads(response.text)
+	backupList=[]
+	for i in range(len(parsed_json_response['images'])):
+		if str(parsed_json_response['images'][i]['name'])==bkupname:
+			print str(parsed_json_response['images'][i]['id'])
+			return str(parsed_json_response['images'][i]['id'])
+		
+	return ""
+
+def deleteBackup(bkupID,ip):
 	
+	headers = {
+    'User-Agent': 'python-novaclient',
+    'Accept': 'application/json',
+    'X-OpenStack-Nova-API-Version': '2.25',
+    'X-Auth-Token': get_token(ip),
+	}
+
+	requests.delete('http://'+ip+':8774/v2.1/'+getProjectID(ip)+'/images/'+bkupID, headers=headers)
+
 def backupvm(ip, backup_name, vm_id):
 	headers = {
     'User-Agent': 'python-novaclient',
@@ -33,8 +63,17 @@ def backupvm(ip, backup_name, vm_id):
 	print data
 	print response.text
 	print response
+
+	db=models.Backup.objects.all();
+	if(len(db)>3):
+		id=getBackupIDbyName(str(db[0]),ip)
+		deleteBackup(id,ip)
+		models.Backup.objects.get(backup_name=str(db[0])).delete()
+
+
 	return str(response.headers['Location']).split('/')[-1]
-	
+
+
 
 def getProjectID(ip):
 	headers = {'Content-Type': 'application/json',}
