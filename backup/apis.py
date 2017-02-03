@@ -18,13 +18,13 @@ import pdb, datetime
 
 
 @api_view(['GET', 'POST'])
-def vm_list(request, hv, util, ip, password, user, vname, format=None):
+def vm_list(request, hv, util, ip, password, user, format=None):
     if util == 'backup':
         if request.method == 'GET':
        	    if hv == "kvm":
                 gv.kvm_ip=ip
        	    	vms=VM()
-    	        list_VM = utilsK.main(ip)
+    	        list_VM = utilsK.main(ip,user,password)
     	    	for vm in list_VM:
     	    		vm = VM(VM_name=vm[1],
     	    			VM_id=vm[0],
@@ -87,11 +87,13 @@ def vm_list(request, hv, util, ip, password, user, vname, format=None):
 
         elif request.method == 'POST':
             if hv == "kvm":
+                print "REQ DATA"
+                print request.data
                 bkupserializer = BackupSerializer(data=request.data)
                 #print request.data
                 if bkupserializer.is_valid():
-                    vm=VM.objects.get(VM_id=vname)
-                    bkupID=backup_kvm.main(ip, request.data['backup_name'], request.data['VM_name'])
+                    vm=VM.objects.get(VM_id=request.data['VM_name'])
+                    bkupID=backup_kvm.main(ip, request.data['backup_name'], request.data['VM_name'],user,password)
                     print bkupID
                     print "AFA"
                     Backup(vm=vm,

@@ -93,12 +93,13 @@ def configShow(request, hyper, values):
     """Stuff."""
     temp="http://www.dbz.com/goku?"
     temp=temp + values
+    print values
     parsed=urlparse.urlparse(temp)
     parsed_dict = urlparse.parse_qs(parsed.query)
     if hyper == 'hyperv':
         if request.method == 'GET':
             #print parsed_dict['servip'], parsed_dict['servuser'], parsed_dict['servpaswd']
-            var=apis.vm_list(request, hyper, "backup", parsed_dict['servip'], parsed_dict['servpaswd'], parsed_dict['servuser'], "")
+            var=apis.vm_list(request, hyper, "backup", parsed_dict['servip'], parsed_dict['servpaswd'], parsed_dict['servuser'])
             return HttpResponse(json.dumps(var.data))
         elif request.method == 'POST':
             gv.hyperv_vmID=parsed_dict['vmID'][0].strip('/')
@@ -106,18 +107,17 @@ def configShow(request, hyper, values):
     elif hyper == 'esx':
         if request.method == 'GET':
             print parsed_dict['servip'][0], parsed_dict['servpaswd'][0], parsed_dict['servuser'][0].strip('/')
-            var=apis.vm_list(request, hyper, "backup", parsed_dict['servip'][0], parsed_dict['servpaswd'][0], parsed_dict['servuser'][0].strip('/'), "")
+            var=apis.vm_list(request, hyper, "backup", parsed_dict['servip'][0], parsed_dict['servpaswd'][0], parsed_dict['servuser'][0].strip('/'))
             return HttpResponse(json.dumps(var.data))
         elif request.method == 'POST':
             gv.esx_vmID=parsed_dict['vmID'][0].strip('/')
             apis.vm_list(request, hyper, "backup", gv.esx_ip, gv.esx_password, gv.esx_username, gv.esx_vmID)
     elif hyper == 'kvm':
         if request.method == 'GET':
-            var=apis.vm_list(request, hyper, "backup", parsed_dict['servip'][0].strip('/'), "", "", "")
+            var=apis.vm_list(request, hyper, "backup", parsed_dict['servip'][0].strip('/'), parsed_dict['servpaswd'][0], parsed_dict['servuser'][0])
             return HttpResponse(json.dumps(var.data))
         elif request.method == 'POST':
-            gv.kvm_vmID=parsed_dict['vmID'][0].strip('/')
-            apis.vm_list(request, hyper, "backup", gv.kvm_ip, "", "", gv.kvm_vmID)
+            apis.vm_list(request, hyper, "backup", parsed_dict['servip'][0].strip('/'), parsed_dict['servpaswd'][0], parsed_dict['servuser'][0])
             return HttpResponse("")
 
 def createPolicy(request, values):

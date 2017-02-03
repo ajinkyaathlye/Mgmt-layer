@@ -4,10 +4,10 @@ import json
 from backup import models
 #ip="10.136.60.38"
 
-def get_token(ip):
+def get_token(ip,username,password):
 	headers = {'Content-Type': 'application/json',}
 
-	data = '{"auth": {"tenantName": "demo", "passwordCredentials": {"username": "demo", "password":"root123"}}}'
+	data = '{"auth": {"tenantName": "demo", "passwordCredentials": {"username": "'+username+'", "password":"'+password+'"}}}'
 
 	response=requests.post('http://'+ip+':5000/v2.0/tokens', headers=headers, data=data)
 
@@ -18,12 +18,12 @@ def get_token(ip):
 	#print token
 	return token
 
-def getBackupIDbyName(bkupname,ip):
+def getBackupIDbyName(bkupname,ip,username,password):
 	headers = {
     'User-Agent': 'python-novaclient',
     'Accept': 'application/json',
     'X-OpenStack-Nova-API-Version': '2.25',
-    'X-Auth-Token': get_token(ip),
+    'X-Auth-Token': get_token(ip,username,password),
 	}
 	string='http://'+ip+':8774/v2.1/'+str(getProjectID(ip))+'/images/detail'
 	#print string
@@ -37,24 +37,24 @@ def getBackupIDbyName(bkupname,ip):
 		
 	return ""
 
-def deleteBackup(bkupID,ip):
+def deleteBackup(bkupID,ip,username,password):
 	
 	headers = {
     'User-Agent': 'python-novaclient',
     'Accept': 'application/json',
     'X-OpenStack-Nova-API-Version': '2.25',
-    'X-Auth-Token': get_token(ip),
+    'X-Auth-Token': get_token(ip,username,password),
 	}
 
 	requests.delete('http://'+ip+':8774/v2.1/'+getProjectID(ip)+'/images/'+bkupID, headers=headers)
 
-def backupvm(ip, backup_name, vm_id):
+def backupvm(ip, backup_name, vm_id,username,password):
 	headers = {
     'User-Agent': 'python-novaclient',
     'Content-Type': 'application/json',
     'Accept': 'application/json',
     'X-OpenStack-Nova-API-Version': '2.25',
-    'X-Auth-Token': get_token(ip),
+    'X-Auth-Token': get_token(ip,username,password),
 	}
 
 	data = '{"createBackup": {"backup_type": "weekly", "rotation": "100", "name":' + '"' + backup_name + '"' + '}}'
@@ -68,8 +68,8 @@ def backupvm(ip, backup_name, vm_id):
 	VM=models.VM.objects.filter(hyper_type='KVM', VM_id=vm_id)
 	db=models.Backup.objects.filter(vm=VM)
 	if(len(db)>3):
-		id=getBackupIDbyName(str(db[0]),ip)
-		deleteBackup(id,ip)
+		id=getBackupIDbyName(str(db[0]),ip,username,password)
+		deleteBackup(id,ip,username,password)
 		models.Backup.objects.get(backup_name=str(db[0])).delete()
 
 
@@ -100,5 +100,5 @@ def getProjectID(ip):
 			#print ll['id']
 			return ll['id']
 
-def main(ip, backup_name, vm_id):
-	return backupvm(ip, backup_name, vm_id)
+def main(ip, backup_name, vm_id,username,password):
+	return backupvm(ip, backup_name, vm_id,username,password)

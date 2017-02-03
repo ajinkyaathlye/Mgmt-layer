@@ -70,7 +70,7 @@
    var myList = [];
     function list() {
         var xmlhttp = new XMLHttpRequest();
-        xmlhttp.open("GET", "http://127.0.0.1:8000/vm/kvm/list/servip=" + document.getElementById("servip").value, true);
+        xmlhttp.open("GET", "http://127.0.0.1:8000/vm/kvm/list/servip=" + document.getElementById("servip").value+ "&servuser=" + document.getElementById("servuser").value +"&servpaswd=" + document.getElementById("servpaswd").value, true);
         xmlhttp.onreadystatechange = function() 
         {
             if (this.readyState == 4 && this.status == 200) 
@@ -111,7 +111,7 @@
 
     function takeBackup() {
         var xmlhttp = new XMLHttpRequest();
-        xmlhttp.open("POST", "http://127.0.0.1:8000/vm/kvm/backup/vmID=" + document.getElementById("VMName").value, true);
+        xmlhttp.open("POST", "http://127.0.0.1:8000/vm/kvm/list/servip=" + document.getElementById("servip").value+ "&servuser=" + document.getElementById("servuser").value +"&servpaswd=" + document.getElementById("servpaswd").value, true);
         xmlhttp.setRequestHeader("Content-Type", "application/json");
         //alert(JSON.stringify({VM_name: document.getElementById("VMName").value, backup_name: "ajinkya"}));
         //xmlhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
@@ -239,9 +239,13 @@ xmlhttp.send(null);
 
 <form class="details" style="margin-top: 50px"> 
     <fieldset>
-       <legend style="color:#337ab7">KVM Configuration Details:</legend>
+       <legend style="color:#337ab7">Openstack Configuration Details:</legend>
 		<p><b>OpenStack IP:</b></p>
 		<input type="text" id="servip" value="10.136.60.38"><br><br>
+        <p><b>OpenStack username:</b></p>
+        <input type="text" id="servuser" value="demo"><br><br>
+        <p><b>OpenStack password:</b></p>
+        <input type="text" id="servpaswd" value="root123"><br><br>
 		<button type="button" onclick="list()" style="width:90%">Submit</button>
     </fieldset>
 </form> 
