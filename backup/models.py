@@ -11,6 +11,7 @@ class Profile(models.Model):
 		return str(self.id)
 
 class VM(models.Model):
+	profile=models.ForeignKey('Profile', on_delete=models.CASCADE, null=True)
 	VM_name=models.CharField(max_length=1000, blank=True)
 	VM_id=models.CharField(max_length=500, blank=True, primary_key=True)
 	hyper_type=models.CharField(max_length=1000,blank=True)

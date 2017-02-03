@@ -188,6 +188,7 @@ function addAllColumnHeaders(myList, selector) {
   return columnSet;
 }
 
+policyParams=[]
 
 function myFunction(msg)
 {
@@ -203,25 +204,28 @@ xmlhttp.onreadystatechange = function()
 {
    if (this.readyState == 4 && this.status == 200) 
     {
-        myList=xmlhttp.responseText;
-        myList=myList.substring(1,myList.length-1);
-        gg=myList.split("},");
-        myList=[];
+        policyParams=xmlhttp.responseText;
+        policyParams=policyParams.substring(1,policyParams.length-1);
+        gg=policyParams.split("},");
+        policyParams=[];
         for(var i=0;i<gg.length;i++)
         {
             if(i==gg.length-1)
             {
-                myList.push(JSON.parse(gg[i]));
+                policyParams.push(JSON.parse(gg[i]));
             }
             else
-                myList.push(JSON.parse(gg[i]+'}'));
+                policyParams.push(JSON.parse(gg[i]+'}'));
         }
         var select = document.getElementById('policyList');
-        for(var i=0; i<myList.length; i++)
-        {
-            select.options[select.length] = new Option(str(myList[i]['id']), str(myList[i]['id']);    
+        for(var i=0;i<policyParams.length;i++){
+            var option = document.createElement('option');
+            option.text = option.value = policyParams[i]['id'];
+            select.add(option, 0);    
         }
         
+
+
 
     }
 }
@@ -232,6 +236,18 @@ xmlhttp.send(null);
 
 }
 
+function fillPolicyLabel(name){
+    //alert(policyParams[0][1]);
+    for(var i=0;i<policyParams.length;i++){
+        if(policyParams[i]['id']==name)
+        {
+            //alert(policyParams[i][1]);
+            document.getElementById("startDate").innerHTML = policyParams[i]['start_date'];
+            document.getElementById("endDate").innerHTML = policyParams[i]['end_date'];
+            document.getElementById("rotationCount").innerHTML = policyParams[i]['freq_count'];
+        }
+    }
+}
 
 </script>
 
@@ -262,8 +278,14 @@ xmlhttp.send(null);
                 <p><b>VM Name:</b></p>
                 <input type="text" id="VMName" value=VMName style="width:80%" readonly><br><br>
                 <p><b>Policy:</b></p>
-                <select id="policyList" style="width:80%">
+                <select id="policyList" style="width:80%" onchange="fillPolicyLabel(this.value)">
                 </select><br><br><br>
+                <p><b>Start Date:</b>
+                <label type="text" id="startDate" value="" style="width:80%" > </label></p>
+                <p><b>End Date:</b>
+                <label type="text" id="endDate" value="" style="width:80%" > </label></p>
+                <p><b>Maximum number of backups:</b>
+                <label type="text" id="rotationCount" value="" style="width:80%" ></label></p><br>
                 <button type="button" onclick="takeBackup()" style="width:80%">Submit</button>
         </fieldset>
     </form> 
