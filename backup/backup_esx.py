@@ -14,16 +14,14 @@ from pyVim.connect import Disconnect, SmartConnect, GetSi
 a = []
 
 def get_obj(content, vimtype, name):
-    """
-     Get the vsphere object associated with a given text name
-    """    
-    obj = None
-    container = content.viewManager.CreateContainerView(content.rootFolder, vimtype, True)
-    for c in container.view:
-        if c.name == name:
-            obj = c
-            break
-    return obj
+     """Get the vsphere object associated with a given text name"""
+     obj = None
+     container = content.viewManager.CreateContainerView(content.rootFolder, vimtype, True)
+     for c in container.view:
+         if c.name == name:
+             obj = c
+             break
+     return obj
 
 #used for task synchronisation.
 #si= service instance; pc=property collector; pc gets properties of VMs by connecting to si.
@@ -152,6 +150,7 @@ def get_snapshots_recursively(snapshots, snapshot_location):
     return snapshot_paths
     
 def list_snapshot(vm, vm_name):
+    """Lists the snapshots of the VMs Present"""
     all_snapshots = []              
     try:
         snapshots = vm.snapshot.rootSnapshotList

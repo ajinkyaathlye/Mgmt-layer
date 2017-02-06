@@ -63,13 +63,13 @@ def PrintVmInfo(vm, depth=1):
         l.append("")
     a.append(l)
 
-def main(ip, password, user, vname):
+def main(ip, password, user):
     global a
     del a[:]
     inputs = {'vcenter_ip': str(ip),
               'vcenter_password': str(password),
               'vcenter_user': str(user),
-              'vm_name': str(vname),
+              'vm_name': "",
               # create, remove,info,snap info or list
               'operation': 'info',
               'snapshot_name': 'testtt',

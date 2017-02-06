@@ -4,7 +4,6 @@
 {%block body%}
 
 <style>
-
     form {
             margin: 0 0 0 43%; 
             padding: 10px;
@@ -22,7 +21,6 @@
         border-width: 2px !important;
         border-spacing: 10px !important;
     }
-
     .modal {
     display: none; /* Hidden by default */
     position: fixed; /* Stay in place */
@@ -37,7 +35,6 @@
     background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
     font-family: verdana;
     }
-
 /* Modal Content */
 .modal-content {
     background-color: #fefefe;
@@ -47,7 +44,6 @@
     width: 20%;
     font-size: 12px;
 }
-
 /* The Close Button */
 .close {
     color: #aaaaaa;
@@ -55,22 +51,20 @@
     font-size: 28px;
     font-weight: bold;
 }
-
 .close:hover,
 .close:focus {
     color: #000;
     text-decoration: none;
     cursor: pointer;
 }
-
-
 </style>
 
 <script type = "text/javascript">
-   var myList = [];
+    var myList = [];
     function list() {
+
         var xmlhttp = new XMLHttpRequest();
-        xmlhttp.open("GET", "http://127.0.0.1:8000/vm/kvm/list/servip=" + document.getElementById("servip").value, true);
+        xmlhttp.open("GET", "http://127.0.0.1:8000/vm/kvm/list/servip=" + document.getElementById("servip").value+ "&servuser=" + document.getElementById("servuser").value +"&servpaswd=" + document.getElementById("servpaswd").value, true);
         xmlhttp.onreadystatechange = function() 
         {
             if (this.readyState == 4 && this.status == 200) 
@@ -80,7 +74,6 @@
                 //document.write(myList);
                 //alert(myList.substring(1,myList.length-1));
                 myList=myList.substring(1,myList.length-1);
-
                 gg=myList.split("},");
                 myList=[];
                 //document.write(gg);
@@ -93,7 +86,6 @@
                     else
                     myList.push(JSON.parse(gg[i]+'}'));
                     
-
                     //alert(gg[i]+'}');
                     //alert(JSON.parse(gg[i]+'}'));
                     //alert(myList[i]);
@@ -105,13 +97,11 @@
                 //message = xmlDE.firstChild.data;
             }
         };
-
         xmlhttp.send(null);
     }
-
     function takeBackup() {
         var xmlhttp = new XMLHttpRequest();
-        xmlhttp.open("POST", "http://127.0.0.1:8000/vm/kvm/backup/vmID=" + document.getElementById("VMName").value, true);
+        xmlhttp.open("POST", "http://127.0.0.1:8000/vm/kvm/backup/servip=" + document.getElementById("servip").value+ "&servuser=" + document.getElementById("servuser").value +"&servpaswd=" + document.getElementById("servpaswd").value, true);
         xmlhttp.setRequestHeader("Content-Type", "application/json");
         //alert(JSON.stringify({VM_name: document.getElementById("VMName").value, backup_name: "ajinkya"}));
         //xmlhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
@@ -120,20 +110,17 @@
             if (this.readyState == 4 && this.status == 200) 
             {
                 //alert(xmlhttp.responseText);
-
                 //xmlResponse=xmlhttp.responseXML;
                 //xmlDE=xmlResponse.documentElement;
                 //message = xmlDE.firstChild.data;
             }
         };
-
         //var csrftoken = getCookie('csrftoken');
         var now=new Date();
         //JSON.stringify({"csrfmiddlewaretoken":csrftoken})
         xmlhttp.send(JSON.stringify({VM_name: document.getElementById("VMName").value, backup_name: now.toString()}));
     }
     
-
     function buildHtmlTable(selector) {
   var columns = addAllColumnHeaders(myList, selector);
     var k=0;
@@ -162,8 +149,6 @@
     $(selector).append(row$);
   }
 }
-
-
 // Adds a header row to the table and returns the set of columns.
 // Need to do union of keys from all records as some records may not contain
 // all records.
@@ -184,12 +169,9 @@ function addAllColumnHeaders(myList, selector) {
   }
   headerTr$.append($('<th/>').html('Action'));
   $(selector).append(headerTr$);
-
   return columnSet;
 }
-
 policyParams=[]
-
 function myFunction(msg)
 {
 //alert(msg);
@@ -224,18 +206,13 @@ xmlhttp.onreadystatechange = function()
             select.add(option, 0);    
         }
         
-
-
-
     }
 }
 xmlhttp.send(null);
 /*span.onclick = function() {
     modal.style.display = "none";
 }*/
-
 }
-
 function fillPolicyLabel(name){
     //alert(policyParams[0][1]);
     for(var i=0;i<policyParams.length;i++){
@@ -248,16 +225,19 @@ function fillPolicyLabel(name){
         }
     }
 }
-
 </script>
 
 
 <form class="details" style="margin-top: 50px"> 
     <fieldset>
-       <legend style="color:#337ab7">KVM Configuration Details:</legend>
-		<p><b>OpenStack IP:</b></p>
-		<input type="text" id="servip" value="10.136.60.38"><br><br>
-		<button type="button" onclick="list()" style="width:90%">Submit</button>
+       <legend style="color:#337ab7">Openstack Configuration Details:</legend>
+        <p><b>OpenStack IP:</b></p>
+        <input type="text" id="servip" value="10.136.60.38"><br><br>
+        <p><b>OpenStack username:</b></p>
+        <input type="text" id="servuser" value="demo"><br><br>
+        <p><b>OpenStack password:</b></p>
+        <input type="text" id="servpaswd" value="root123"><br><br>
+        <button type="button" onclick="list()" style="width:90%">Submit</button>
     </fieldset>
 </form> 
 
@@ -278,14 +258,8 @@ function fillPolicyLabel(name){
                 <p><b>VM Name:</b></p>
                 <input type="text" id="VMName" value=VMName style="width:80%" readonly><br><br>
                 <p><b>Policy:</b></p>
-                <select id="policyList" style="width:80%" onchange="fillPolicyLabel(this.value)">
+                <select id="policyList" style="width:80%">
                 </select><br><br><br>
-                <p><b>Start Date:</b>
-                <label type="text" id="startDate" value="" style="width:80%" > </label></p>
-                <p><b>End Date:</b>
-                <label type="text" id="endDate" value="" style="width:80%" > </label></p>
-                <p><b>Maximum number of backups:</b>
-                <label type="text" id="rotationCount" value="" style="width:80%" ></label></p><br>
                 <button type="button" onclick="takeBackup()" style="width:80%">Submit</button>
         </fieldset>
     </form> 
@@ -296,23 +270,18 @@ function fillPolicyLabel(name){
 <script>
 // Get the modal
 var modal = document.getElementById('myModal');
-
 // Get the button that opens the modal
 //var btn = document.getElementById("myBtn");
-
 // Get the <span> element that closes the modal
 var span = document.getElementsByClassName("close")[0];
-
 // When the user clicks the button, open the modal 
 /*btn.onclick = function() {
     modal.style.display = "block";
 }*/
-
 // When the user clicks on <span> (x), close the modal
 span.onclick = function() {
     modal.style.display = "none";
 }
-
 // When the user clicks anywhere outside of the modal, close it
 window.onclick = function(event) {
     if (event.target == modal) {

@@ -4,10 +4,12 @@ import json
 
 #ip="10.136.60.38"
 
-def get_token(ip):
+def get_token(ip,username,password):
+	"""Get openstack authentication token for all operations"""
 	headers = {'Content-Type': 'application/json',}
 
-	data = '{"auth": {"tenantName": "demo", "passwordCredentials": {"username": "demo", "password":"root123"}}}'
+	#data = '{"auth": {"tenantName": "demo", "passwordCredentials": {"username": "demo", "password":"root123"}}}'
+	data = '{"auth": {"tenantName": "demo", "passwordCredentials": {"username": "'+username+'", "password":"'+password+'"}}}'
 
 	response=requests.post('http://'+ip+':5000/v2.0/tokens', headers=headers, data=data)
 
@@ -18,12 +20,13 @@ def get_token(ip):
 	#print token
 	return token
 
-def list_vms(ip):
+def list_vms(ip,username,password):
+	"""Return list of VMs currently running in project demo for user #username with password #password"""
 	headers = {
     'User-Agent': 'python-novaclient',
     'Accept': 'application/json',
     'X-OpenStack-Nova-API-Version': '2.25',
-    'X-Auth-Token': get_token(ip),}
+    'X-Auth-Token': get_token(ip,username,password),}
 	
 	string='http://'+ip+':8774/v2.1/'+str(getProjectID(ip))+'/servers/detail'
 	#print string
@@ -66,6 +69,7 @@ def list_vms(ip):
 		
 
 def getProjectID(ip):
+	""""Get project id of the project demo"""
 	headers = {'Content-Type': 'application/json',}
 
 	data = '{"auth": {"tenantName": "demo", "passwordCredentials": {"username": "admin", "password":"root123"}}}'
@@ -89,5 +93,5 @@ def getProjectID(ip):
 			return ll['id']
 
 
-def main(ip):
-	return list_vms(ip)
+def main(ip,username,password):
+	return list_vms(ip,username,password)

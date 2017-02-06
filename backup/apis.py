@@ -18,15 +18,20 @@ import pdb, datetime
 
 
 @api_view(['GET', 'POST'])
-def vm_list(request, hv, util, ip, password, user, vname, format=None):
+def vm_list(request, hv, util, ip, password, user, format=None):
     if util == 'backup':
         if request.method == 'GET':
        	    if hv == "kvm":
+                l=[]
                 gv.kvm_ip=ip
        	    	vms=VM()
-    	        list_VM = utilsK.main(ip)
+    	        list_VM = utilsK.main(ip,user,password)
+                print list_VM
     	    	for vm in list_VM:
-    	    		vm = VM(VM_name=vm[1],
+                    d=models.Details(hyper_type='KVM', ip_addr=ip, username=user, password=password)
+                    d.save()
+                    virt_mach = VM(VM_name=vm[1],
+                        details=d,
     	    			VM_id=vm[0],
     	    			hyper_type="KVM",
     	    			state=vm[2],
@@ -35,24 +40,26 @@ def vm_list(request, hv, util, ip, password, user, vname, format=None):
     	    			ip=ip,
     	    			backup_content="",
     	    			).save()
-    	    	vms = VM.objects.filter(hyper_type="KVM")
-    	       	serializer = VMSerializer(vms, many=True)
+    	    	    vms = VM.objects.get(hyper_type="KVM", VM_id=vm[0])
+                    l.append(vms)
+    	       	serializer = VMSerializer(l, many=True) 
     	    	return Response(serializer.data)
 
     	    elif hv=="esx":
                 gv.esx_ip=ip
                 gv.esx_password=password
                 gv.esx_username=user
-                gv.esx_vmname=vname
                 #ip="192.168.32.98"
                 #password="gsLab123"
                 #user="sumitt@ad2lab.com"
-                #vname="test_TSAM"
-    	    	list_VM = utils.main(ip, password, user, vname)
+    	    	list_VM = utils.main(ip, password, user)
                 #print "IN VMLIST"
     	    	for vm in list_VM:
-    	    		if vm is not None:
+                    d=models.Details(hyper_type='ESX', ip_addr=ip, username=user, password=password)
+                    d.save()
+                    if vm is not None:
     		    		VM(VM_id=vm[0],
+                        details=d,
                         VM_name=vm[0], 
     	    			hyper_type="ESX",
     	    			disk_location=vm[1],
@@ -90,8 +97,8 @@ def vm_list(request, hv, util, ip, password, user, vname, format=None):
                 bkupserializer = BackupSerializer(data=request.data)
                 #print request.data
                 if bkupserializer.is_valid():
-                    vm=VM.objects.get(VM_id=vname)
-                    bkupID=backup_kvm.main(ip, request.data['backup_name'], request.data['VM_name'])
+                    vm=VM.objects.get(VM_id=request.data['VM_name'])
+                    bkupID=backup_kvm.main(ip, request.data['backup_name'], request.data['VM_name'], vm.profile.freq_count, user,password)
                     print bkupID
                     print "AFA"
                     Backup(vm=vm,
@@ -108,8 +115,8 @@ def vm_list(request, hv, util, ip, password, user, vname, format=None):
             if hv == "esx":
                 bkupserializer = BackupSerializer(data=request.data)
                 if bkupserializer.is_valid():
-                    vm=VM.objects.get(VM_id=vname)
-                    backup_esx.main(ip,password,user,vname,request.data['backup_name'])
+                    vm=VM.objects.get(VM_id=request.data['VM_name'])
+                    backup_esx.main(ip,password,user,request.data['VM_name'],request.data['backup_name'])
                     Backup(vm=vm,
                     backup_name=request.data['backup_name'],
                     VM_name=request.data['VM_name'],

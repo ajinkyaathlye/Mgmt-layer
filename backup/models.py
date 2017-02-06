@@ -1,6 +1,12 @@
 from __future__ import unicode_literals
 from django.db import models
 
+class Details(models.Model):
+	hyper_type=models.CharField(max_length=1000,blank=True)
+	ip_addr=models.CharField(max_length=1000, blank=True)
+	username=models.CharField(max_length=1000, blank=True)
+	password=models.CharField(max_length=1000, blank=True)
+
 
 class Profile(models.Model):
 	start_date=models.DateField()
@@ -12,6 +18,7 @@ class Profile(models.Model):
 
 class VM(models.Model):
 	profile=models.ForeignKey('Profile', on_delete=models.CASCADE, null=True)
+	details=models.ForeignKey('Details', on_delete=models.CASCADE)
 	VM_name=models.CharField(max_length=1000, blank=True)
 	VM_id=models.CharField(max_length=500, blank=True, primary_key=True)
 	hyper_type=models.CharField(max_length=1000,blank=True)
