@@ -8,7 +8,7 @@ def get_token():
 
 	data = '{"auth": {"tenantName": "demo", "passwordCredentials": {"username": "demo", "password":"root123"}}}'
 
-	response=requests.post('http://10.136.60.48:5000/v2.0/tokens', headers=headers, data=data)
+	response=requests.post('http://10.136.60.38:5000/v2.0/tokens', headers=headers, data=data)
 
 	parsed_response=json.loads(response.text)
 

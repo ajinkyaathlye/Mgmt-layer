@@ -101,26 +101,28 @@
     }
     function takeBackup() {
         var xmlhttp = new XMLHttpRequest();
-        xmlhttp.open("POST", "http://127.0.0.1:8000/vm/kvm/backup/servip=" + document.getElementById("servip").value+ "&servuser=" + document.getElementById("servuser").value +"&servpaswd=" + document.getElementById("servpaswd").value, true);
-        xmlhttp.setRequestHeader("Content-Type", "application/json");
+        var IDstr = document.getElementById("policyList").value;
+        var ID=parseInt(IDstr);
+        //alert(policyParams[ID-1]['id']);
+        xmlhttp.open("GET", "http://127.0.0.1:8000/policy/kvm/policyID=" + policyParams[ID-1]['id'] + "&vmID=" + document.getElementById("VMName").value, true);
         //alert(JSON.stringify({VM_name: document.getElementById("VMName").value, backup_name: "ajinkya"}));
         //xmlhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
         xmlhttp.onreadystatechange = function()     
         {
             if (this.readyState == 4 && this.status == 200) 
             {
-                //alert(xmlhttp.responseText);
+                alert(xmlhttp.responseText);
                 //xmlResponse=xmlhttp.responseXML;
                 //xmlDE=xmlResponse.documentElement;
                 //message = xmlDE.firstChild.data;
             }
         };
         //var csrftoken = getCookie('csrftoken');
-        var now=new Date();
+        //var now=new Date();
         //JSON.stringify({"csrfmiddlewaretoken":csrftoken})
-        xmlhttp.send(JSON.stringify({VM_name: document.getElementById("VMName").value, backup_name: now.toString()}));
+        xmlhttp.send(null);
     }
-    
+
     function buildHtmlTable(selector) {
   var columns = addAllColumnHeaders(myList, selector);
     var k=0;
@@ -186,6 +188,7 @@ xmlhttp.onreadystatechange = function()
 {
    if (this.readyState == 4 && this.status == 200) 
     {
+        //alert("ASDASD");
         policyParams=xmlhttp.responseText;
         policyParams=policyParams.substring(1,policyParams.length-1);
         gg=policyParams.split("},");
@@ -205,6 +208,7 @@ xmlhttp.onreadystatechange = function()
             option.text = option.value = policyParams[i]['id'];
             select.add(option, 0);    
         }
+        //alert(policyParams[0][1]);
         
     }
 }
@@ -258,8 +262,10 @@ function fillPolicyLabel(name){
                 <p><b>VM Name:</b></p>
                 <input type="text" id="VMName" value=VMName style="width:80%" readonly><br><br>
                 <p><b>Policy:</b></p>
-                <select id="policyList" style="width:80%">
-                </select><br><br><br>
+                <select id="policyList" style="width:80%" onchange="fillPolicyLabel(this.value)"></select><br><br><br> 
+                <label>Start Date: </label> <label id="startDate"></label><br><br>
+                <label>End Date: </label> <label id="endDate"></label><br><br>
+                <label>Maximum number of backups: </label> <label id="rotationCount"></label><br><br><br>
                 <button type="button" onclick="takeBackup()" style="width:80%">Submit</button>
         </fieldset>
     </form> 

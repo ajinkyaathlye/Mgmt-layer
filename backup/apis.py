@@ -1,4 +1,4 @@
-from .models import VM, Backup
+from .models import VM, Backup, Profile
 from .serializers import VMSerializer, BackupSerializer, ProfileSerializer
 from django.contrib.auth.models import User
 from rest_framework import permissions
@@ -105,7 +105,6 @@ def vm_list(request, hv, util, ip, password, user, format=None):
         	    	backup_name=request.data['backup_name'],
         	    	bkupid=bkupID,
                     VM_name=str(request.data['VM_name']),
-        	    	#status=str(bkuplist[2]),
         	    	).save()
                     #print request.data
                     return Response(bkupserializer.data, status=status.HTTP_201_CREATED)
@@ -200,7 +199,8 @@ def vm_list(request, hv, util, ip, password, user, format=None):
                 #pdb.set_trace()
                 restore_hyperv.main('D', str(request.data['backup_name']), str(request.data['VM_name']))  
                 return Response(status=status.HTTP_201_CREATED)
-
+                
+@api_view(['GET', 'POST'])
 def createPolicy(request, startDay, startMonth, startYear, endDay, endMonth, endYear, bckrotation, format=None):
     if request.method == 'GET':
         d=models.Profile()
@@ -211,6 +211,12 @@ def createPolicy(request, startDay, startMonth, startYear, endDay, endMonth, end
         d.save()
         serializer = ProfileSerializer(d)
         return Response(serializer.data)
+
+def conPolicy(request, policyID, vmID):
+    policy=Profile.objects.get(pk=policyID)
+    vm=VM.objects.get(VM_id=vmID)
+    vm.profile=policy
+    vm.save()
 
 
 @api_view(['GET', 'PUT', 'DELETE'])

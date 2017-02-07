@@ -120,7 +120,9 @@ def configShow(request, hyper, values):
             print json.dumps(var.data)
             return HttpResponse(json.dumps(var.data))
         elif request.method == 'POST':
+            print "ASFASDSADSAD"
             apis.vm_list(request, hyper, "backup", parsed_dict['servip'][0].strip('/'), parsed_dict['servpaswd'][0], parsed_dict['servuser'][0])
+            #print parsed_dict['servip'][0].strip('/'), parsed_dict['servpaswd'][0], parsed_dict['servuser'][0], parsed_dict['startDate'][0].strip('/'), parsed_dict['endDate'][0].strip('/'), parsed_dict['rotationCount'][0].strip('/')
             return HttpResponse("")
 
 def createPolicy(request, values):
@@ -137,4 +139,18 @@ def listPolicies(request):
     policies=models.Profile.objects.all()
     ord_dict = ProfileSerializer(policies, many=True)
     JSON = json.dumps(ord_dict.data)
+    print JSON
     return HttpResponse(JSON)
+
+def connectPolicy(request, hyper, values):
+    """Connects a policy to a VM in the database"""
+    print "AHAAHAHAHAHAHAHAH"
+    temp="http://www.dbz.com/goku?"
+    temp=temp + values
+    parsed=urlparse.urlparse(temp)
+    parsed_dict = urlparse.parse_qs(parsed.query)
+    print parsed_dict
+    if hyper == 'kvm':
+        if request.method == 'GET':
+            apis.conPolicy(request, parsed_dict['policyID'][0].strip('/'), parsed_dict['vmID'][0].strip('/'))
+            return HttpResponse("")

@@ -47,7 +47,7 @@ class Backup(models.Model):
 	status=models.CharField(max_length=1000, blank=True)
 	#vm_ID=models.IntegerField()
 	metadata=models.FileField(blank=True,)
-	timestamp=models.TimeField(auto_now_add=True,blank=True)	
+	timestamp=models.DateTimeField(auto_now_add=True,blank=True)	
 	image=models.FileField(blank=True)
 
 	def __str__(self):

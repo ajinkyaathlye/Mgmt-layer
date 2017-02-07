@@ -3,8 +3,10 @@ from django.contrib import admin
 from django.http import HttpResponse
 #from rest_framework.schemas import get_schema_view
 from backup import views
+from backup import multi
 
 #schema_view = get_schema_view(title='Pastebin API')
+multi.main()
 
 urlpatterns = [
     # url(r'^$',HttpResponse()),
