@@ -4,7 +4,6 @@
 {%block body%}
 
 <style>
-
     form {
             margin: 0 0 0 43%; 
             padding: 10px;
@@ -15,14 +14,27 @@
         padding: 5px;
         width: 90%;
     }
-    table, th, td {
+    #excelDataTable {
         border:1px solid black !important;
         padding: 10px !important;
         text-align: center; 
         border-width: 2px !important;
         border-spacing: 10px !important;
     }
-
+    .thh{
+        border:1px solid black !important;
+        padding: 10px !important;
+        text-align: center; 
+        border-width: 2px !important;
+        border-spacing: 10px !important;
+    }
+    .tdd{
+        border:1px solid black !important;
+        padding: 10px !important;
+        text-align: center; 
+        border-width: 2px !important;
+        border-spacing: 10px !important;
+    }
     .modal {
     display: none; /* Hidden by default */
     position: fixed; /* Stay in place */
@@ -37,7 +49,6 @@
     background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
     font-family: verdana;
     }
-
 /* Modal Content */
 .modal-content {
     background-color: #fefefe;
@@ -47,7 +58,6 @@
     width: 20%;
     font-size: 12px;
 }
-
 /* The Close Button */
 .close {
     color: #aaaaaa;
@@ -55,14 +65,16 @@
     font-size: 28px;
     font-weight: bold;
 }
-
 .close:hover,
 .close:focus {
     color: #000;
     text-decoration: none;
     cursor: pointer;
 }
-
+select option:checked,
+select option:hover {    
+    box-shadow: 0 0 10px 100px #D3D3D3 inset;
+}
 
 </style>
 
@@ -127,8 +139,11 @@
         xmlhttp.send(JSON.stringify({VM_name: document.getElementById("VMName").value, backup_name: now.toString()}));
     }
     
-
-    function buildHtmlTable(selector) {
+ function buildHtmlTable(selector) {
+    var table = document.getElementById("excelDataTable");
+    while(table.rows.length>0){
+            table.deleteRow(0);
+    }
   var columns = addAllColumnHeaders(myList, selector);
     var k=0;
   for (var i = 0; i < myList.length; i++) {
@@ -152,12 +167,10 @@
     var string="<button onclick=\"myFunction('"+msg+"')\">Backup</button>";
     //alert(string);
     //<button onclick="myFunction()">Click me</button>
-    row$.append($('<td/>').html(string));
+    row$.append($('<td class="tdd"/>').html(string));
     $(selector).append(row$);
   }
 }
-
-
 // Adds a header row to the table and returns the set of columns.
 // Need to do union of keys from all records as some records may not contain
 // all records.
@@ -172,13 +185,12 @@ function addAllColumnHeaders(myList, selector) {
       if ($.inArray(key, columnSet) == -1) {
         columnSet.push(key);
         
-        headerTr$.append($('<th/>').html(key));
+        headerTr$.append($('<th class="thh"/>').html(key));
       }
     }
   }
-  headerTr$.append($('<th/>').html('Action'));
+  headerTr$.append($('<th class="thh"/>').html('Action'));
   $(selector).append(headerTr$);
-
   return columnSet;
 }
 
@@ -246,30 +258,55 @@ document.getElementById('VMName').value = msg;
 
 <script>
 // Get the modal
-var modal = document.getElementById('myModal');
-
+var span1 = document.getElementsByClassName("close")[0];
+var span2=document.getElementsByClassName("close")[1];
+var modalPol = document.getElementById('policyModal');
+var modalBack = document.getElementById('myModal');
 // Get the button that opens the modal
 //var btn = document.getElementById("myBtn");
-
 // Get the <span> element that closes the modal
-var span = document.getElementsByClassName("close")[0];
-
 // When the user clicks the button, open the modal 
 /*btn.onclick = function() {
     modal.style.display = "block";
 }*/
-
 // When the user clicks on <span> (x), close the modal
-span.onclick = function() {
-    modal.style.display = "none";
+span1.onclick = function() {
+    //modalBack.style.display = "none";
+    modalPol.style.display = "none";
 }
 
+span2.onclick = function() {
+    modalBack.style.display = "none";
+    //modalPol.style.display = "none";
+}
 // When the user clicks anywhere outside of the modal, close it
 window.onclick = function(event) {
-    if (event.target == modal) {
-        modal.style.display = "none";
+    if (event.target == modalBack) {
+        modalBack.style.display = "none";
     }
+    if (event.target == modalPol) {
+            modalPol.style.display = "none";
+        }
 }
+
+$(document).ready(function(event) {
+    $('select').on('mouseenter', 'option', function(e) {
+        var name=this.value;
+        for(var i=0;i<policyParams.length;i++){
+        if(policyParams[i]['id']==name)
+        {
+            //alert(policyParams[i][1]);
+            document.getElementById("startDate").innerHTML = policyParams[i]['start_date'];
+            document.getElementById("endDate").innerHTML = policyParams[i]['end_date'];
+            document.getElementById("rotationCount").innerHTML = policyParams[i]['freq_count'];
+        }
+    }
+        //alert(this.value, 'Yeah');
+        // this refers to the option so you can do this.value if you need..
+    });
+});
+
+
 </script>
 
 {% endblock %}

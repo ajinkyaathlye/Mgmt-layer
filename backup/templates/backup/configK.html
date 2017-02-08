@@ -14,7 +14,21 @@
         padding: 5px;
         width: 90%;
     }
-    table, th, td {
+    #excelDataTable {
+        border:1px solid black !important;
+        padding: 10px !important;
+        text-align: center; 
+        border-width: 2px !important;
+        border-spacing: 10px !important;
+    }
+    .thh{
+        border:1px solid black !important;
+        padding: 10px !important;
+        text-align: center; 
+        border-width: 2px !important;
+        border-spacing: 10px !important;
+    }
+    .tdd{
         border:1px solid black !important;
         padding: 10px !important;
         text-align: center; 
@@ -156,7 +170,7 @@ select option:hover {
     var string="<button onclick=\"myFunction('"+msg+"')\">Backup</button>";
     //alert(string);
     //<button onclick="myFunction()">Click me</button>
-    row$.append($('<td/>').html(string));
+    row$.append($('<td class="tdd"/>').html(string));
     $(selector).append(row$);
   }
 }
@@ -174,11 +188,11 @@ function addAllColumnHeaders(myList, selector) {
       if ($.inArray(key, columnSet) == -1) {
         columnSet.push(key);
         
-        headerTr$.append($('<th/>').html(key));
+        headerTr$.append($('<th class="thh"/>').html(key));
       }
     }
   }
-  headerTr$.append($('<th/>').html('Action'));
+  headerTr$.append($('<th class="thh"/>').html('Action'));
   $(selector).append(headerTr$);
   return columnSet;
 }
