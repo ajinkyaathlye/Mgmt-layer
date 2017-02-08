@@ -1,0 +1,19 @@
+	BE IN PROJECT DIRECTORY
+
+
+>>>>>CHANGING BRANCH
+
+git fetch
+git checkout BranchName
+
+>>>>>PUSHING
+
+git init
+git add .
+git commit -m "Comment"
+git push origin BranchName
+
+
+>>>>>PULLING FROM MASTER
+
+git clone https://github.com/ajinkyaathlye/Mgmt-layer.git
