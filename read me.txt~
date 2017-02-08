@@ -22,10 +22,10 @@ pip install django-filter  # Filtering support
 
 Instructions:
 
-1. Open terminal and cd into directory "Mgmt-layer".
+1. Open terminal and cd into directory "GS_Management".
 
 2. Type "python manage.py migrate --run-syncdb".
 
 3. Type "python manage.py runserver".
 
-4. Open browser and type "127.0.0.1:8000/config/esx" and continue as required. 
+4. Open browser and type "127.0.0.1/config/esx" and continue as required. 
