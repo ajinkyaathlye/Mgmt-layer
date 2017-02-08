@@ -57,17 +57,12 @@
     text-decoration: none;
     cursor: pointer;
 }
-select option:checked,
-select option:hover {    
-    box-shadow: 0 0 10px 100px #D3D3D3 inset;
-}
-
 </style>
 
 <script type = "text/javascript">
     var myList = [];
     function list() {
-
+    	alert('ad');
         var xmlhttp = new XMLHttpRequest();
         xmlhttp.open("GET", "http://127.0.0.1:8000/vm/kvm/list/servip=" + document.getElementById("servip").value+ "&servuser=" + document.getElementById("servuser").value +"&servpaswd=" + document.getElementById("servpaswd").value, true);
         xmlhttp.onreadystatechange = function() 
@@ -129,10 +124,7 @@ select option:hover {
     }
 
     function buildHtmlTable(selector) {
-    var table = document.getElementById("excelDataTable");
-    while(table.rows.length>0){
-            table.deleteRow(0);
-    }
+
   var columns = addAllColumnHeaders(myList, selector);
     var k=0;
   for (var i = 0; i < myList.length; i++) {
@@ -158,12 +150,21 @@ select option:hover {
     //<button onclick="myFunction()">Click me</button>
     row$.append($('<td/>').html(string));
     $(selector).append(row$);
-  }
+
+  	}
+  	//var table = document.getElementById("excelDataTable");
+    
+    //while(table.rows.length>0){
+    		//table.deleteRow(0);
+  	//}
+
 }
+
 // Adds a header row to the table and returns the set of columns.
 // Need to do union of keys from all records as some records may not contain
 // all records.
 function addAllColumnHeaders(myList, selector) {
+
   var columnSet = [];
   var headerTr$ = $('<tr/>');
   var k=0;
@@ -186,12 +187,6 @@ policyParams=[]
 function myFunction(msg)
 {
 //alert(msg);
-var selector=document.getElementById("policyList");
-var length = selector.options.length;
-for(var i=0; i<length;i++)
-{
-    selector.remove(0);
-}
 var modalOpen = document.getElementById('myModal');
 //var span = document.getElementsByClassName("close")[0];
 modalOpen.style.display = "block";
@@ -221,7 +216,7 @@ xmlhttp.onreadystatechange = function()
         for(var i=0;i<policyParams.length;i++){
             var option = document.createElement('option');
             option.text = option.value = policyParams[i]['id'];
-            select.options.add(option, 0);    
+            select.add(option, 0);    
         }
         //alert(policyParams[0][1]);
         
@@ -232,7 +227,6 @@ xmlhttp.send(null);
     modal.style.display = "none";
 }*/
 }
-
 function fillPolicyLabel(name){
     //alert(policyParams[0][1]);
     for(var i=0;i<policyParams.length;i++){
@@ -278,7 +272,7 @@ function fillPolicyLabel(name){
                 <p><b>VM Name:</b></p>
                 <input type="text" id="VMName" value=VMName style="width:80%" readonly><br><br>
                 <p><b>Policy:</b></p>
-                <select id="policyList" style="width:80%" size="5"></select><br><br><br> 
+                <select id="policyList" style="width:80%" onchange="fillPolicyLabel(this.value)"></select><br><br><br> 
                 <label>Start Date: </label> <label id="startDate"></label><br><br>
                 <label>End Date: </label> <label id="endDate"></label><br><br>
                 <label>Maximum number of backups: </label> <label id="rotationCount"></label><br><br><br>
@@ -291,8 +285,7 @@ function fillPolicyLabel(name){
 
 <script>
 // Get the modal
-var span1 = document.getElementsByClassName("close")[0];
-var span2=document.getElementsByClassName("close")[1];
+var span = document.getElementsByClassName("close")[0];
 var modalPol = document.getElementById('policyModal');
 var modalBack = document.getElementById('myModal');
 // Get the button that opens the modal
@@ -303,43 +296,15 @@ var modalBack = document.getElementById('myModal');
     modal.style.display = "block";
 }*/
 // When the user clicks on <span> (x), close the modal
-span1.onclick = function() {
-    //modalBack.style.display = "none";
-    modalPol.style.display = "none";
-}
-
-span2.onclick = function() {
+span.onclick = function() {
     modalBack.style.display = "none";
-    //modalPol.style.display = "none";
 }
 // When the user clicks anywhere outside of the modal, close it
 window.onclick = function(event) {
     if (event.target == modalBack) {
         modalBack.style.display = "none";
     }
-    if (event.target == modalPol) {
-            modalPol.style.display = "none";
-        }
 }
-
-$(document).ready(function(event) {
-    $('select').on('mouseenter', 'option', function(e) {
-        var name=this.value;
-        for(var i=0;i<policyParams.length;i++){
-        if(policyParams[i]['id']==name)
-        {
-            //alert(policyParams[i][1]);
-            document.getElementById("startDate").innerHTML = policyParams[i]['start_date'];
-            document.getElementById("endDate").innerHTML = policyParams[i]['end_date'];
-            document.getElementById("rotationCount").innerHTML = policyParams[i]['freq_count'];
-        }
-    }
-        //alert(this.value, 'Yeah');
-        // this refers to the option so you can do this.value if you need..
-    });
-});
-
-
 </script>
 
 {% endblock %}
