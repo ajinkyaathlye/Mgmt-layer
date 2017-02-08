@@ -14,26 +14,49 @@
         padding: 5px;
         width: 90%;
     }
-    #excelDataTable {
-        border:1px solid black !important;
+#excelDataTable {
+        font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
+        border-collapse: collapse;
+        width: 100%;
+        /*border:1px solid black !important;
         padding: 10px !important;
         text-align: center; 
         border-width: 2px !important;
-        border-spacing: 10px !important;
+        border-spacing: 10px !important;*/
+    }
+    .trr{
+        text-align: center;
     }
     .thh{
-        border:1px solid black !important;
+         border: 1px solid #ddd;
+    padding: 8px;
+     padding-top: 12px;
+    padding-bottom: 12px;
+    text-align: center;
+    background-color: #337ab7;
+    color: white;
+    }
+        /*border:1px solid black !important;
         padding: 10px !important;
         text-align: center; 
         border-width: 2px !important;
-        border-spacing: 10px !important;
+        border-spacing: 10px !important;*/
     }
     .tdd{
-        border:1px solid black !important;
+         border: 10px solid #ddd;
+    padding: 8px;
+    text-align: center;
+    align-content: center;
+    }
+    #excelDataTable tr:nth-child(even){background-color: #f2f2f2;}
+
+    #excelDataTable tr:hover {background-color: #ddd;}
+
+        /*border:1px solid black !important;
         padding: 10px !important;
         text-align: center; 
         border-width: 2px !important;
-        border-spacing: 10px !important;
+        border-spacing: 10px !important;*/
     }
     .modal {
     display: none; /* Hidden by default */
@@ -152,7 +175,7 @@ select option:hover {
   //alert(columns.length);
     var k=0;
   for (var i = 0; i < myList.length; i++) {
-    var row$ = $('<tr/>');
+    var row$ = $('<tr class="trr"/>');
     var flag=0;
     
     var msg="";
@@ -172,8 +195,7 @@ select option:hover {
       
       
     }
-  }
-  var string="<button onclick=\"myFunction('"+msg+"')\">Backup</button>";
+     var string="<button onclick=\"myFunction('"+msg+"')\">Backup</button>";
         //alert(string);
         //<button onclick="myFunction()">Click me</button>
         row$.append($('<td class="tdd"/>').html(string));
@@ -183,6 +205,50 @@ select option:hover {
       //<button onclick="myFunction()">Click me</button>
       row$.append($('<td class="tdd"/>').html(string));
       $(selector).append(row$);
+  }
+
+  function buildBackupListTable(selector) {
+    var table = document.getElementById("excelDataTable");
+    while(table.rows.length>0){
+            table.deleteRow(0);
+    }
+
+  var columns = addAllColumnHeaders(myList, selector);
+  //alert(columns.length);
+    var k=0;
+  for (var i = 0; i < myList.length; i++) {
+    var row$ = $('<tr class="trr"/>');
+    var flag=0;
+    
+    var msg="";
+    for (var colIndex = 0; colIndex < columns.length; colIndex++) {
+      var cellValue = myList[i][columns[colIndex]];
+      
+      
+      if(flag==0)
+      {
+        msg=cellValue;
+        //alert(msg);
+        flag=1;
+      }
+      if (cellValue == null) 
+        cellValue = "";
+      row$.append($('<td class="tdd"/>').html(cellValue));
+      
+      
+    }
+     var string="<button onclick=\"myFunction('"+msg+"')\">Backup</button>";
+        //alert(string);
+        //<button onclick="myFunction()">Click me</button>
+        row$.append($('<td class="tdd"/>').html(string));
+        $(selector).append(row$);
+        string="<button onclick=\"listBackups('"+msg+"')\"> List Backups</button>";
+      //alert(string);
+      //<button onclick="myFunction()">Click me</button>
+      row$.append($('<td class="tdd"/>').html(string));
+      $(selector).append(row$);
+  }
+ 
 
    
 }
@@ -191,7 +257,7 @@ select option:hover {
 // all records.
 function addAllColumnHeaders(myList, selector) {
   var columnSet = [];
-  var headerTr$ = $('<tr/>');
+  var headerTr$ = $('<tr class="trr"/>');
   var k=0;
   for (var i = 0; i < myList.length; i++) {
     var rowHash = myList[i];
@@ -289,7 +355,7 @@ function listBackups(msg){
                 //alert(myList[i]);
             }
             //document.write(myList);
- 
+            buildBackupListTable('#excelDataTable');
             //xmlResponse=xmlhttp.responseXML;
             //xmlDE=xmlResponse.documentElement;
             //message = xmlDE.firstChild.data;

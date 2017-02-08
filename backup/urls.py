@@ -27,6 +27,7 @@ urlpatterns = [
     url(r'^vm/backup/kvm',views.backupKVM, name='backupKVM'),
     url(r'^vm/backup/hyperv',views.backupHyperV, name='backupHyperV'),
     url(r'^vm/(?P<hyper>[a-z]+)/backup/(?P<values>[A-Za-z0-9._@&%=:/,?-]+)',views.configShow, name='configShow'),
+    url(r'^vm/(?P<hyper>[a-z]+)/listbackups/(?P<values>[A-Za-z0-9._@&%=:/,?-]+)',views.listBackups, name='listbackups'),
     url(r'^config/(?P<hyper>[a-z]+)/$',views.config, name='config'),
     url(r'^vm/(?P<hyper>[a-z]+)/list/(?P<values>[A-Za-z0-9._@&%=:/,?-]+)',views.configShow, name='configShow'),
     url(r'^policy/(?P<hyper>[a-z]+)/(?P<values>[A-Za-z0-9._@&%=:/,?-]+)', views.connectPolicy, name='connectPolicy'),

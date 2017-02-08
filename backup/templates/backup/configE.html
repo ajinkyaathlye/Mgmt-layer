@@ -14,26 +14,49 @@
         padding: 5px;
         width: 90%;
     }
-    #excelDataTable {
-        border:1px solid black !important;
+  #excelDataTable {
+        font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
+        border-collapse: collapse;
+        width: 100%;
+        /*border:1px solid black !important;
         padding: 10px !important;
         text-align: center; 
         border-width: 2px !important;
-        border-spacing: 10px !important;
+        border-spacing: 10px !important;*/
+    }
+    .trr{
+        text-align: center;
     }
     .thh{
-        border:1px solid black !important;
+         border: 1px solid #ddd;
+    padding: 8px;
+     padding-top: 12px;
+    padding-bottom: 12px;
+    text-align: center;
+    background-color: #337ab7;
+    color: white;
+    }
+        /*border:1px solid black !important;
         padding: 10px !important;
         text-align: center; 
         border-width: 2px !important;
-        border-spacing: 10px !important;
+        border-spacing: 10px !important;*/
     }
     .tdd{
-        border:1px solid black !important;
+         border: 10px solid #ddd;
+    padding: 8px;
+    text-align: center;
+    align-content: center;
+    }
+    #excelDataTable tr:nth-child(even){background-color: #f2f2f2;}
+
+    #excelDataTable tr:hover {background-color: #ddd;}
+
+        /*border:1px solid black !important;
         padding: 10px !important;
         text-align: center; 
         border-width: 2px !important;
-        border-spacing: 10px !important;
+        border-spacing: 10px !important;*/
     }
     .modal {
     display: none; /* Hidden by default */
@@ -148,7 +171,7 @@ select option:hover {
   var columns = addAllColumnHeaders(myList, selector);
     var k=0;
   for (var i = 0; i < myList.length; i++) {
-    var row$ = $('<tr/>');
+    var row$ = $('<tr class="trr"/>');
     var flag=0;
     
     var msg="";
@@ -177,7 +200,7 @@ select option:hover {
 // all records.
 function addAllColumnHeaders(myList, selector) {
   var columnSet = [];
-  var headerTr$ = $('<tr/>');
+  var headerTr$ = $('<tr class="trr"/>');
   var k=0;
   for (var i = 0; i < myList.length; i++) {
     var rowHash = myList[i];

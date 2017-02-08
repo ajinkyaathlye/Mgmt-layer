@@ -18,7 +18,7 @@ import pdb, datetime
 
 
 @api_view(['GET', 'POST'])
-def vm_list(request, hv, util, ip, password, user, format=None):
+def vm_list(request, hv, util, ip, password, user, vmname, format=None):
     if util == 'backup':
         if request.method == 'GET':
        	    if hv == "kvm":
@@ -141,17 +141,9 @@ def vm_list(request, hv, util, ip, password, user, format=None):
     elif util == 'restore':
         if request.method == 'GET':
             if hv == "kvm":
-                vm_obj=VM.objects.get(VM_name=str(request.data['VM_name']))
-                list_bkups = utilsKB.main()
-                for bkup in list_bkups:
-                    Backup(vm=vm,
-                    backup_name=str(bkuplist[1]),
-                    backup_id=str(bkuplist[0]),
-                    VM_name=str(request.data['VM_name']),
-                    status=str(bkuplist[2]),
-                    ).save()
-                bkups = Backup.objects.filter(vm=vm_obj)
-                serializer = BackupSerializer(bkups, many=True)
+                vm_obj=VM.objects.get(VM_name=vmname)
+                list_bkups = utilsKB.main(ip, vmname)
+                serializer = json.dumps(list_bkups)
                 return Response(serializer.data)
 
             elif hv=="esx":
@@ -199,7 +191,7 @@ def vm_list(request, hv, util, ip, password, user, format=None):
                 #pdb.set_trace()
                 restore_hyperv.main('D', str(request.data['backup_name']), str(request.data['VM_name']))  
                 return Response(status=status.HTTP_201_CREATED)
-                
+
 @api_view(['GET', 'POST'])
 def createPolicy(request, startDay, startMonth, startYear, endDay, endMonth, endYear, bckrotation, format=None):
     if request.method == 'GET':

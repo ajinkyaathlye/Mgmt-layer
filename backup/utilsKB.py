@@ -107,11 +107,11 @@ def getVMdetails():
 	return dict
 	
 
-def main():
+def main(ip, VMID):
 	#getVMdetails()
 	#print get_token()	
 	#list_vms()
-	list_backups()
+	list_backups(ip, VMID)
 	#backupvm()
 	#deleteBackup()
 	#print getBackupIDbyName("Wed Feb 01 2017 12:53:50 GMT+0530 (IST)")
