@@ -4,9 +4,12 @@ from django.http import HttpResponse
 #from rest_framework.schemas import get_schema_view
 from backup import views
 from backup import multi
+import sys
 
 #schema_view = get_schema_view(title='Pastebin API')
-multi.main()
+#print sys.argv
+if sys.argv[1] == 'runserver':
+	multi.main()
 
 urlpatterns = [
     # url(r'^$',HttpResponse()),
