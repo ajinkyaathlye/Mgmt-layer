@@ -14,7 +14,7 @@
         padding: 5px;
         width: 90%;
     }
-#excelDataTable {
+#excelDataTable, #buildExcelDataTable {
         font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
         border-collapse: collapse;
         width: 100%;
@@ -51,6 +51,10 @@
     #excelDataTable tr:nth-child(even){background-color: #f2f2f2;}
 
     #excelDataTable tr:hover {background-color: #ddd;}
+
+    #buildexcelDataTable tr:nth-child(even){background-color: #f2f2f2;}
+
+    #buildexcelDataTable tr:hover {background-color: #ddd;}
 
         /*border:1px solid black !important;
         padding: 10px !important;
@@ -103,6 +107,7 @@ select option:hover {
 
 <script type = "text/javascript">
     var myList = [];
+    var myBackups=[];
     function list() {
 
         var xmlhttp = new XMLHttpRequest();
@@ -206,6 +211,7 @@ select option:hover {
       row$.append($('<td class="tdd"/>').html(string));
       $(selector).append(row$);
   }
+}
 
   function buildBackupListTable(selector) {
     var table = document.getElementById("excelDataTable");
@@ -213,10 +219,10 @@ select option:hover {
             table.deleteRow(0);
     }
 
-  var columns = addAllColumnHeaders(myList, selector);
+  var columns = addAllColumnHeadersBackupList(myBackups, selector);
   //alert(columns.length);
     var k=0;
-  for (var i = 0; i < myList.length; i++) {
+  for (var i = 0; i < myBackups.length; i++) {
     var row$ = $('<tr class="trr"/>');
     var flag=0;
     
@@ -237,21 +243,12 @@ select option:hover {
       
       
     }
-     var string="<button onclick=\"myFunction('"+msg+"')\">Backup</button>";
-        //alert(string);
-        //<button onclick="myFunction()">Click me</button>
-        row$.append($('<td class="tdd"/>').html(string));
-        $(selector).append(row$);
-        string="<button onclick=\"listBackups('"+msg+"')\"> List Backups</button>";
-      //alert(string);
-      //<button onclick="myFunction()">Click me</button>
-      row$.append($('<td class="tdd"/>').html(string));
-      $(selector).append(row$);
   }
- 
-
-   
 }
+
+
+
+
 // Adds a header row to the table and returns the set of columns.
 // Need to do union of keys from all records as some records may not contain
 // all records.
@@ -275,7 +272,28 @@ function addAllColumnHeaders(myList, selector) {
   headerTr$.append($('<th class="thh"/>').html('List Backups'));
   return columnSet;
 }
+
+
+function addAllColumnHeadersBackupList(myBackups, selector) {
+  var columnSet = [];
+  var headerTr$ = $('<tr class="trr"/>');
+  var k=0;
+  for (var i = 0; i < myBackups.length; i++) {
+    var rowHash = myBackups[i];
+    
+    for (var key in rowHash) {
+      if ($.inArray(key, columnSet) == -1) {
+        columnSet.push(key);
+        
+        headerTr$.append($('<th class="thh"/>').html(key));
+      }
+    }
+  }
+  return columnSet;
+}
+
 policyParams=[]
+
 function myFunction(msg)
 {
 //alert(msg);
@@ -333,29 +351,29 @@ function listBackups(msg){
     {
         if (this.readyState == 4 && this.status == 200) 
         {
-            myList=xmlhttp.responseText;
+            myBackups=xmlhttp.responseText;
             //alert(xmlhttp.responseText);
             //document.write(myList);
             //alert(myList.substring(1,myList.length-1));
-            myList=myList.substring(1,myList.length-1);
-            gg=myList.split("},");
-            myList=[];
+            myBackups=myBackups.substring(1,myBackups.length-1);
+            gg=myBackups.split("},");
+            myBackups=[];
             //document.write(gg);
             for(var i=0;i<gg.length;i++)
             {
                 if(i==gg.length-1)
                 {
-                    myList.push(JSON.parse(gg[i]));
+                    myBackups.push(JSON.parse(gg[i]));
                 }
                 else
-                myList.push(JSON.parse(gg[i]+'}'));
+                myBackups.push(JSON.parse(gg[i]+'}'));
                 
                 //alert(gg[i]+'}');
                 //alert(JSON.parse(gg[i]+'}'));
                 //alert(myList[i]);
             }
             //document.write(myList);
-            buildBackupListTable('#excelDataTable');
+            buildBackupListTable('#backupListExcelDataTable');
             //xmlResponse=xmlhttp.responseXML;
             //xmlDE=xmlResponse.documentElement;
             //message = xmlDE.firstChild.data;
@@ -397,6 +415,7 @@ function fillPolicyLabel(name){
 <br>
 <br>
 <table id="excelDataTable" border="1"></table>
+<table id="backupListExcelDataTable" border="1"></table>
 
 <div id="myModal" class="modal">
 

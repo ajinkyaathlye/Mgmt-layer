@@ -15,6 +15,7 @@ from rest_framework.permissions import IsAuthenticated
 from . import models, utils, utilsH, utilsK, utilsKB, utilsEB, utilsHB, backup_kvm, backup_hyperv, backup_esx, restore_esx, restore_kvm, restore_hyperv
 from . import global_variables as gv
 import pdb, datetime
+import json
 
 
 @api_view(['GET', 'POST'])
@@ -141,7 +142,9 @@ def vm_list(request, hv, util, ip, password, user, vmname, format=None):
     elif util == 'restore':
         if request.method == 'GET':
             if hv == "kvm":
-                vm_obj=VM.objects.get(VM_name=vmname)
+                #vm_obj=VM.objects.get(VM_name=vmname)
+                print "=================================="
+                print vm_obj
                 list_bkups = utilsKB.main(ip, vmname)
                 serializer = json.dumps(list_bkups)
                 return Response(serializer.data)
