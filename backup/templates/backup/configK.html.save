@@ -14,53 +14,25 @@
         padding: 5px;
         width: 90%;
     }
-#excelDataTable, #backupListExcelDataTable {
-        font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
-        border-collapse: collapse;
-        width: 100%;
-        /*border:1px solid black !important;
+        border:1px solid black !important;
         padding: 10px !important;
         text-align: center; 
         border-width: 2px !important;
-        border-spacing: 10px !important;*/
-    }
-    .trr{
-        text-align: center;
+        border-spacing: 10px !important;
     }
     .thh{
-         border: 1px solid #ddd;
-    padding: 8px;
-     padding-top: 12px;
-    padding-bottom: 12px;
-    text-align: center;
-    background-color: #337ab7;
-    color: white;
-    }
-        /*border:1px solid black !important;
+        border:1px solid black !important;
         padding: 10px !important;
         text-align: center; 
         border-width: 2px !important;
-        border-spacing: 10px !important;*/
+        border-spacing: 10px !important;
     }
     .tdd{
-         border: 10px solid #ddd;
-    padding: 8px;
-    text-align: center;
-    align-content: center;
-    }
-    #excelDataTable tr:nth-child(even){background-color: #f0f0f0;}
-
-    #excelDataTable tr:hover {background-color: #ddd;}
-
-    #backupListExcelDataTable tr:nth-child(even){background-color: #f0f0f0;}
-
-    #backupListExcelDataTable tr:hover {background-color: #ddd;}
-
-        /*border:1px solid black !important;
+        border:1px solid black !important;
         padding: 10px !important;
         text-align: center; 
         border-width: 2px !important;
-        border-spacing: 10px !important;*/
+        border-spacing: 10px !important;
     }
     .modal {
     display: none; /* Hidden by default */
@@ -85,29 +57,6 @@
     width: 20%;
     font-size: 12px;
 }
-.modal1 {
-    display: none; /* Hidden by default */
-    position: fixed; /* Stay in place */
-    z-index: 1; /* Sit on top */
-    padding-top: 100px; /* Location of the box */
-    left: 0;
-    top: 0;
-    width: 100%; /* Full width */
-    height: 100%; /* Full height */
-    overflow: auto; /* Enable scroll if needed */
-    background-color: rgb(0,0,0); /* Fallback color */
-    background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
-    font-family: verdana;
-    }
-/* Modal Content */
-.modal-content1 {
-    background-color: #fefefe;
-    margin: auto;
-    padding: 20px;
-    border: 1px solid #888;
-    width: 80%;
-    font-size: 20px;
-}
 /* The Close Button */
 .close {
     color: #aaaaaa;
@@ -130,7 +79,6 @@ select option:hover {
 
 <script type = "text/javascript">
     var myList = [];
-    var myBackups=[];
     function list() {
 
         var xmlhttp = new XMLHttpRequest();
@@ -203,7 +151,7 @@ select option:hover {
   //alert(columns.length);
     var k=0;
   for (var i = 0; i < myList.length; i++) {
-    var row$ = $('<tr class="trr"/>');
+    var row$ = $('<tr/>');
     var flag=0;
     
     var msg="";
@@ -234,55 +182,16 @@ select option:hover {
       row$.append($('<td class="tdd"/>').html(string));
       $(selector).append(row$);
   }
+ 
+
+   
 }
-
-  function buildBackupListTable(selector) {
-
-    var table = document.getElementById("backupListExcelDataTable");
-    while(table.rows.length>0){
-            table.deleteRow(0);
-    }
-
-  var columns = addAllColumnHeadersBackupList(myBackups, selector);
-  //alert(columns);
-  //alert(columns.length);
-    var k=0;
-    //alert(myBackups[0]['VM_name']);
-  for (var i = 0; i < myBackups.length; i++) {
-    var row$ = $('<tr class="trr"/>');
-    var flag=0;
-    
-    var msg="";
-    for (var colIndex = 0; colIndex < columns.length; colIndex++) {
-      var cellValue = myBackups[i][columns[colIndex]];
-      //alert(cellValue);
-      
-      if(flag==0)
-      {
-        msg=cellValue;
-        //alert(msg);
-        flag=1;
-      }
-      //alert(cellValue);
-      if (cellValue == null) 
-        cellValue = "";
-
-      row$.append($('<td class="tdd"/>').html(cellValue));
-      $(selector).append(row$);
-      
-    }
-  }
-}
-
-
-
-
 // Adds a header row to the table and returns the set of columns.
 // Need to do union of keys from all records as some records may not contain
 // all records.
 function addAllColumnHeaders(myList, selector) {
   var columnSet = [];
-  var headerTr$ = $('<tr class="trr"/>');
+  var headerTr$ = $('<tr/>');
   var k=0;
   for (var i = 0; i < myList.length; i++) {
     var rowHash = myList[i];
@@ -300,30 +209,7 @@ function addAllColumnHeaders(myList, selector) {
   headerTr$.append($('<th class="thh"/>').html('List Backups'));
   return columnSet;
 }
-
-
-function addAllColumnHeadersBackupList(myBackups, selector) {
-  var columnSet = [];
-  var headerTr$ = $('<tr class="trr"/>');
-  var k=0;
-  for (var i = 0; i < myBackups.length; i++) {
-    var rowHash = myBackups[i];
-
-    for (var key in rowHash) {
-      if ($.inArray(key, columnSet) == -1) {
-        columnSet.push(key);
-        
-        headerTr$.append($('<th class="thh"/>').html(key));
-      }
-    }
-  }
-  $(selector).append(headerTr$);
-  return columnSet;
-  //alert(columnSet);
-}
-
 policyParams=[]
-
 function myFunction(msg)
 {
 //alert(msg);
@@ -375,51 +261,41 @@ xmlhttp.send(null);
 }
 
 function listBackups(msg){
-    
     var xmlhttp = new XMLHttpRequest();
     xmlhttp.open("GET", "http://127.0.0.1:8000/vm/kvm/listbackups/servip=" + document.getElementById("servip").value+ "&servuser=" + document.getElementById("servuser").value +"&servpaswd=" + document.getElementById("servpaswd").value + "&VMName=" + msg, true);
     xmlhttp.onreadystatechange = function() 
     {
         if (this.readyState == 4 && this.status == 200) 
         {
-            myBackups=xmlhttp.responseText;
+            myList=xmlhttp.responseText;
             //alert(xmlhttp.responseText);
             //document.write(myList);
             //alert(myList.substring(1,myList.length-1));
-            myBackups=myBackups.substring(1,myBackups.length-1);
-            gg=myBackups.split("},");
-            myBackups=[];
+            myList=myList.substring(1,myList.length-1);
+            gg=myList.split("},");
+            myList=[];
             //document.write(gg);
             for(var i=0;i<gg.length;i++)
             {
                 if(i==gg.length-1)
                 {
-                    myBackups.push(JSON.parse(gg[i]));
+                    myList.push(JSON.parse(gg[i]));
                 }
                 else
-                myBackups.push(JSON.parse(gg[i]+'}'));
+                myList.push(JSON.parse(gg[i]+'}'));
                 
                 //alert(gg[i]+'}');
                 //alert(JSON.parse(gg[i]+'}'));
                 //alert(myList[i]);
             }
-            //alert(myBackups);
             //document.write(myList);
+ 
             //xmlResponse=xmlhttp.responseXML;
-            //alert("Asd");
-            buildBackupListTable('#backupListExcelDataTable');
-            var modalOpen = document.getElementById('listBackupsModal');
-            //var span = document.getElementsByClassName("close")[0];
-            modalOpen.style.display = "block";
-           
-
             //xmlDE=xmlResponse.documentElement;
             //message = xmlDE.firstChild.data;
         }
     };
     xmlhttp.send(null);
-   
-   
 
 }
 
@@ -436,20 +312,6 @@ function fillPolicyLabel(name){
     }
 }
 </script>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 <form class="details" style="margin-top: 50px"> 
@@ -469,7 +331,6 @@ function fillPolicyLabel(name){
 <br>
 <br>
 <table id="excelDataTable" border="1"></table>
-
 
 <div id="myModal" class="modal">
 
@@ -494,14 +355,27 @@ function fillPolicyLabel(name){
 
 </div>
 
-<div id="listBackupsModal" class="modal1" >
+<!--<div id="listBackupsModal" class="modal">
 
-  <div class="modal-content1">
+  <div class="modal-content">
     <span class="close" id="closeBack">&times;</span>
-    <table id="backupListExcelDataTable" border="1"></table>
+    <p>Backup VM: </p>
+    <form,>
+        <fieldset>
+            <legend style="color:#337ab7"> Options: </legend>
+                <p><b>VM Name:</b></p>
+                <input type="text" id="VMName" value=VMName style="width:80%" readonly><br><br>
+                <p><b>Policy:</b></p>
+                <select id="policyList" style="width:80%" size="5"></select><br><br><br> 
+                <label>Start Date: </label> <label id="startDate"></label><br><br>
+                <label>End Date: </label> <label id="endDate"></label><br><br>
+                <label>Maximum number of backups: </label> <label id="rotationCount"></label><br><br><br>
+                <button type="button" onclick="takeBackup()" style="width:80%">Submit</button>
+        </fieldset>
+    </form> 
   </div>
 
-</div> 
+</div> -->
 
 <script>
 // Get the modal

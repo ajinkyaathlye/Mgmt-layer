@@ -142,11 +142,12 @@ def vm_list(request, hv, util, ip, password, user, vmname, format=None):
     elif util == 'restore':
         if request.method == 'GET':
             if hv == "kvm":
-                #vm_obj=VM.objects.get(VM_name=vmname)
+                vm_obj=VM.objects.get(VM_id=vmname)
                 print "=================================="
-                print vm_obj
-                list_bkups = utilsKB.main(ip, vmname)
-                serializer = json.dumps(list_bkups)
+                #list_bkups = utilsKB.main(ip, user, password, vmname)
+                #print ip, user, password, vmname
+                backups=Backup.objects.filter(vm=vm_obj)
+                serializer = BackupSerializer(backups, many=True)
                 return Response(serializer.data)
 
             elif hv=="esx":

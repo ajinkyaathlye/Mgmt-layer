@@ -164,4 +164,4 @@ def listBackups(request, hyper, values):
     if hyper == 'kvm':
         if request.method == 'GET':
             var=apis.vm_list(request, hyper, "restore", parsed_dict['servip'][0].strip('/'), parsed_dict['servpaswd'][0], parsed_dict['servuser'][0], parsed_dict['VMName'][0].strip('/'))
-            return HttpResponse(var)
+            return HttpResponse(json.dumps(var.data))

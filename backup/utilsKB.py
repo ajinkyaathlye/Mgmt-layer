@@ -22,15 +22,15 @@ def get_token(ip,username,password):
 	return token
 
 		
-def list_backups(ip, VMID):
+def list_backups(ip, username, password, VMID):
 	#VMID='9580f46e-2bc3-42af-97bb-8a365ac9de71'
 	headers = {
     'User-Agent': 'python-novaclient',
     'Accept': 'application/json',
     'X-OpenStack-Nova-API-Version': '2.25',
-    'X-Auth-Token': get_token(),
+    'X-Auth-Token': get_token(ip, username, password),
 	}
-	string='http://'+ip+':8774/v2.1/'+str(getProjectID())+'/images/detail'
+	string='http://'+ip+':8774/v2.1/'+str(getProjectID(ip))+'/images/detail'
 	#print string
 	response=requests.get(string, headers=headers)
 	parsed_json_response=json.loads(response.text)
@@ -74,16 +74,16 @@ def getProjectID(ip):
 			#print ll['id']
 			return ll['id']
 
-def getVMdetails():
+def getVMdetails(ip, username, password, VMID):
 	#parameters: ip,user,pass,vmid
 	headers = {
     'User-Agent': 'python-novaclient',
     'Accept': 'application/json',
     'X-OpenStack-Nova-API-Version': '2.25',
-    'X-Auth-Token': get_token(),
+    'X-Auth-Token': get_token(ip, username, password),
 }
 
-	response=requests.get('http://10.136.60.38:8774/v2.1/'+getProjectID()+'/servers/9580f46e-2bc3-42af-97bb-8a365ac9de71', headers=headers)
+	response=requests.get('http://10.136.60.38:8774/v2.1/'+getProjectID(ip)+'/servers/' + VMID, headers=headers)
 	#print response.text
 	parsed_response=json.loads(response.text)
 	#print parsed_response
@@ -107,11 +107,11 @@ def getVMdetails():
 	return dict
 	
 
-def main(ip, VMID):
+def main(ip, username, password, VMID):
 	#getVMdetails()
 	#print get_token()	
 	#list_vms()
-	list_backups(ip, VMID)
+	return list_backups(ip, username, password, VMID)
 	#backupvm()
 	#deleteBackup()
 	#print getBackupIDbyName("Wed Feb 01 2017 12:53:50 GMT+0530 (IST)")

@@ -14,8 +14,10 @@ def check_KVM():
 	}
 	for vm in vms_kvm:
 		if vm.profile == None:
+			print vm
 			pass
 		else:
+
 			if d>=vm.profile.start_date and d<=vm.profile.end_date:
 				l=models.Backup.objects.filter(vm=vm).order_by('timestamp')
 				data = '{"VM_name": "' + vm.VM_id + '", "backup_name":"' + dt.strftime("%A %d %B %Y %I:%M:%S %p") + '"}'
