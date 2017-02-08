@@ -108,7 +108,7 @@ def getVMdetails():
 	
 
 def main():
-	getVMdetails()
+	#getVMdetails()
 	#print get_token()	
 	#list_vms()
 	list_backups()

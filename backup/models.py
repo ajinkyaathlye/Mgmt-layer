@@ -31,6 +31,7 @@ class VM(models.Model):
 	ip=models.CharField(max_length=100,blank=True,null=True)
 	class Meta:
 		ordering=('VM_name',)
+		#unique_together = (('key1', 'key2'),)
 
 	def __str__(self):
 		return self.VM_name
