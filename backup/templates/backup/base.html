@@ -12,7 +12,13 @@
 	<script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
 	<script type = "text/javascript" src = "https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
-
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>jQuery UI Datepicker - Default functionality</title>
+	<link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+	<link rel="stylesheet" href="/resources/demos/style.css">
+	<script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+	<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
 
     <style>
     	.modal {
@@ -40,6 +46,10 @@
 			font-size: 12px;
 		}
 
+	.dateClass {
+
+	    }
+
 		/* The Close Button */
 		.close {
 		    color: #aaaaaa;
@@ -53,6 +63,9 @@
 		    color: #000;
 		    text-decoration: none;
 	    	cursor: pointer;
+
+	 	}   
+
     </style>
 	
 
@@ -72,9 +85,14 @@
 	       function createPolicy() {
 	        var xmlhttp = new XMLHttpRequest();
 	        //alert("http://127.0.0.1:8000/policy/create/startDay=" + document.getElementById("startDay").value + "&startMonth=" + document.getElementById("startMonth").value + "&startYear=" + document.getElementById("startYear").value + "&endDay=" + document.getElementById("endDay").value + "&endMonth=" + document.getElementById("endMonth").value+ "&endYear=" + document.getElementById("endYear").value + "&bckrotation=" + document.getElementById("bckrotation").value );
+	        var currentDate = $( "#startdatepicker" ).datepicker( "getDate" );
+			var startdate=document.getElementById("startdatepicker").value;
+			var startres=startdate.split("-"); 
+			var currentDate = $( "#enddatepicker" ).datepicker( "getDate" );
+			var enddate=document.getElementById("enddatepicker").value;
+			var endres=enddate.split("-"); 
 
-
-	        xmlhttp.open("GET", "http://127.0.0.1:8000/policy/create/startDay=" + document.getElementById("startDay").value + "&startMonth=" + document.getElementById("startMonth").value + "&startYear=" + document.getElementById("startYear").value + "&endDay=" + document.getElementById("endDay").value + "&endMonth=" + document.getElementById("endMonth").value + "&endYear=" + document.getElementById("endYear").value + "&bckrotation=" + document.getElementById("bckrotation").value, true);
+	        xmlhttp.open("GET", "http://127.0.0.1:8000/policy/create/startDay=" + startres[0] + "&startMonth=" + startres[1] + "&startYear=" + startres[2] + "&endDay=" + endres[0] + "&endMonth=" + endres[1] + "&endYear=" + endres[2] + "&bckrotation=" + document.getElementById("bckrotation").value, true);
 
 	        xmlhttp.onreadystatechange = function() 
 	        {
@@ -87,6 +105,26 @@
         	xmlhttp.send(null);
     }
     </script>
+
+<script>
+  $( function() {
+    
+	$( "#startdatepicker" ).datepicker({
+	  dateFormat: "dd-mm-yy"
+	});
+	//alert(document.getElementById("datepicker").value);
+  } );
+
+   $( function() {
+    
+	$( "#enddatepicker" ).datepicker({
+	  dateFormat: "dd-mm-yy"
+	});
+	//alert(document.getElementById("datepicker").value);
+  } );
+
+  </script>
+
 
 <body>
 	 
@@ -150,12 +188,10 @@
 			<form,>
 				<fieldset>
 					<legend style="color:#337ab7"> Policy Parameters: </legend>
-						<p><b>Start Date:</b></p>
-							<input type="text" id="startDay" value="1" style="width:25%"> - <input type="text" id="startMonth" value="1" style="width:25%"> - <input type="text" id="startYear" value="2017" style="width:40%"><br><br>
-						<p><b>End Date:</b></p>
-							<input type="text" id="endDay" value="12" style="width:25%"> - <input type="text" id="endMonth" value="12" style="width:25%"> - <input type="text" id="endYear" value="2017" style="width:40%"><br><br>
+						<p>Start Date: <input type="text" id="startdatepicker" class="dateClass"></p>
+						<p>End Date: <input type="text" id="enddatepicker" class="dateClass"></p>
 						<p><b>Backup Rotation Count:</b></p>
-							<input type="text" id="bckrotation" value="2"><br><br>
+						<input type="text" id="bckrotation" value="2"><br><br>
 						<button type="button" onclick="createPolicy()" style="width:90%">Submit</button>
 				</fieldset>
 			</form> 
