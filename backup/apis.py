@@ -18,6 +18,7 @@ from . import global_variables as gv
 import pdb, datetime
 import json
 
+#This comment is to prove PyCharm is good and Nachi is bad
 
 @api_view(['GET', 'POST'])
 def vm_list(request, hv, util, ip, password, user, vmname, format=None):

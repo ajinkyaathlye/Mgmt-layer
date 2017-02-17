@@ -2,16 +2,9 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="afa3e54d-7396-4a47-9555-6242586d400e" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/db.sqlite3" afterPath="$PROJECT_DIR$/db.sqlite3" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.gitignore" afterPath="$PROJECT_DIR$/.gitignore" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/backup/apis.py" afterPath="$PROJECT_DIR$/backup/apis.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/backup/models.py" afterPath="$PROJECT_DIR$/backup/models.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/backup/multi.py" afterPath="$PROJECT_DIR$/backup/multi.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/backup/policy_script.py" afterPath="$PROJECT_DIR$/backup/policy_script.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/backup/templates/backup/configH.html" afterPath="$PROJECT_DIR$/backup/templates/backup/configH.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/backup/utilsH.py" afterPath="$PROJECT_DIR$/backup/utilsH.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/backup/utilsHB.py" afterPath="$PROJECT_DIR$/backup/utilsHB.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/backup/views.py" afterPath="$PROJECT_DIR$/backup/views.py" />
     </list>
     <ignored path="GS_Management.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -62,8 +55,8 @@
       <file leaf-file-name="apis.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/backup/apis.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="406">
-              <caret line="31" column="17" selection-start-line="31" selection-start-column="17" selection-end-line="31" selection-end-column="17" />
+            <state relative-caret-position="360">
+              <caret line="20" column="58" selection-start-line="20" selection-start-column="58" selection-end-line="20" selection-end-column="58" />
               <folding>
                 <element signature="e#0#39#0" expanded="true" />
               </folding>
@@ -139,16 +132,6 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="base.html" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/backup/templates/backup/base.html">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="2304">
-              <caret line="128" column="0" selection-start-line="128" selection-start-column="0" selection-end-line="128" selection-end-column="0" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
     </leaf>
   </component>
   <component name="Git.Settings">
@@ -168,6 +151,7 @@
         <option value="$PROJECT_DIR$/backup/models.py" />
         <option value="$PROJECT_DIR$/backup/views.py" />
         <option value="$PROJECT_DIR$/backup/templates/backup/configH.html" />
+        <option value="$PROJECT_DIR$/.gitignore" />
         <option value="$PROJECT_DIR$/backup/apis.py" />
       </list>
     </option>
@@ -615,7 +599,7 @@
       <window_info id="Database" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="10" side_tool="false" content_ui="tabs" />
       <window_info id="Python Console" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.068297654" sideWeight="0.49595687" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.14780836" sideWeight="0.49595687" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
@@ -863,10 +847,18 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/.gitignore">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="18">
+          <caret line="1" column="10" selection-start-line="1" selection-start-column="10" selection-end-line="1" selection-end-column="10" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/backup/apis.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="406">
-          <caret line="31" column="17" selection-start-line="31" selection-start-column="17" selection-end-line="31" selection-end-column="17" />
+        <state relative-caret-position="360">
+          <caret line="20" column="58" selection-start-line="20" selection-start-column="58" selection-end-line="20" selection-end-column="58" />
           <folding>
             <element signature="e#0#39#0" expanded="true" />
           </folding>
