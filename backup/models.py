@@ -43,23 +43,26 @@ class Profile(models.Model):
     # def save(self, *args, **kwargs):
     # super(VM, self).save(*args, **kwargs)
 """
-class VM(models.Model):
-	profile=models.ForeignKey('Profile', on_delete=models.CASCADE, null=True)
-	details=models.ForeignKey('Details', on_delete=models.CASCADE,null=True)
-	VM_name=models.CharField(max_length=1000, blank=True)
-	VM_id=models.CharField(max_length=500, blank=True, primary_key=True)
-	hyper_type=models.CharField(max_length=1000,blank=True)
-	state=models.CharField(max_length=5000,blank=True)
-	guest_name=models.CharField(max_length=1000, blank=True, null=True)
-	#owner = models.ForeignKey('auth.User', related_name='vm', on_delete=models.CASCADE, editable=False)
-	#annotation=models.CharField(max_length=1000, blank=True)
-	ip=models.CharField(max_length=100,blank=True,null=True)
-	class Meta:
-		ordering=('VM_name',)
-		#unique_together = (('key1', 'key2'),)
 
-	def __str__(self):
-		return self.VM_name
+
+class VM(models.Model):
+    profile = models.ForeignKey('Profile', on_delete=models.CASCADE, null=True)
+    details = models.ForeignKey('Details', on_delete=models.CASCADE, null=True)
+    VM_name = models.CharField(max_length=1000, blank=True)
+    VM_id = models.CharField(max_length=500, blank=True, primary_key=True)
+    hyper_type = models.CharField(max_length=1000, blank=True)
+    state = models.CharField(max_length=5000, blank=True)
+    guest_name = models.CharField(max_length=1000, blank=True, null=True)
+    # owner = models.ForeignKey('auth.User', related_name='vm', on_delete=models.CASCADE, editable=False)
+    # annotation=models.CharField(max_length=1000, blank=True)
+    ip = models.CharField(max_length=100, blank=True, null=True)
+
+    class Meta:
+        ordering = ('VM_name',)
+    # unique_together = (('key1', 'key2'),)
+
+    def __str__(self):
+        return self.VM_name
 
 
 class Backup(models.Model):
@@ -76,8 +79,8 @@ class Backup(models.Model):
     def __str__(self):
         return str(self.backup_name)
 
-    # def save(self, *args, **kwargs):
-    # super(Backup, self).save(*args, **kwargs)
+        # def save(self, *args, **kwargs):
+        # super(Backup, self).save(*args, **kwargs)
 
 
 class DiffBackup(models.Model):

@@ -29,10 +29,16 @@ def vm_list(request, hv, util, ip, password, user, vmname, format=None):
                 list_VM = utilsK.main(ip, user, password)
                 print list_VM
                 for vm in list_VM:
-                    d = models.Details(hyper_type='KVM', ip_addr=ip, username=user, password=password)
-                    d.save()
+	            #d = models.Details(hyper_type='KVM', ip_addr=ip, username=user, password=password)
+                    db, created = models.Details.objects.get_or_create(hyper_type='KVM', ip_addr=ip, username=user,
+                                                                       password=password)
+                    #print db
+                    #print created
+
+                    if created == False:
+                        db.save()
                     virt_mach = VM(VM_name=vm[1],
-                                   details=d,
+                                   details=db,
                                    VM_id=vm[0],
                                    hyper_type="KVM",
                                    state=vm[2],
@@ -54,11 +60,17 @@ def vm_list(request, hv, util, ip, password, user, vmname, format=None):
                 list_VM = utils.main(ip, password, user)
                 # print "IN VMLIST"
                 for vm in list_VM:
-                    d = models.Details(hyper_type='ESX', ip_addr=ip, username=user, password=password)
-                    d.save()
+                    #d = models.Details(hyper_type='KVM', ip_addr=ip, username=user, password=password)
+                    db, created = models.Details.objects.get_or_create(hyper_type='KVM', ip_addr=ip, username=user,
+                                                                       password=password)
+                    #print db
+                    #print created
+
+                    if created == False:
+                        db.save()
                     if vm is not None:
                         VM(VM_id=vm[0],
-                           details=d,
+                           details=db,
                            VM_name=vm[0],
                            hyper_type="ESX",
                            guest_name=vm[2],
@@ -70,21 +82,34 @@ def vm_list(request, hv, util, ip, password, user, vmname, format=None):
                 return Response(serializer.data)
 
             elif hv == "hyperv":
+                l = []
                 gv.hyperv_ip = ip
                 gv.hyperv_password = password
                 gv.hyperv_username = user
                 list_VM = utilsH.main(ip, user, password)
+                #print "hgfhgfhgf", list_VM
                 for vm in list_VM:
+                    #d = models.Details(hyper_type='KVM', ip_addr=ip, username=user, password=password)
+                    db, created = models.Details.objects.get_or_create(hyper_type='KVM', ip_addr=ip, username=user,
+                                                                       password=password)
+                    #print db
+                    #print created
+
+                    if created == False:
+                        db.save()
                     if vm is not None:
                         VM(VM_name=vm[0],
+                           details=db,
                            VM_id=vm[0],
                            hyper_type="HyperV",
                            guest_name="",
                            ip="",
                            state=vm[1],
                            ).save()
-                vms = VM.objects.filter(hyper_type="HyperV")
-                serializer = VMSerializer(vms, many=True)
+                    vms = VM.objects.filter(hyper_type="HyperV", VM_id=vm[0])
+                    l.append(vms)
+                #print l
+                serializer = VMSerializer(l, many=True)
                 return Response(serializer.data)
 
         elif request.method == 'POST':

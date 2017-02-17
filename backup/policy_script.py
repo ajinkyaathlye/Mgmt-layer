@@ -104,4 +104,4 @@ def check_HyperV():
 
 def main():
     check_KVM()
-    check_HyperV()
+   # check_HyperV()
