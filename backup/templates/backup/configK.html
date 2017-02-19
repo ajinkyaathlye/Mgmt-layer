@@ -129,6 +129,19 @@ select option:hover {
 </style>
 
 <script type = "text/javascript">
+ var FAKEHEADERS=["VM_id","VM_name","hyper_type","state","guest_name","ip","profile","details"];
+    var REALHEADERS=["VIRTUAL MACHINE ID","VIRTUAL MACHINE NAME","HYPERVISOR","STATE","GUEST NAME","IP","PROFILE","DETAILS"];
+    
+    function getRealheader(fakeheader)
+    {
+        
+        for(var i=0;i<FAKEHEADERS.length;i++)
+        {
+            if(FAKEHEADERS[i]==fakeheader)
+                return i;
+        }
+        return -1;
+    }
     var myList = [];
     var myBackups=[];
     function list() {
@@ -290,7 +303,10 @@ function addAllColumnHeaders(myList, selector) {
     for (var key in rowHash) {
       if ($.inArray(key, columnSet) == -1) {
         columnSet.push(key);
+     	var index=getRealheader(key);
         
+        if(index!=-1)
+        key=REALHEADERS[index];   
         headerTr$.append($('<th class="thh"/>').html(key));
       }
     }
@@ -456,7 +472,7 @@ function fillPolicyLabel(name){
     <fieldset>
        <legend style="color:#337ab7">Openstack Configuration Details:</legend>
         <p><b>OpenStack IP:</b></p>
-        <input type="text" id="servip" value="10.136.60.38"><br><br>
+        <input type="text" id="servip" value="10.136.60.65"><br><br>
         <p><b>OpenStack username:</b></p>
         <input type="text" id="servuser" value="demo"><br><br>
         <p><b>OpenStack password:</b></p>

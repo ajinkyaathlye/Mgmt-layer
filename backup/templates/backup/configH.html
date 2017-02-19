@@ -14,13 +14,13 @@
         padding: 5px;
         width: 90%;
     }
-   #excelDataTable {
+#excelDataTable, #backupListExcelDataTable {
         font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
         border-collapse: collapse;
         width: 100%;
         /*border:1px solid black !important;
         padding: 10px !important;
-        text-align: center; 
+        text-align: center;
         border-width: 2px !important;
         border-spacing: 10px !important;*/
     }
@@ -38,7 +38,7 @@
     }
         /*border:1px solid black !important;
         padding: 10px !important;
-        text-align: center; 
+        text-align: center;
         border-width: 2px !important;
         border-spacing: 10px !important;*/
     }
@@ -48,13 +48,17 @@
     text-align: center;
     align-content: center;
     }
-    #excelDataTable tr:nth-child(even){background-color: #e0e0e0;}
+    #excelDataTable tr:nth-child(even){background-color: #f0f0f0;}
 
     #excelDataTable tr:hover {background-color: #ddd;}
 
+    #backupListExcelDataTable tr:nth-child(even){background-color: #f0f0f0;}
+
+    #backupListExcelDataTable tr:hover {background-color: #ddd;}
+
         /*border:1px solid black !important;
         padding: 10px !important;
-        text-align: center; 
+        text-align: center;
         border-width: 2px !important;
         border-spacing: 10px !important;*/
     }
@@ -81,6 +85,29 @@
     width: 20%;
     font-size: 12px;
 }
+.modal1 {
+    display: none; /* Hidden by default */
+    position: fixed; /* Stay in place */
+    z-index: 1; /* Sit on top */
+    padding-top: 100px; /* Location of the box */
+    left: 0;
+    top: 0;
+    width: 100%; /* Full width */
+    height: 100%; /* Full height */
+    overflow: auto; /* Enable scroll if needed */
+    background-color: rgb(0,0,0); /* Fallback color */
+    background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+    font-family: verdana;
+    }
+/* Modal Content */
+.modal-content1 {
+    background-color: #fefefe;
+    margin: auto;
+    padding: 20px;
+    border: 1px solid #888;
+    width: 80%;
+    font-size: 20px;
+}
 /* The Close Button */
 .close {
     color: #aaaaaa;
@@ -95,27 +122,44 @@
     cursor: pointer;
 }
 select option:checked,
-select option:hover {    
+select option:hover {
     box-shadow: 0 0 10px 100px #D3D3D3 inset;
 }
 
 </style>
 
 <script type = "text/javascript">
-   var myList = [];
-    function list() {
-        var xmlhttp = new XMLHttpRequest();
-        xmlhttp.open("GET", "http://127.0.0.1:8000/vm/hyperv/list/servip=" + document.getElementById("servip").value + "&servpaswd=" + document.getElementById("servpaswd").value + "&servuser=" + document.getElementById("servuser").value, true);
-        xmlhttp.onreadystatechange = function() 
+ var FAKEHEADERS=["VM_id","VM_name","hyper_type","state","guest_name","ip","profile","details"];
+    var REALHEADERS=["VIRTUAL MACHINE ID","VIRTUAL MACHINE NAME","HYPERVISOR","STATE","GUEST NAME","IP","PROFILE","DETAILS"];
+
+    function getRealheader(fakeheader)
+    {
+
+        for(var i=0;i<FAKEHEADERS.length;i++)
         {
-            if (this.readyState == 4 && this.status == 200) 
+            if(FAKEHEADERS[i]==fakeheader)
+                return i;
+        }
+        return -1;
+    }
+    var myList = [];
+    var myBackups=[];
+    function list() {
+
+        var xmlhttp = new XMLHttpRequest();
+        xmlhttp.open("GET", "http://127.0.0.1:8000/vm/hyperv/list/servip=" + document.getElementById("servip").value+ "&servuser=" + document.getElementById("servuser").value +"&servpaswd=" + document.getElementById("servpaswd").value, true);
+        xmlhttp.onreadystatechange = function()
+        {
+            if (this.readyState == 4 && this.status == 200)
             {
                 myList=xmlhttp.responseText;
-                //alert(myList);
+                //alert(xmlhttp.responseText);
+                //document.write(myList);
                 //alert(myList.substring(1,myList.length-1));
                 myList=myList.substring(1,myList.length-1);
                 gg=myList.split("},");
                 myList=[];
+                //document.write(gg);
                 for(var i=0;i<gg.length;i++)
                 {
                     if(i==gg.length-1)
@@ -124,9 +168,11 @@ select option:hover {
                     }
                     else
                     myList.push(JSON.parse(gg[i]+'}'));
-                    
-                }
 
+                    //alert(gg[i]+'}');
+                    //alert(JSON.parse(gg[i]+'}'));
+                    //alert(myList[i]);
+                }
                 //document.write(myList);
                 buildHtmlTable('#excelDataTable');
                 //xmlResponse=xmlhttp.responseXML;
@@ -134,66 +180,116 @@ select option:hover {
                 //message = xmlDE.firstChild.data;
             }
         };
-
         xmlhttp.send(null);
     }
-
     function takeBackup() {
         var xmlhttp = new XMLHttpRequest();
-        xmlhttp.open("POST", "http://127.0.0.1:8000/vm/hyperv/backup/vmID=" + document.getElementById("VMName").value, true);
-        xmlhttp.setRequestHeader("Content-Type", "application/json");
+        var IDstr = document.getElementById("policyList").value;
+        var ID=parseInt(IDstr);
+        //alert(document.getElementById("VMName").value);
+        xmlhttp.open("GET", "http://127.0.0.1:8000/policy/hyperv/policyID=" + policyParams[ID-1]['id'] + "&vmID=" + document.getElementById("VMName").value, true);
         //alert(JSON.stringify({VM_name: document.getElementById("VMName").value, backup_name: "ajinkya"}));
         //xmlhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-        xmlhttp.onreadystatechange = function()     
+        xmlhttp.onreadystatechange = function()
         {
-            if (this.readyState == 4 && this.status == 200) 
+            if (this.readyState == 4 && this.status == 200)
             {
                 alert(xmlhttp.responseText);
-
                 //xmlResponse=xmlhttp.responseXML;
                 //xmlDE=xmlResponse.documentElement;
                 //message = xmlDE.firstChild.data;
             }
         };
-
         //var csrftoken = getCookie('csrftoken');
-        var now=new Date();
+        //var now=new Date();
         //JSON.stringify({"csrfmiddlewaretoken":csrftoken})
-        xmlhttp.send(JSON.stringify({VM_name: document.getElementById("VMName").value, backup_name: now.toString()}));
+        xmlhttp.send(null);
     }
-    
- function buildHtmlTable(selector) {
+
+    function buildHtmlTable(selector) {
     var table = document.getElementById("excelDataTable");
     while(table.rows.length>0){
             table.deleteRow(0);
     }
+
   var columns = addAllColumnHeaders(myList, selector);
+  //alert(columns.length);
     var k=0;
   for (var i = 0; i < myList.length; i++) {
     var row$ = $('<tr class="trr"/>');
     var flag=0;
-    
+
     var msg="";
     for (var colIndex = 0; colIndex < columns.length; colIndex++) {
       var cellValue = myList[i][columns[colIndex]];
-      
-      
+
+
       if(flag==0)
       {
         msg=cellValue;
         //alert(msg);
         flag=1;
       }
-      if (cellValue == null) cellValue = "";
-      row$.append($('<td/>').html(cellValue));
+      if (cellValue == null)
+        cellValue = "";
+      row$.append($('<td class="tdd"/>').html(cellValue));
+
+
     }
-    var string="<button onclick=\"myFunction('"+msg+"')\">Backup</button>";
-    //alert(string);
-    //<button onclick="myFunction()">Click me</button>
-    row$.append($('<td class="tdd"/>').html(string));
-    $(selector).append(row$);
+     var string="<button onclick=\"myFunction('"+msg+"')\">Backup</button>";
+        //alert(string);
+        //<button onclick="myFunction()">Click me</button>
+        row$.append($('<td class="tdd"/>').html(string));
+        $(selector).append(row$);
+        string="<button onclick=\"listBackups('"+msg+"')\"> List Backups</button>";
+      //alert(string);
+      //<button onclick="myFunction()">Click me</button>
+      row$.append($('<td class="tdd"/>').html(string));
+      $(selector).append(row$);
   }
 }
+
+  function buildBackupListTable(selector) {
+
+    var table = document.getElementById("backupListExcelDataTable");
+    while(table.rows.length>0){
+            table.deleteRow(0);
+    }
+
+  var columns = addAllColumnHeadersBackupList(myBackups, selector);
+  //alert(columns);
+  //alert(columns.length);
+    var k=0;
+    //alert(myBackups[0]['VM_name']);
+  for (var i = 0; i < myBackups.length; i++) {
+    var row$ = $('<tr class="trr"/>');
+    var flag=0;
+
+    var msg="";
+    for (var colIndex = 0; colIndex < columns.length; colIndex++) {
+      var cellValue = myBackups[i][columns[colIndex]];
+      //alert(cellValue);
+
+      if(flag==0)
+      {
+        msg=cellValue;
+        //alert(msg);
+        flag=1;
+      }
+      //alert(cellValue);
+      if (cellValue == null)
+        cellValue = "";
+
+      row$.append($('<td class="tdd"/>').html(cellValue));
+      $(selector).append(row$);
+
+    }
+  }
+}
+
+
+
+
 // Adds a header row to the table and returns the set of columns.
 // Need to do union of keys from all records as some records may not contain
 // all records.
@@ -203,37 +299,173 @@ function addAllColumnHeaders(myList, selector) {
   var k=0;
   for (var i = 0; i < myList.length; i++) {
     var rowHash = myList[i];
-    
+
     for (var key in rowHash) {
       if ($.inArray(key, columnSet) == -1) {
         columnSet.push(key);
-        
+     	var index=getRealheader(key);
+
+        if(index!=-1)
+        key=REALHEADERS[index];
         headerTr$.append($('<th class="thh"/>').html(key));
       }
     }
   }
   headerTr$.append($('<th class="thh"/>').html('Action'));
   $(selector).append(headerTr$);
+  headerTr$.append($('<th class="thh"/>').html('List Backups'));
   return columnSet;
 }
 
 
+function addAllColumnHeadersBackupList(myBackups, selector) {
+  var columnSet = [];
+  var headerTr$ = $('<tr class="trr"/>');
+  var k=0;
+  for (var i = 0; i < myBackups.length; i++) {
+    var rowHash = myBackups[i];
+
+    for (var key in rowHash) {
+      if ($.inArray(key, columnSet) == -1) {
+        columnSet.push(key);
+
+        headerTr$.append($('<th class="thh"/>').html(key));
+      }
+    }
+  }
+  $(selector).append(headerTr$);
+  return columnSet;
+  //alert(columnSet);
+}
+
+policyParams=[]
+
 function myFunction(msg)
 {
 //alert(msg);
-var modal = document.getElementById('myModal');
-var span = document.getElementsByClassName("close")[0];
-modal.style.display = "block";
+var selector=document.getElementById("policyList");
+var length = selector.options.length;
+for(var i=0; i<length;i++)
+{
+    selector.remove(0);
+}
+var modalOpen = document.getElementById('myModal');
+//var span = document.getElementsByClassName("close")[0];
+modalOpen.style.display = "block";
 document.getElementById('VMName').value = msg;
+var xmlhttp = new XMLHttpRequest();
+//alert("HI");
+xmlhttp.open("GET", "http://127.0.0.1:8000/policy/list/", true);
+xmlhttp.onreadystatechange = function()
+{
+   if (this.readyState == 4 && this.status == 200)
+    {
+        //alert("ASDASD");
+        policyParams=xmlhttp.responseText;
+        policyParams=policyParams.substring(1,policyParams.length-1);
+        gg=policyParams.split("},");
+        policyParams=[];
+        for(var i=0;i<gg.length;i++)
+        {
+            if(i==gg.length-1)
+            {
+                policyParams.push(JSON.parse(gg[i]));
+            }
+            else
+                policyParams.push(JSON.parse(gg[i]+'}'));
+        }
+        var select = document.getElementById('policyList');
+        for(var i=0;i<policyParams.length;i++){
+            var option = document.createElement('option');
+            option.text = option.value = policyParams[i]['id'];
+            select.options.add(option, 0);
+        }
+        //alert(policyParams[0][1]);
+
+    }
+}
+xmlhttp.send(null);
 /*span.onclick = function() {
     modal.style.display = "none";
 }*/
+}
+
+function listBackups(msg){
+
+    var xmlhttp = new XMLHttpRequest();
+    xmlhttp.open("GET", "http://127.0.0.1:8000/vm/hyperv/listbackups/servip=" + document.getElementById("servip").value+ "&servuser=" + document.getElementById("servuser").value +"&servpaswd=" + document.getElementById("servpaswd").value + "&VMName=" + msg, true);
+    xmlhttp.onreadystatechange = function()
+    {
+        if (this.readyState == 4 && this.status == 200)
+        {
+            myBackups=xmlhttp.responseText;
+            //alert(xmlhttp.responseText);
+            //document.write(myList);
+            //alert(myList.substring(1,myList.length-1));
+            myBackups=myBackups.substring(1,myBackups.length-1);
+            gg=myBackups.split("},");
+            myBackups=[];
+            //document.write(gg);
+            for(var i=0;i<gg.length;i++)
+            {
+                if(i==gg.length-1)
+                {
+                    myBackups.push(JSON.parse(gg[i]));
+                }
+                else
+                myBackups.push(JSON.parse(gg[i]+'}'));
+
+                //alert(gg[i]+'}');
+                //alert(JSON.parse(gg[i]+'}'));
+                //alert(myList[i]);
+            }
+            //alert(myBackups);
+            //document.write(myList);
+            //xmlResponse=xmlhttp.responseXML;
+            //alert("Asd");
+            buildBackupListTable('#backupListExcelDataTable');
+            var modalOpen = document.getElementById('listBackupsModal');
+            //var span = document.getElementsByClassName("close")[0];
+            modalOpen.style.display = "block";
+
+
+            //xmlDE=xmlResponse.documentElement;
+            //message = xmlDE.firstChild.data;
+        }
+    };
+    xmlhttp.send(null);
+
+
 
 }
 
-
-
+function fillPolicyLabel(name){
+    //alert(policyParams[0][1]);
+    for(var i=0;i<policyParams.length;i++){
+        if(policyParams[i]['id']==name)
+        {
+            //alert(policyParams[i][1]);
+            document.getElementById("startDate").innerHTML = policyParams[i]['start_date'];
+            document.getElementById("endDate").innerHTML = policyParams[i]['end_date'];
+            document.getElementById("rotationCount").innerHTML = policyParams[i]['freq_count'];
+        }
+    }
+}
 </script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 <form class="details" style="margin-top: 50px">
@@ -247,18 +479,18 @@ document.getElementById('VMName').value = msg;
             <input type="text" id="servpaswd" value="gsLab@123"><br><br>
             <button type="button" onclick="list()" style="width:90%">Submit</button>
     </fieldset>
-</form> 
-
+</form>
 
 <br>
 <br>
 <table id="excelDataTable" border="1"></table>
 
+
 <div id="myModal" class="modal">
 
   <!-- Modal content -->
   <div class="modal-content">
-    <span class="close">&times;</span>
+    <span class="close" id="closeBack">&times;</span>
     <p>Backup VM: </p>
     <form,>
         <fieldset>
@@ -266,15 +498,22 @@ document.getElementById('VMName').value = msg;
                 <p><b>VM Name:</b></p>
                 <input type="text" id="VMName" value=VMName style="width:80%" readonly><br><br>
                 <p><b>Policy:</b></p>
-                <select name="policyList" style="width:80%">
-                    <option>Populate</option>
-                    <option>Policy</option>
-                    <option>Names</option>
-                    <option>Here</option>
-                </select><br><br><br>
+                <select id="policyList" style="width:80%" size="5"></select><br><br><br>
+                <label>Start Date: </label> <label id="startDate"></label><br><br>
+                <label>End Date: </label> <label id="endDate"></label><br><br>
+                <label>Maximum number of backups: </label> <label id="rotationCount"></label><br><br><br>
                 <button type="button" onclick="takeBackup()" style="width:80%">Submit</button>
         </fieldset>
-    </form> 
+    </form>
+  </div>
+
+</div>
+
+<div id="listBackupsModal" class="modal1" >
+
+  <div class="modal-content1">
+    <span class="close" id="closeBack">&times;</span>
+    <table id="backupListExcelDataTable" border="1"></table>
   </div>
 
 </div>
@@ -285,14 +524,7 @@ var span1 = document.getElementsByClassName("close")[0];
 var span2=document.getElementsByClassName("close")[1];
 var modalPol = document.getElementById('policyModal');
 var modalBack = document.getElementById('myModal');
-// Get the button that opens the modal
-//var btn = document.getElementById("myBtn");
-// Get the <span> element that closes the modal
-// When the user clicks the button, open the modal 
-/*btn.onclick = function() {
-    modal.style.display = "block";
-}*/
-// When the user clicks on <span> (x), close the modal
+
 span1.onclick = function() {
     //modalBack.style.display = "none";
     modalPol.style.display = "none";

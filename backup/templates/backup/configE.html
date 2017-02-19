@@ -48,7 +48,7 @@
     text-align: center;
     align-content: center;
     }
-    #excelDataTable tr:nth-child(even){background-color: #e0e0e0;}
+    #excelDataTable tr:nth-child(even){background-color: #f4f4f4;}
 
     #excelDataTable tr:hover {background-color: #ddd;}
 
@@ -102,6 +102,20 @@ select option:hover {
 </style>
 
 <script type = "text/javascript">
+var FAKEHEADERS=["VM_id",  "VM_name", "hyper_type",  "state",   "guest_name",  "ip",  "profile", "details"];
+   var REALHEADERS=["VIRTUAL MACHINE ID","VIRTUAL MACHINE NAME","HYPERVISOR","STATE","GUEST NAME","IP","PROFILE","DETAILS"];
+   var myList = [];
+   function getRealheader(fakeheader)
+    {
+        
+        for(var i=0;i<FAKEHEADERS.length;i++)
+        {
+            if(FAKEHEADERS[i]==fakeheader)
+                return i;
+        }
+        return -1;
+    }
+
    var myList = [];
     function list() {
         var xmlhttp = new XMLHttpRequest();
@@ -208,7 +222,10 @@ function addAllColumnHeaders(myList, selector) {
     for (var key in rowHash) {
       if ($.inArray(key, columnSet) == -1) {
         columnSet.push(key);
+	var index=getRealheader(key);
         
+        if(index!=-1)
+        key=REALHEADERS[index];        
         headerTr$.append($('<th class="thh"/>').html(key));
       }
     }
