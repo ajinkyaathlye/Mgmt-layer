@@ -28,8 +28,7 @@ class Policy(threading.Thread):
                 break
             else:
                 policy_script.main()
-                print "Eat my shit Nachi"
-            time.sleep(600)
+            time.sleep(5)
 
 
 exitFlag = 0

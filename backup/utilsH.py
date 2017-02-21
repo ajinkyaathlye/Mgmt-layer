@@ -5,8 +5,10 @@ a = []
 
 def listVm(splitvm):
     global a
-    for currvm in splitvm:
+    a = []
+    for i in range(0, len(splitvm)-1):
         l = []
+        currvm=splitvm[i]
         linesvm = currvm.split('\r\n')  # line by line slice
         for currline in linesvm:
             wordsvm = currline.split(': ')  # slicing each parameter
@@ -18,7 +20,7 @@ def listVm(splitvm):
             # print wordsvm[1]
             if (wordsvm[0] == 'VM identifier'):
                 l.append(wordsvm[1])
-            # print wordsvm[1]
+                # print wordsvm[1]
         a.append(l)
 
 
@@ -30,8 +32,9 @@ def main(rmtip, usernm, passwd):
     currSession = winrm.Session(rmtip, auth=(usernm, passwd))
     getvm = currSession.run_cmd('wbadmin get virtualmachines')
     splitvm = getvm.std_out.split('\r\n\r\n')  # get individual vm tuples
-    listVm(splitvm)
     global a
+    listVm(splitvm)
     a = filter(None, a)
+    a=a[:len(a)-1]
     print a
     return a

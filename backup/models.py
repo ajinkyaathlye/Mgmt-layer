@@ -71,7 +71,7 @@ class Backup(models.Model):
     backup_name = models.CharField(max_length=1000, primary_key=True)
     bkupid = models.CharField(max_length=1000, blank=True)
     status = models.CharField(max_length=1000, blank=True)
-    # vm_ID=models.IntegerField()
+    destination = models.CharField(max_length=1000, blank=True)
     metadata = models.FileField(blank=True, )
     timestamp = models.DateTimeField(auto_now_add=True, blank=True)
     image = models.FileField(blank=True)

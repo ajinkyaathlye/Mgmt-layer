@@ -97,13 +97,12 @@ def config(request, hyper):
 
 @csrf_exempt
 def configShow(request, hyper, values):
-    """Calls the functions which makes the REST api calls"""
+    """Parses the URL-appended data and calls the functions which make the REST api calls"""
     temp = "http://www.dbz.com/goku?"
     temp = temp + values
-    print values
     parsed = urlparse.urlparse(temp)
     parsed_dict = urlparse.parse_qs(parsed.query)
-    print parsed_dict
+    #print parsed_dict
     if hyper == 'hyperv':
         if request.method == 'GET':
             #print parsed_dict['servip'][0].strip('/'), parsed_dict['servpaswd'][0], parsed_dict['servuser'][0]
@@ -112,7 +111,6 @@ def configShow(request, hyper, values):
             #print json.dumps(var.data)
             return HttpResponse(json.dumps(var.data))
         elif request.method == 'POST':
-            gv.hyperv_vmID = parsed_dict['vmID'][0].strip('/')
             apis.vm_list(request, hyper, "backup", parsed_dict['servip'][0].strip('/'), parsed_dict['servpaswd'][0],
                          parsed_dict['servuser'][0], "")
             return HttpResponse("")
@@ -133,14 +131,13 @@ def configShow(request, hyper, values):
             print json.dumps(var.data)
             return HttpResponse(json.dumps(var.data))
         elif request.method == 'POST':
-            print "ASFASDSADSAD"
             apis.vm_list(request, hyper, "backup", parsed_dict['servip'][0].strip('/'), parsed_dict['servpaswd'][0],
                          parsed_dict['servuser'][0], "")
-            # print parsed_dict['servip'][0].strip('/'), parsed_dict['servpaswd'][0], parsed_dict['servuser'][0], parsed_dict['startDate'][0].strip('/'), parsed_dict['endDate'][0].strip('/'), parsed_dict['rotationCount'][0].strip('/')
             return HttpResponse("")
 
 
 def createPolicy(request, values):
+    """Creates a policy and stores it into the database"""
     temp = "http://www.dbz.com/goku?"  # Don't change this, otherwise the code won't work. The power of this url is over 9000!
     temp = temp + values
     parsed = urlparse.urlparse(temp)
@@ -163,17 +160,14 @@ def listPolicies(request):
 
 def connectPolicy(request, hyper, values):
     """Connects a policy to a VM in the database"""
-    print "AHAAHAHAHAHAHAHAH"
     temp = "http://www.dbz.com/vegeta?"
     temp = temp + values
     parsed = urlparse.urlparse(temp)
     parsed_dict = urlparse.parse_qs(parsed.query)
     print parsed_dict
-    if hyper == 'kvm':
-        if request.method == 'GET':
-            apis.conPolicy(request, parsed_dict['policyID'][0].strip('/'), parsed_dict['vmID'][0].strip('/'))
-            return HttpResponse("")
-
+    if request.method == 'GET':
+        apis.conPolicy(request, parsed_dict['policyID'][0].strip('/'), parsed_dict['vmID'][0].strip('/'))
+        return HttpResponse("")
 
 def listBackups(request, hyper, values):
     """Lists the backups for a particular VM."""

@@ -236,12 +236,12 @@ select option:hover {
       
       
     }
-     var string="<button onclick=\"myFunction('"+msg+"')\">Backup</button>";
+     var string="<button class=\" buttontable\" onclick=\"myFunction('"+msg+"')\" >Backup</button>";
         //alert(string);
         //<button onclick="myFunction()">Click me</button>
         row$.append($('<td class="tdd"/>').html(string));
         $(selector).append(row$);
-        string="<button onclick=\"listBackups('"+msg+"')\"> List Backups</button>";
+        string="<button class=\" buttontable\"onclick=\"listBackups('"+msg+"')\"> List Backups</button>";
       //alert(string);
       //<button onclick="myFunction()">Click me</button>
       row$.append($('<td class="tdd"/>').html(string));
@@ -472,12 +472,15 @@ function fillPolicyLabel(name){
     <fieldset>
        <legend style="color:#337ab7">Openstack Configuration Details:</legend>
         <p><b>OpenStack IP:</b></p>
-        <input type="text" id="servip" value="10.136.60.65"><br><br>
+        <input type="text" id="servip" value="10.136.60.2"><br><br>
         <p><b>OpenStack username:</b></p>
         <input type="text" id="servuser" value="demo"><br><br>
         <p><b>OpenStack password:</b></p>
         <input type="text" id="servpaswd" value="root123"><br><br>
-        <button type="button" onclick="list()" style="width:90%">Submit</button>
+        <div style="text-align: center;margin-right:10px">
+             <button type="button" class="button" onclick="list()" ><span>Submit</span></button>
+        </div>
+
     </fieldset>
 </form> 
 
@@ -503,7 +506,9 @@ function fillPolicyLabel(name){
                 <label>Start Date: </label> <label id="startDate"></label><br><br>
                 <label>End Date: </label> <label id="endDate"></label><br><br>
                 <label>Maximum number of backups: </label> <label id="rotationCount"></label><br><br><br>
-                <button type="button" onclick="takeBackup()" style="width:80%">Submit</button>
+                <div style="text-align: center;margin-right:10px">
+             <button type="button" class="button" onclick="takeBackup()" ><span>Submit</span></button>
+        </div>
         </fieldset>
     </form> 
   </div>
@@ -523,9 +528,14 @@ function fillPolicyLabel(name){
 // Get the modal
 var span1 = document.getElementsByClassName("close")[0];
 var span2=document.getElementsByClassName("close")[1];
+var span3=document.getElementsByClassName("close")[2];
 var modalPol = document.getElementById('policyModal');
 var modalBack = document.getElementById('myModal');
-
+var modalbacklist=document.getElementById('listBackupsModal');
+span3.onclick = function() {
+    //modalBack.style.display = "none";
+    modalbacklist.style.display = "none";
+}
 span1.onclick = function() {
     //modalBack.style.display = "none";
     modalPol.style.display = "none";
@@ -543,6 +553,10 @@ window.onclick = function(event) {
     if (event.target == modalPol) {
             modalPol.style.display = "none";
         }
+    if (event.target == modalbacklist) {
+        modalbacklist.style.display = "none";
+    }
+
 }
 
 $(document).ready(function(event) {
@@ -566,3 +580,4 @@ $(document).ready(function(event) {
 </script>
 
 {% endblock %}
+

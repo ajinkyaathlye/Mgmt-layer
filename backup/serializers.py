@@ -27,7 +27,7 @@ class BackupSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Backup
-        fields = ('VM_name','backup_name')
+        fields = ('VM_name','backup_name','status')
 
 class ProfileSerializer(serializers.ModelSerializer):
     class Meta:

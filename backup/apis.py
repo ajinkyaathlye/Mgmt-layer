@@ -18,7 +18,7 @@ from . import global_variables as gv
 import pdb, datetime
 import json
 
-#This comment is to prove PyCharm is good and Nachi is bad
+
 
 @api_view(['GET', 'POST'])
 def vm_list(request, hv, util, ip, password, user, vmname, format=None):
@@ -30,11 +30,11 @@ def vm_list(request, hv, util, ip, password, user, vmname, format=None):
                 list_VM = utilsK.main(ip, user, password)
                 print list_VM
                 for vm in list_VM:
-	            #d = models.Details(hyper_type='KVM', ip_addr=ip, username=user, password=password)
+                    # d = models.Details(hyper_type='KVM', ip_addr=ip, username=user, password=password)
                     db, created = models.Details.objects.get_or_create(hyper_type='KVM', ip_addr=ip, username=user,
                                                                        password=password)
-                    #print db
-                    #print created
+                    # print db
+                    # print created
 
                     if created == False:
                         db.save()
@@ -52,20 +52,17 @@ def vm_list(request, hv, util, ip, password, user, vmname, format=None):
                 return Response(serializer.data)
 
             elif hv == "esx":
-                gv.esx_ip = ip
-                gv.esx_password = password
-                gv.esx_username = user
                 # ip="192.168.32.98"
                 # password="gsLab123"
                 # user="sumitt@ad2lab.com"
                 list_VM = utils.main(ip, password, user)
                 # print "IN VMLIST"
                 for vm in list_VM:
-                    #d = models.Details(hyper_type='KVM', ip_addr=ip, username=user, password=password)
-                    db, created = models.Details.objects.get_or_create(hyper_type='KVM', ip_addr=ip, username=user,
+                    # d = models.Details(hyper_type='KVM', ip_addr=ip, username=user, password=password)
+                    db, created = models.Details.objects.get_or_create(hyper_type='ESX', ip_addr=ip, username=user,
                                                                        password=password)
-                    #print db
-                    #print created
+                    # print db
+                    # print created
 
                     if created == False:
                         db.save()
@@ -84,18 +81,12 @@ def vm_list(request, hv, util, ip, password, user, vmname, format=None):
 
             elif hv == "hyperv":
                 l = []
-                gv.hyperv_ip = ip
-                gv.hyperv_password = password
-                gv.hyperv_username = user
                 list_VM = utilsH.main(ip, user, password)
-                #print "hgfhgfhgf", list_VM
+                # print "hgfhgfhgf", list_VM
                 for vm in list_VM:
-                    #d = models.Details(hyper_type='KVM', ip_addr=ip, username=user, password=password)
-                    db, created = models.Details.objects.get_or_create(hyper_type='KVM', ip_addr=ip, username=user,
+                    # d = models.Details(hyper_type='KVM', ip_addr=ip, username=user, password=password)
+                    db, created = models.Details.objects.get_or_create(hyper_type='HyperV', ip_addr=ip, username=user,
                                                                        password=password)
-                    #print db
-                    #print created
-
                     if created == False:
                         db.save()
                     if vm is not None:
@@ -107,9 +98,9 @@ def vm_list(request, hv, util, ip, password, user, vmname, format=None):
                            ip="",
                            state=vm[1],
                            ).save()
-                    vms = VM.objects.filter(hyper_type="HyperV", VM_id=vm[0])
+                    vms = VM.objects.get(hyper_type="HyperV", VM_id=vm[0])
                     l.append(vms)
-                #print l
+                # print l
                 serializer = VMSerializer(l, many=True)
                 return Response(serializer.data)
 
@@ -137,7 +128,8 @@ def vm_list(request, hv, util, ip, password, user, vmname, format=None):
                 bkupserializer = BackupSerializer(data=request.data)
                 if bkupserializer.is_valid():
                     vm = VM.objects.get(VM_id=request.data['VM_name'])
-                    backup_esx.main(ip, password, user, request.data['VM_name'], request.data['backup_name'])
+                    backup_esx.main(ip, password, user, request.data['VM_name'], request.data['backup_name'],
+                                    vm.profile.freq_count)
                     Backup(vm=vm,
                            backup_name=request.data['backup_name'],
                            VM_name=request.data['VM_name'],
@@ -150,10 +142,11 @@ def vm_list(request, hv, util, ip, password, user, vmname, format=None):
                 bkupserializer = BackupSerializer(data=request.data)
                 if bkupserializer.is_valid():
                     vm = VM.objects.get(VM_id=str(request.data['VM_name']))
-                    ver=backup_hyperv.main(gv.hyperv_ip, gv.hyperv_password, gv.hyperv_username, request.data['VM_name'])
+                    verList = backup_hyperv.main(ip, password, user, request.data['VM_name'], vm.profile.freq_count)
                     Backup(vm=vm,
                            backup_name=request.data['backup_name'],
-                           bkupID=ver,
+                           bkupid=verList[0],
+                           destination=verList[1],
                            ).save()
                     return Response(bkupserializer.data, status=status.HTTP_201_CREATED)
                 else:
