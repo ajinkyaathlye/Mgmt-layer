@@ -262,9 +262,7 @@ string=""
 def getHv(request, hv):
 	if request.method=='GET':
 		self.string=hv
-
 class VMViewSet(viewsets.ModelViewSet):
-
 	if string == "kvm":
 	    vms=VM()
         list_VM = utilsK.main()
@@ -283,13 +281,11 @@ class VMViewSet(viewsets.ModelViewSet):
     	serializer_class = VMSerializer
     	permission_classes = (permissions.IsAuthenticatedOrReadOnly,
                       		IsOwnerOrReadOnly,)
-
-
 	if string == "esx":
 	    vms=VM()
         list_VM = utilsK.main()
     	for vm in list_VM:
-    		VM(VM_name=vm[0], 
+    		VM(VM_name=vm[0],
     			hyper_type="ESX",
     			disk_location=vm[1],
     			guest_name=vm[2],
@@ -302,13 +298,12 @@ class VMViewSet(viewsets.ModelViewSet):
     	serializer_class = VMSerializer
     	permission_classes = (permissions.IsAuthenticatedOrReadOnly,
                       		IsOwnerOrReadOnly,)
-
 	if string == "hyperv":
 	    vms=VM()
         list_VM = utilsK.main()
     	for vm in list_VM:
     		if vm is not None:
-	    		VM(VM_name=vm[0], 
+	    		VM(VM_name=vm[0],
     			hyper_type="HyperV",
     			disk_location="",
     			guest_name="",
@@ -321,12 +316,8 @@ class VMViewSet(viewsets.ModelViewSet):
     	serializer_class = VMSerializer
     	permission_classes = (permissions.IsAuthenticatedOrReadOnly,
                       		IsOwnerOrReadOnly,)
-
-
 	def perform_create(self, serializer):
 		serializer.save(owner=self.request.user)
-
-
 class UserViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = User.objects.all()
     serializer_class = UserSerializer"""

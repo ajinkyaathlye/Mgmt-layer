@@ -2,21 +2,9 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="afa3e54d-7396-4a47-9555-6242586d400e" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/db.sqlite3" afterPath="$PROJECT_DIR$/db.sqlite3" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/backup/apis.py" afterPath="$PROJECT_DIR$/backup/apis.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/backup/backup_esx.py" afterPath="$PROJECT_DIR$/backup/backup_esx.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/backup/backup_hyperv.py" afterPath="$PROJECT_DIR$/backup/backup_hyperv.py" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/backup/backup_kvm.py" afterPath="$PROJECT_DIR$/backup/backup_kvm.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/backup/models.py" afterPath="$PROJECT_DIR$/backup/models.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/backup/multi.py" afterPath="$PROJECT_DIR$/backup/multi.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/backup/policy_script.py" afterPath="$PROJECT_DIR$/backup/policy_script.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/backup/serializers.py" afterPath="$PROJECT_DIR$/backup/serializers.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/backup/static/backup/styles.css" afterPath="$PROJECT_DIR$/backup/static/backup/styles.css" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/backup/templates/backup/configE.html" afterPath="$PROJECT_DIR$/backup/templates/backup/configE.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/backup/templates/backup/configH.html" afterPath="$PROJECT_DIR$/backup/templates/backup/configH.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/backup/templates/backup/configK.html" afterPath="$PROJECT_DIR$/backup/templates/backup/configK.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/backup/utilsH.py" afterPath="$PROJECT_DIR$/backup/utilsH.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/backup/templates/backup/base.html" afterPath="$PROJECT_DIR$/backup/templates/backup/base.html" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/backup/views.py" afterPath="$PROJECT_DIR$/backup/views.py" />
     </list>
     <ignored path="GS_Management.iws" />
@@ -63,11 +51,11 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="apis.py" pinned="false" current-in-tab="false">
+      <file leaf-file-name="apis.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/backup/apis.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="558">
-              <caret line="130" column="60" selection-start-line="130" selection-start-column="60" selection-end-line="130" selection-end-column="60" />
+            <state relative-caret-position="701">
+              <caret line="322" column="40" selection-start-line="322" selection-start-column="40" selection-end-line="322" selection-end-column="40" />
               <folding>
                 <element signature="e#0#39#0" expanded="true" />
               </folding>
@@ -99,7 +87,7 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="policy_script.py" pinned="false" current-in-tab="true">
+      <file leaf-file-name="policy_script.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/backup/policy_script.py">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="-382">
@@ -126,8 +114,8 @@
       <file leaf-file-name="views.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/backup/views.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="304">
-              <caret line="168" column="0" selection-start-line="168" selection-start-column="0" selection-end-line="168" selection-end-column="0" />
+            <state relative-caret-position="790">
+              <caret line="195" column="0" selection-start-line="195" selection-start-column="0" selection-end-line="195" selection-end-column="0" />
               <folding>
                 <element signature="e#0#22#0" expanded="true" />
               </folding>
@@ -153,11 +141,11 @@
         <option value="$PROJECT_DIR$/backup/models.py" />
         <option value="$PROJECT_DIR$/backup/backup_hyperv.py" />
         <option value="$PROJECT_DIR$/backup/backup_esx.py" />
-        <option value="$PROJECT_DIR$/backup/apis.py" />
         <option value="$PROJECT_DIR$/backup/templates/backup/configE.html" />
         <option value="$PROJECT_DIR$/backup/views.py" />
         <option value="$PROJECT_DIR$/backup/policy_script.py" />
         <option value="$PROJECT_DIR$/backup/multi.py" />
+        <option value="$PROJECT_DIR$/backup/apis.py" />
       </list>
     </option>
   </component>
@@ -967,8 +955,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/backup/views.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="304">
-          <caret line="168" column="0" selection-start-line="168" selection-start-column="0" selection-end-line="168" selection-end-column="0" />
+        <state relative-caret-position="790">
+          <caret line="195" column="0" selection-start-line="195" selection-start-column="0" selection-end-line="195" selection-end-column="0" />
           <folding>
             <element signature="e#0#22#0" expanded="true" />
           </folding>
@@ -981,16 +969,6 @@
           <caret line="250" column="74" selection-start-line="250" selection-start-column="74" selection-end-line="250" selection-end-column="74" />
           <folding>
             <element signature="e#0#13#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/backup/apis.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="558">
-          <caret line="130" column="60" selection-start-line="130" selection-start-column="60" selection-end-line="130" selection-end-column="60" />
-          <folding>
-            <element signature="e#0#39#0" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -1011,6 +989,16 @@
           <caret line="86" column="54" selection-start-line="86" selection-start-column="54" selection-end-line="86" selection-end-column="54" />
           <folding>
             <element signature="e#0#32#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/backup/apis.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="701">
+          <caret line="322" column="40" selection-start-line="322" selection-start-column="40" selection-end-line="322" selection-end-column="40" />
+          <folding>
+            <element signature="e#0#39#0" expanded="true" />
           </folding>
         </state>
       </provider>

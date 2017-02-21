@@ -3,7 +3,7 @@
 <html lang="en">
 <head>
 	<meta charset="UTF-8">
-	<title>{% block title %}VM Management{%endblock%}</title>
+	<title >{% block title %}VM Management{%endblock%}</title>
 	{% load staticfiles %}
 	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
 	<link href='https://fonts.googleapis.com/css?family=Slabo+27px' rel='stylesheet' type='text/css'>
@@ -129,49 +129,51 @@
 <body>
 	 
 
-	<nav class="navbar navbar-inverse" >
+	<nav class="navbar navbar-bg" >
 		<div class="container-fluid">
 
 		<!--Header-->
 		<div class="navbar-header">
-			<button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#topNavBar">
-				<span class="icon-bar"></span>
-				<span class="icon-bar"></span>
-				<span class="icon-bar"></span>
-			</button>
-			<a class="navbar-brand" href="#">VM Management</a>
+
+			<a class="navbarButtons navbar-brand" href="#">VM Management</a>
 		</div>
 
 		<!--Items-->
-		<div class="collapse navbar-collapse" id="topNavBar">
-			<ul class="nav navbar-nav">
-				<li class="active">
-					<a href="#">
-						<span class="glyphicon glyphicon-cloud-upload" aria-hidden="true"></span>&nbsp; Backup
+		<div class="collapse navbar-collapse" id="topNavBar" >
+
+			<ul  class="nav navbar-nav" >
+				<li class="active" >
+					<a id="KVMlink" class=" links" href="http://127.0.0.1:8000/config/kvm/">
+						<b> KVM </b>
 					</a>
 				</li>
 				<li class="active">
-					<a href="#">
-						<span class="glyphicon glyphicon-cloud-download" aria-hidden="true"></span>&nbsp; Restore
+					<a id="ESXlink" class="links" href="http://127.0.0.1:8000/config/esx/">
+						<b> ESX </b>
+					</a>
+				</li>
+                <li class="active">
+					<a id="HYPERVlink" class="links" href="http://127.0.0.1:8000/config/hyperv/">
+						 <b> HyperV </b>
 					</a>
 				</li>
 			</ul>
 
-			<form class="navbar-form navbar-left" role="search" method="get" action="#">
-				<div class="form-group">
-					<input type="text" class="form-control" name="q" value="">
-				</div>
-				<button type="submit" class="btn btn-default">Search</button>
-			</form>
+
 
 			<ul class="nav navbar-nav navbar-right">
+                <li class="active">
+					<a class="navbarButtons" href="#">
+						<span class="glyphicon" aria-hidden="true"></span>&nbsp; Configuration
+					</a>
+				</li>
 				<li class="active">
-					<a href="javascript:OpenModal()">
+					<a class="navbarButtons" href="javascript:OpenModal()">
 						<span class="glyphicon glyphicon-edit" aria-hidden="true"></span>&nbsp; Create Policy
 					</a>
 				</li>
 				<li class="active">
-					<a href="#">
+					<a class="navbarButtons" href="#">
 						<span class="glyphicon glyphicon-off" aria-hidden="true"></span>&nbsp; Logout
 					</a>
 				</li>
@@ -192,20 +194,22 @@
 						<p>End Date: <input type="text" id="enddatepicker" class="dateClass"></p>
 						<p><b>Backup Rotation Count:</b></p>
 						<input type="text" id="bckrotation" value="2"><br><br>
-						<button type="button" onclick="createPolicy()" style="width:90%">Submit</button>
+						<div style="text-align: center;margin-right:10px">
+                         <button type="button" class="button" onclick="createPolicy()" ><span>Submit</span></button>
+                        </div>
 				</fieldset>
 			</form> 
 		</div>
 	</div>
 
-	<div class="col-md-3 column margintop20" style="margin-top: 50px; ">
+	<!--<div class="col-md-3 column margintop20" style="margin-top: 50px; ">
 	    <ul class="nav nav-pills nav-stacked">
 		  <li class="active" ><a><strong>Hypervisors</strong></a></li>
 		  <li><a href="http://127.0.0.1:8000/config/esx/"><span class="glyphicon glyphicon-chevron-right"></span> ESX</a></li>
 		  <li><a href="http://127.0.0.1:8000/config/kvm/"><span class="glyphicon glyphicon-chevron-right"></span> KVM</a></li>
 		  <li><a href="http://127.0.0.1:8000/config/hyperv/"><span class="glyphicon glyphicon-chevron-right"></span> HyperV</a></li>
 		 </ul>
-	</div>
+	</div> -->
 
 
 
@@ -213,5 +217,6 @@
 	{% endblock %}
 </body>
 </html>
+
 
 
