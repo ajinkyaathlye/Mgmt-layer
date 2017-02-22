@@ -1,4 +1,4 @@
-from .models import VM, Backup, Profile
+from .models import VM, Backup, Profile, Jobs
 from .serializers import VMSerializer, BackupSerializer, ProfileSerializer
 from django.contrib.auth.models import User
 from rest_framework import permissions
@@ -21,7 +21,7 @@ import json
 
 
 @api_view(['GET', 'POST'])
-def vm_list(request, hv, util, ip, password, user, vmname, format=None):
+def vm_list(request, hv, util, ip, password, user, vmname, bkupid=None, restoreName=None, format=None):
     if util == 'backup':
         if request.method == 'GET':
             if hv == "kvm":
@@ -106,22 +106,28 @@ def vm_list(request, hv, util, ip, password, user, vmname, format=None):
 
         elif request.method == 'POST':
             if hv == "kvm":
+                vm = VM.objects.get(VM_id=request.data['VM_name'])
+                Jobs(vm=vm, status='IN PROGRESS',
+                     function='Backup',
+                     timestamp=datetime.datetime.now(),
+                     hyper_type='KVM').save()
                 bkupserializer = BackupSerializer(data=request.data)
                 # print request.data
                 if bkupserializer.is_valid():
-                    vm = VM.objects.get(VM_id=request.data['VM_name'])
                     bkupID = backup_kvm.main(ip, request.data['backup_name'], request.data['VM_name'],
                                              vm.profile.freq_count, user, password)
-                    print bkupID
-                    print "AFA"
                     Backup(vm=vm,
                            backup_name=request.data['backup_name'],
                            bkupid=bkupID,
                            VM_name=str(request.data['VM_name']),
                            ).save()
                     # print request.data
+                    Jobs(vm=vm, status='SUCCESSFUL', function='Backup', timestamp=datetime.datetime.now(), hyper_type=
+                         'KVM').save()
                     return Response(bkupserializer.data, status=status.HTTP_201_CREATED)
                 else:
+                    Jobs(vm=vm, status='FAILED', function='Backup', timestamp=datetime.datetime.now(), hyper_type=
+                    'KVM').save()
                     return Response(bkupserializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
             if hv == "esx":
@@ -147,6 +153,7 @@ def vm_list(request, hv, util, ip, password, user, vmname, format=None):
                            backup_name=request.data['backup_name'],
                            bkupid=verList[0],
                            destination=verList[1],
+                           VM_name=str(request.data['VM_name']),
                            ).save()
                     return Response(bkupserializer.data, status=status.HTTP_201_CREATED)
                 else:
@@ -157,58 +164,60 @@ def vm_list(request, hv, util, ip, password, user, vmname, format=None):
     elif util == 'restore':
         if request.method == 'GET':
             if hv == "kvm":
+                openstackbkups = utilsKB.main(ip, user, password, vmname)
                 vm_obj = VM.objects.get(VM_id=vmname)
                 print "=================================="
+                dict = {}
+                for bkps in openstackbkups:
+                    dict[bkps[0]] = bkps[2]
                 # list_bkups = utilsKB.main(ip, user, password, vmname)
                 # print ip, user, password, vmname
                 backups = Backup.objects.filter(vm=vm_obj)
-                serializer = BackupSerializer(backups, many=True)
-                return Response(serializer.data)
-
-            elif hv == "esx":
-                bkuplist = utilsEB.main('test_TSAM')
-                vm_obj = VM.objects.get(VM_name='test_TSAM')
-                for bkup in bkuplist:
-                    if bkup is not None:
-                        Backup(vm=vm_obj,
-                               backup_name=str(bkup[0]),
-                               VM_name='test_TSAM'
-                               ).save()
-                backups = Backup.objects.filter(vm=vm_obj)
+                for bk in backups:
+                    if (bk.bkupid in dict):
+                        bk.status = dict[bk.bkupid]
+                    else:
+                        bk.status = 'UNAVAILABLE'
                 serializer = BackupSerializer(backups, many=True)
                 return Response(serializer.data)
 
             elif hv == "hyperv":
                 # pdb.set_trace()
-                bkuplist = utilsHB.main('D')
-                for bkup in bkuplist:
-                    if bkup is not None:
-                        vm_obj = VM.objects.get(VM_name=bkup[1])
-                        Backup(vm=vm_obj,
-                               backup_name=str(bkup[0]),
-                               VM_name=str(bkup[1]),
-                               ).save()
-                backups = Backup.objects.all()
+                bkuplist = utilsHB.main(ip, user, password, 'D')
+                vm_obj = VM.objects.get(VM_name=vmname)
+                backups = Backup.objects.filter(vm=vm_obj)
+                for bk in backups:
+                    bk.status = 'ACTIVE'
+                print "VM NAME: " + backups[0].vm.VM_id
+                serializer = BackupSerializer(backups, many=True)
+                return Response(serializer.data)
+
+            elif hv == "esx":
+                # pdb.set_trace()
+                print "VM NAME: " + vmname
+                bkuplist = utilsEB.main(ip, password, user, vmname)
+                vm_obj = VM.objects.get(VM_name=vmname)
+                backups = Backup.objects.filter(vm=vm_obj)
+                for bk in backups:
+                    bk.status = 'ACTIVE'
+                print "VM NAME: " + backups[0].vm.VM_id
                 serializer = BackupSerializer(backups, many=True)
                 return Response(serializer.data)
 
         elif request.method == 'POST':
             if hv == "kvm":
-                restore_kvm.main(str(request.data['VM_name']), str(request.data['backup_name']))
-                return Response(status=status.HTTP_201_CREATED)
+                # (ip, username, password, VMID, bkupid, VMNAME):
+                resp = restore_kvm.main(ip, user, password, vmname, bkupid, restoreName)
+                return Response(resp, status=status.HTTP_201_CREATED,)
 
             if hv == "esx":
-                # pdb.set_trace()
-                # bkupserializer = BackupSerializer(data=request.data)
-                # if bkupserializer.is_valid():
-                restore_esx.main(str(request.data['VM_name']), str(request.data['backup_name']))
+                resp = restore_esx.main(ip, password, user, vmname, bkupid)
                 return Response(status=status.HTTP_201_CREATED)
-                # else:
-                # return Response(bkupserializer.data, status=status.HTTP_400_BAD_REQUEST)
 
             if hv == "hyperv":
                 # pdb.set_trace()
-                restore_hyperv.main('D', str(request.data['backup_name']), str(request.data['VM_name']))
+                restore_hyperv.main(ip, user, password, vmname, bkupid,
+                                    'D')
                 return Response(status=status.HTTP_201_CREATED)
 
 

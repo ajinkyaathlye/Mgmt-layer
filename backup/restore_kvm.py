@@ -3,76 +3,154 @@ import requests
 import json
 
 
-def get_token():
-	headers = {'Content-Type': 'application/json',}
+def get_token(ip, username, password):
+    """Get Openstack authentication token for all request opertaions"""
 
-	data = '{"auth": {"tenantName": "demo", "passwordCredentials": {"username": "demo", "password":"root123"}}}'
+    headers = {'Content-Type': 'application/json', }
 
-	response=requests.post('http://10.136.60.48:5000/v2.0/tokens', headers=headers, data=data)
+    data = '{"auth": {"tenantName": "demo", "passwordCredentials": {"username": "' + username + '", "password":"' + password + '"}}}'
 
-	parsed_response=json.loads(response.text)
+    response = requests.post('http://' + ip + ':5000/v2.0/tokens', headers=headers, data=data)
 
-	token=parsed_response['access']['token']['id']
+    parsed_response = json.loads(response.text)
 
-	#print token
-	return token
+    token = parsed_response['access']['token']['id']
 
-		
-def list_backups():
-	headers = {
-    'User-Agent': 'python-novaclient',
-    'Accept': 'application/json',
-    'X-OpenStack-Nova-API-Version': '2.25',
-    'X-Auth-Token': get_token(),
-	}
-	response=requests.get('http://10.136.60.48:8774/v2.1/f8391ff92c6a4b45b0360f8c85eacb2f/images/detail', headers=headers)
-	parsed_json_response=json.loads(response.text)
-	backupList=[]
-	for i in range(len(parsed_json_response['images'])):
-		backup=[]
-		backup.append(str(parsed_json_response['images'][i]['id']))#ID
-		backup.append(str(parsed_json_response['images'][i]['name']))#Name
-		backup.append(str(parsed_json_response['images'][i]['status']))#Status
-		
-		
-		#print "ID",parsed_json_response['images'][i]['id']
-		#print "Name",parsed_json_response['images'][i]['name']
-		#print "Status",parsed_json_response['images'][i]['status']
-		if 'server' in parsed_json_response['images'][i]:
-			backup.append("VM ID"+str(parsed_json_response['images'][i]['server']['id']))#VM ID
-		else:
-			backup.append("VM ID --")#VM ID
-			#print "VM ID","--"
-		#print backup
-		#print "======================================================"
-		backupList.append(backup)
-	print backupList
-	return backupList
-	
-#ff587d41-0c91-4648-81e6-d74fa6f34615	= VM_ID
-	
-
-def restoreVM():
-	headers = {
-    'User-Agent': 'python-novaclient',
-    'Content-Type': 'application/json',
-    'Accept': 'application/json',
-    'X-OpenStack-Nova-API-Version': '2.25',
-    'X-Auth-Token': get_token(),
-}
-
-	data = '{"server": {"name": "djangoRestore", "imageRef": "fe800404-88cf-4e03-b2df-888695f79ba2", "availability_zone": "nova", "flavorRef": "1", "max_count": 1, "min_count": 1, "networks": [{"uuid": "4a985365-c999-41c7-ae17-0b7929f19009"}], "security_groups": [{"name": "default"}]}}'
-
-	response=requests.post('http://10.136.60.48:8774/v2.1/f8391ff92c6a4b45b0360f8c85eacb2f/servers', headers=headers, data=data)
-	parsed_json_response=json.loads(response.text)
-	print "Backup restoring with id : ",parsed_json_response['server']['id']
-
-#get_token()	
-#list_vms()
-#list_backups()
-#backupvm()
+    # print token
+    return token
 
 
-#list_backups()
-def main():
-	restoreVM()
+def getProjectID(ip):
+    headers = {'Content-Type': 'application/json', }
+
+    data = '{"auth": {"tenantName": "demo", "passwordCredentials": {"username": "admin", "password":"root123"}}}'
+
+    response = requests.post('http://' + ip + ':5000/v2.0/tokens', headers=headers, data=data)
+
+    parsed_response = json.loads(response.text)
+
+    token = parsed_response['access']['token']['id']
+    headers = {
+        'User-Agent': 'python-keystoneclient',
+        'Accept': 'application/json',
+        'X-Auth-Token': token, }
+    response = requests.get('http://' + ip + ':35357/v2.0/tenants', headers=headers)
+    parsed_json_response = json.loads(response.text)
+    # print parsed_json_response
+    gg = parsed_json_response['tenants']
+    for ll in gg:
+        if ll['name'] == 'demo':
+            # print ll['id']
+            return ll['id']
+
+
+def getVMdetails(ip, username, password, VMID):
+    # parameters: ip,user,pass,vmid
+    headers = {
+        'User-Agent': 'python-novaclient',
+        'Accept': 'application/json',
+        'X-OpenStack-Nova-API-Version': '2.25',
+        'X-Auth-Token': get_token(ip, username, password),
+    }
+
+    response = requests.get('http://' + ip + ':8774/v2.1/' + getProjectID(ip) + '/servers/' + VMID, headers=headers)
+    print response.text
+    parsed_response = json.loads(response.text)
+
+    # print parsed_response
+    """print parsed_response['server']['OS-EXT-AZ:availability_zone']
+	print parsed_response['server']['flavor']['id']
+	if ('private'in parsed_response['server']['addresses']):
+		print parsed_response['server']['addresses']['private'][1]['addr']
+	elif ('public'in parsed_response['server']['addresses']):
+		print parsed_response['server']['addresses']['public'][1]['addr']
+	print parsed_response['server']['security_groups'][0]['name']"""
+
+    dict = {}
+    dict['availability_zone'] = parsed_response['server']['OS-EXT-AZ:availability_zone']
+    dict['flavorRef'] = parsed_response['server']['flavor']['id']
+    if ('private' in parsed_response['server']['addresses']):
+        dict['uuid'] = getNetworkID(ip, username, password,
+                                    parsed_response['server']['addresses']['private'][1]['addr'])
+    elif ('public' in parsed_response['server']['addresses']):
+        dict['uuid'] = getNetworkID(parsed_response['server']['addresses']['public'][1]['addr'])
+
+    dict['security_groups'] = parsed_response['server']['security_groups'][0]['name']
+    return dict
+
+
+def getSubnetID(ip, username, password, address):
+    headers = {
+        'User-Agent': 'python-neutronclient',
+        'Accept': 'application/json',
+        'X-Auth-Token': get_token(ip, username, password),
+    }
+
+    response = requests.get('http://' + ip + ':9696/v2.0/ports.json', headers=headers)
+    # print response.text
+    parsed_response = json.loads(response.text)
+    ports = parsed_response['ports']
+    for gg in ports:
+        for lol in gg['fixed_ips']:
+            if lol['ip_address'] == address:
+                return lol['subnet_id']
+
+
+def getNetworkID(ip, username, password, address):
+    headers = {
+        'User-Agent': 'python-neutronclient',
+        'Accept': 'application/json',
+        'X-Auth-Token': get_token(ip, username, password),
+    }
+
+    response = requests.get('http://' + ip + ':9696/v2.0/networks.json', headers=headers)
+    parsed_response = json.loads(response.text)
+    subid = getSubnetID(ip, username, password, address)
+    for gg in parsed_response['networks']:
+        if subid in gg['subnets']:
+            return gg['id']
+
+
+# ff587d41-0c91-4648-81e6-d74fa6f34615	= VM_ID
+# str(models.Backup.objects.get(backup_name='Monday 20 February 2017 12:44:19 PM').vm.VM_id)
+# models.Backup.objects.get(backup_name='Monday 20 February 2017 12:44:19 PM').bkupid
+def restoreVM(ip, username, password, VMID, bkupid, VMNAME):
+    headers = {
+        'User-Agent': 'python-novaclient',
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+        'X-OpenStack-Nova-API-Version': '2.25',
+        'X-Auth-Token': get_token(ip, username, password),
+    }
+    print VMNAME
+    print bkupid
+    dict = getVMdetails(ip, username, password, VMID)
+    data = '{"server": {"name": "' + VMNAME + '", "imageRef": "' + bkupid + '", "availability_zone": "' + \
+           dict['availability_zone'] + '", "flavorRef": "' + dict[
+               'flavorRef'] + '", "max_count": 1, "min_count": 1, "networks": [{"uuid": "' + dict[
+               'uuid'] + '"}], "security_groups": [{"name": "' + dict['security_groups'] + '"}]}}'
+    print data
+    print 'http://' + ip + ':8774/v2.1/' + getProjectID(ip) + '/servers'
+
+    response = requests.post('http://' + ip + ':8774/v2.1/' + getProjectID(ip) + '/servers', headers=headers,
+                             data=data)
+
+    if response.status_code in [200,201,202] == False:
+        return str(response)
+    else:
+        print response.text
+        parsed_json_response = json.loads(response.text)
+        print "Backup restoring with id : ", parsed_json_response['server']['id']
+        return "Backup restoring with id : ", parsed_json_response['server']['id']
+
+
+# get_token()
+# list_vms()
+# list_backups()
+# backupvm()
+
+
+# list_backups()
+def main(ip, username, password, VMID, bkupid, VMNAME):
+    return restoreVM(ip, username, password, VMID, bkupid, VMNAME)
+

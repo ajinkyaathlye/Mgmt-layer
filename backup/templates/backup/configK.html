@@ -36,15 +36,8 @@
     background-color: #337ab7;
     color: white;
     }
-        /*border:1px solid black !important;
-        padding: 10px !important;
-        text-align: center; 
-        border-width: 2px !important;
-        border-spacing: 10px !important;*/
-    }
+
     .tdd{
-         border: 10px solid #ddd;
-    padding: 8px;
     text-align: center;
     align-content: center;
     }
@@ -56,12 +49,7 @@
 
     #backupListExcelDataTable tr:hover {background-color: #ddd;}
 
-        /*border:1px solid black !important;
-        padding: 10px !important;
-        text-align: center; 
-        border-width: 2px !important;
-        border-spacing: 10px !important;*/
-    }
+
     .modal {
     display: none; /* Hidden by default */
     position: fixed; /* Stay in place */
@@ -127,11 +115,158 @@ select option:hover {
 }
 
 </style>
+<style type="text/css">
 
+ .modalloader {
+    display: none; /* Hidden by default */
+    position: fixed; /* Stay in place */
+    z-index: 1; /* Sit on top */
+    padding-top: 100px; /* Location of the box */
+    left: 0;
+    top: 0;
+
+    width: 100%; /* Full width */
+    height: 100%; /* Full height */
+    overflow: auto; /* Enable scroll if needed */
+    background-color: rgb(0,0,0); /* Fallback color */
+    background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+    font-family: verdana;
+    }
+/* Modal Content */
+.modal-contentloader {
+    background-color: #FFFFFF;
+	margin:auto;
+    padding: 20px;
+    border: 1px solid #888;
+    width:20%;
+    font-size: 12px;
+     border-radius: 15px 15px;
+}
+
+
+.container1 { margin: 0 auto; overflow: hidden;}
+.content1 {margin:0 auto; padding-top:20px; padding-bottom:20px;}
+
+
+/* STOP ANIMATION */
+
+.stop {
+	-webkit-animation-play-state:paused;
+	-moz-animation-play-state:paused;
+}
+
+.ball {
+    background-color: rgba(0,0,0,0);
+    border: 5px solid rgba(0,183,229,0.9);
+    opacity: .9;
+    border-top: 5px solid rgba(0,0,0,0);
+    border-left: 5px solid rgba(0,0,0,0);
+    border-radius: 50px;
+    box-shadow: 0 0 10px #2187e7;
+    width: 50px;
+    height: 50px;
+    margin: 0 auto;
+    -moz-animation: spin .5s infinite linear;
+    -webkit-animation: spin .5s infinite linear;
+}
+
+.ball1 {
+    background-color: rgba(0,0,0,0);
+    border: 5px solid rgba(0,183,229,0.9);
+    opacity: .9;
+    border-top: 5px solid rgba(0,0,0,0);
+    border-left: 5px solid rgba(0,0,0,0);
+    border-radius: 50px;
+    box-shadow: 0 0 15px #2187e7;
+    width: 30px;
+    height: 30px;
+    margin: 0 auto;
+    position: relative;
+    top: -50px;
+    -moz-animation: spinoff .5s infinite linear;
+    -webkit-animation: spinoff .5s infinite linear;
+}
+
+@-moz-keyframes spin {
+    0% {
+        -moz-transform: rotate(0deg);
+    }
+
+    100% {
+        -moz-transform: rotate(360deg);
+    }
+}
+
+@-moz-keyframes spinoff {
+    0% {
+        -moz-transform: rotate(0deg);
+    }
+
+    100% {
+        -moz-transform: rotate(-360deg);
+    }
+}
+
+@-webkit-keyframes spin {
+    0% {
+        -webkit-transform: rotate(0deg);
+    }
+
+    100% {
+        -webkit-transform: rotate(360deg);
+    }
+}
+
+@-webkit-keyframes spinoff {
+    0% {
+        -webkit-transform: rotate(0deg);
+    }
+
+    100% {
+        -webkit-transform: rotate(-360deg);
+    }
+}
+</style>
 <script type = "text/javascript">
+
+
+
+
  var FAKEHEADERS=["VM_id","VM_name","hyper_type","state","guest_name","ip","profile","details"];
     var REALHEADERS=["VIRTUAL MACHINE ID","VIRTUAL MACHINE NAME","HYPERVISOR","STATE","GUEST NAME","IP","PROFILE","DETAILS"];
-    
+
+    document.getElementById("KVMlink").style.backgroundColor='#FFFFFF';
+    document.getElementById("KVMlink").style.color='#337ab7';
+
+
+    var ip,user,pass;
+    getDetails();
+ function getDetails()
+    {
+        //alert("HELLO");
+        var xmlhttp = new XMLHttpRequest();
+        xmlhttp.open("GET", "http://127.0.0.1:8000/config/kvm/getdetails", true);
+        xmlhttp.onreadystatechange = function()
+        {
+            if (this.readyState == 4 && this.status == 200)
+            {
+               //alert(xmlhttp.responseText);
+                var resp=xmlhttp.responseText;
+                if(resp=="NOT FOUND")
+                {
+                    alert("Enter the details first! (REDIRECT TO CONFIG PAGE)");
+                    return;
+                }
+
+                var details=resp.split("$$");
+                ip=details[0];
+                user=details[1];
+                pass=details[2];
+                list();
+            }
+        };
+        xmlhttp.send(null);
+    }
     function getRealheader(fakeheader)
     {
         
@@ -144,14 +279,21 @@ select option:hover {
     }
     var myList = [];
     var myBackups=[];
+
+
+
     function list() {
 
         var xmlhttp = new XMLHttpRequest();
-        xmlhttp.open("GET", "http://127.0.0.1:8000/vm/kvm/list/servip=" + document.getElementById("servip").value+ "&servuser=" + document.getElementById("servuser").value +"&servpaswd=" + document.getElementById("servpaswd").value, true);
+        if(ip!=null)
+            xmlhttp.open("GET", "http://127.0.0.1:8000/vm/kvm/list/servip=" + ip+"&servuser=" + user +"&servpaswd=" + pass, true);
+        else
+            xmlhttp.open("GET", "http://127.0.0.1:8000/vm/kvm/list/servip=" + document.getElementById("servip").value+ "&servuser=" + document.getElementById("servuser").value +"&servpaswd=" + document.getElementById("servpaswd").value, true);
         xmlhttp.onreadystatechange = function() 
         {
             if (this.readyState == 4 && this.status == 200) 
             {
+                document.getElementById("loader").style.display="none";
                 myList=xmlhttp.responseText;
                 //alert(xmlhttp.responseText);
                 //document.write(myList);
@@ -181,6 +323,7 @@ select option:hover {
             }
         };
         xmlhttp.send(null);
+        document.getElementById("loader").style.display="block";
     }
     function takeBackup() {
         var xmlhttp = new XMLHttpRequest();
@@ -261,33 +404,73 @@ select option:hover {
   //alert(columns.length);
     var k=0;
     //alert(myBackups[0]['VM_name']);
-  for (var i = 0; i < myBackups.length; i++) {
-    var row$ = $('<tr class="trr"/>');
-    var flag=0;
-    
-    var msg="";
-    for (var colIndex = 0; colIndex < columns.length; colIndex++) {
-      var cellValue = myBackups[i][columns[colIndex]];
-      //alert(cellValue);
-      
-      if(flag==0)
-      {
-        msg=cellValue;
-        //alert(msg);
-        flag=1;
-      }
-      //alert(cellValue);
-      if (cellValue == null) 
-        cellValue = "";
+      var string;
+      for (var i = 0; i < myBackups.length; i++) {
+          var row$ = $('<tr class="trr"/>');
+          var flag = 0;
 
-      row$.append($('<td class="tdd"/>').html(cellValue));
-      $(selector).append(row$);
-      
-    }
-  }
+          var msg = "";
+          flag=0;
+          for (var colIndex = 0; colIndex < columns.length; colIndex++) {
+              var cellValue = myBackups[i][columns[colIndex]];
+              //alert(cellValue);
+
+              if (flag == 1) {
+                  msg = cellValue;
+                  //alert(msg);
+
+              }
+              if(flag==2)
+              {
+
+                  if(cellValue!='ACTIVE')
+                      string = " ";
+                  else
+                      string = "<button class=\" buttontable\"onclick=\"restore('" + msg + "')\"> Restore</button>";
+              }
+              //alert(cellValue);
+              if (cellValue == null)
+                  cellValue = "";
+
+               row$.append($('<td class="tdd"/>').html(cellValue));
+
+
+
+              $(selector).append(row$);
+                flag++;
+          }
+
+          row$.append($('<td class="tdd"/>').html(string));
+
+              $(selector).append(row$);
+      }
 }
 
+function restore(msg)
+{
 
+    //alert(encodeURI(msg));
+    var VMNAME = prompt("Please enter the name of the restored VM", "");
+    //alert("The VM with name "+VMNAME+" is being restored xD")
+    var xmlhttp = new XMLHttpRequest();
+    msg=encodeURI(msg);
+    alert(msg);
+    //alert("http://127.0.0.1:8000/vm/kvm/restore/backupid=" + msg + "&vmname=" + VMNAME);
+    xmlhttp.open("POST", "http://127.0.0.1:8000/vm/kvm/restore/backupname=" + msg + "&vmname=" + VMNAME, true);
+
+    xmlhttp.onreadystatechange = function()
+    {
+        if (this.readyState == 4 && this.status == 200)
+        {
+            alert(xmlhttp.responseText);
+
+        }
+    };
+
+    xmlhttp.send(null);
+
+
+}
 
 
 // Adds a header row to the table and returns the set of columns.
@@ -333,6 +516,7 @@ function addAllColumnHeadersBackupList(myBackups, selector) {
       }
     }
   }
+   headerTr$.append($('<th class="thh"/>').html('Action'));
   $(selector).append(headerTr$);
   return columnSet;
   //alert(columnSet);
@@ -391,17 +575,29 @@ xmlhttp.send(null);
 }
 
 function listBackups(msg){
-    
+    var Table = document.getElementById("backupListExcelDataTable");
+    Table.innerHTML = "";
+
     var xmlhttp = new XMLHttpRequest();
     xmlhttp.open("GET", "http://127.0.0.1:8000/vm/kvm/listbackups/servip=" + document.getElementById("servip").value+ "&servuser=" + document.getElementById("servuser").value +"&servpaswd=" + document.getElementById("servpaswd").value + "&VMName=" + msg, true);
     xmlhttp.onreadystatechange = function() 
     {
         if (this.readyState == 4 && this.status == 200) 
         {
+            document.getElementById("loader").style.display="none";
+            //
             myBackups=xmlhttp.responseText;
-            //alert(xmlhttp.responseText);
-            //document.write(myList);
-            //alert(myList.substring(1,myList.length-1));
+            document.getElementById("TITLE").innerHTML="<b>BACKUP LIST</b>";
+
+            if(xmlhttp.responseText.length==2)
+            {
+                document.getElementById("TITLE").innerHTML="<b>NO BACKUPS FOUND</b>";
+                var modalOpen = document.getElementById('listBackupsModal');
+                //var span = document.getElementsByClassName("close")[0];
+                modalOpen.style.display = "block";
+                return;
+            }
+
             myBackups=myBackups.substring(1,myBackups.length-1);
             gg=myBackups.split("},");
             myBackups=[];
@@ -423,6 +619,7 @@ function listBackups(msg){
             //document.write(myList);
             //xmlResponse=xmlhttp.responseXML;
             //alert("Asd");
+            //alert("HELLO");
             buildBackupListTable('#backupListExcelDataTable');
             var modalOpen = document.getElementById('listBackupsModal');
             //var span = document.getElementsByClassName("close")[0];
@@ -434,7 +631,7 @@ function listBackups(msg){
         }
     };
     xmlhttp.send(null);
-   
+    document.getElementById("loader").style.display="block";
    
 
 }
@@ -453,21 +650,6 @@ function fillPolicyLabel(name){
 }
 </script>
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 <form class="details" style="margin-top: 50px"> 
     <fieldset>
        <legend style="color:#337ab7">Openstack Configuration Details:</legend>
@@ -482,15 +664,33 @@ function fillPolicyLabel(name){
         </div>
 
     </fieldset>
-</form> 
+</form>
 
 
 <br>
 <br>
-<table id="excelDataTable" border="1"></table>
+
+ <div id="loader" class="modalloader" >
+
+  <div class="modal-contentloader">
+      <div class="container1">
+	<div class="content1">
+    <div class="ball"></div>
+        <br><br>
+    <p style="text-align: center"><b>LOADING...</b></p>
+    </div>
+</div>
+  </div>
+
+</div>
+
+
+<table id="excelDataTable"  style="width: 90%; margin-left: auto;margin-right: auto;"></table>
 
 
 <div id="myModal" class="modal">
+
+
 
   <!-- Modal content -->
   <div class="modal-content">
@@ -518,14 +718,19 @@ function fillPolicyLabel(name){
 <div id="listBackupsModal" class="modal1" >
 
   <div class="modal-content1">
-    <span class="close" id="closeBack">&times;</span>
-    <table id="backupListExcelDataTable" border="1"></table>
+      <span class="close" id="closeBack">&times;</span>
+      <div style="text-align: center"><span id="TITLE"><b>BACKUP LIST</b></span></div>
+      <table id="backupListExcelDataTable" border="1"></table>
   </div>
 
-</div> 
+</div>
+
+
+
 
 <script>
 // Get the modal
+
 var span1 = document.getElementsByClassName("close")[0];
 var span2=document.getElementsByClassName("close")[1];
 var span3=document.getElementsByClassName("close")[2];
@@ -576,6 +781,13 @@ $(document).ready(function(event) {
     });
 });
 
+$(document).ready(function() {
+
+	$('.ball, .ball1').removeClass('stop');
+		$('.trigger').click(function() {
+				$('.ball, .ball1').toggleClass('stop');
+		});
+});
 
 </script>
 

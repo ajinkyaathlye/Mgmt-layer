@@ -2,17 +2,43 @@ body{
     background: white url("images/background.png");
   }
 
+
+.navbar-bg{
+    background-color: #337ab7;
+  }
+
+
+ .links:link,.links:visited{
+     background-color: #337ab7;
+    color: white;
+     text-align: center;
+    text-decoration: none;
+    display: inline-block;
+ }
+ .links:hover{
+     background-color: #cccccc !important;
+     color: #337ab7 !important;
+ }
+ .navbarButtons{
+     color:#FFF
+
+ }
+
   .navbar{
     border-radius: 0;
+      border: thick;
+      border-color: #2e353d;
     position: fixed;
     z-index: 2;
     top: 0;
     left: 0;
     right: 0;
+
   }
 
   .navbar-brand{
     font-family: 'Slabo 27px', serif;
+
   }
 
   .nav-side-menu {
@@ -34,9 +60,9 @@ body{
     text-align: center;
     font-size: 14px;
   }
-  
- 
-.button {
+
+
+ .button {
   display: inline-block;
   border-radius: 4px;
   background-color: #337ab7;

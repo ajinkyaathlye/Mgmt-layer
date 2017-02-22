@@ -81,7 +81,7 @@ def check_ESX():
                     print 'http://127.0.0.1:8000/vm/esx/backup/servip=' + vm.details.ip_addr + '&servuser=' + vm.details.username + '&servpaswd=' + vm.details.password
                 else:
                     backup = l[len(l) - 1]
-                    print l
+                    # print l
                     print backup
                     # print type(backup.timestamp), type(dt)
                     print (dt - backup.timestamp).days
@@ -137,7 +137,8 @@ def main():
     hypThread = newThread(3, "HyperV Thread")
     try:
         hypThread.start()
-        #print "..after HyperV Thread creation.."
+        print "In TRY"
+        print "..after HyperV Thread creation.."
     except (SystemExit):
         print "cyka blyat"
     check_ESX()
