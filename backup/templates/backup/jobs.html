@@ -1,0 +1,63 @@
+{% extends 'backup/base.html' %}
+{% block title %}VM Management{%endblock%}
+
+{%block body%}
+
+    <style>
+        #detailsDataTable {
+        font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
+        border-collapse: collapse;
+        width: 100%;
+        /*border:1px solid black !important;
+        padding: 10px !important;
+        text-align: center;
+        border-width: 2px !important;
+        border-spacing: 10px !important;*/
+        }
+        .trr{
+            text-align: center;
+        }
+        .thh{
+             border: 1px solid #ddd;
+        padding: 8px;
+         padding-top: 12px;
+        padding-bottom: 12px;
+        text-align: center;
+        background-color: #337ab7;
+        color: white;
+        }
+
+        .tdd{
+        text-align: center;
+        align-content: center;
+        }
+
+        #detailsDataTable tr:nth-child(even){background-color: #f0f0f0;}
+
+        #detailsDataTable tr:hover {background-color: #ddd;}
+
+    </style>
+
+
+
+    <h2 onload="alert('OHIHIH');" style="text-align: center;">Jobs Details:</h2>
+    <table id="detailsDataTable" border="1"></table>
+
+     <script>
+            jobDetails();
+            //buildDetailsTable('#detailsDataTable');
+            var cnt = 0;
+            function func() {
+                while(flag==0){
+                    cnt = cnt+ 1;
+                    if(cnt == 2)
+                        alert("HOO");
+                    continue;
+                }
+
+                buildDetailsTable('#detailsDataTable');
+            }
+     </script>
+
+
+{% endblock %}

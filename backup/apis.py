@@ -107,7 +107,8 @@ def vm_list(request, hv, util, ip, password, user, vmname, bkupid=None, restoreN
         elif request.method == 'POST':
             if hv == "kvm":
                 vm = VM.objects.get(VM_id=request.data['VM_name'])
-                Jobs(vm=vm, status='IN PROGRESS',
+                Jobs(vm=vm,
+                     status='IN PROGRESS',
                      function='Backup',
                      timestamp=datetime.datetime.now(),
                      hyper_type='KVM').save()
@@ -131,23 +132,46 @@ def vm_list(request, hv, util, ip, password, user, vmname, bkupid=None, restoreN
                     return Response(bkupserializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
             if hv == "esx":
+                vm = VM.objects.get(VM_id=request.data['VM_name'])
+                Jobs(vm=vm,
+                     status='IN PROGRESS',
+                     function='Backup',
+                     timestamp=datetime.datetime.now(),
+                     hyper_type='ESX').save()
+                bkupserializer = BackupSerializer(data=request.data)
                 bkupserializer = BackupSerializer(data=request.data)
                 if bkupserializer.is_valid():
-                    vm = VM.objects.get(VM_id=request.data['VM_name'])
+
                     backup_esx.main(ip, password, user, request.data['VM_name'], request.data['backup_name'],
                                     vm.profile.freq_count)
                     Backup(vm=vm,
                            backup_name=request.data['backup_name'],
                            VM_name=request.data['VM_name'],
                            ).save()
+                    Jobs(vm=vm,
+                         status='SUCCESSFUL',
+                         function='Backup',
+                         timestamp=datetime.datetime.now(),
+                         hyper_type='ESX').save()
                     return Response(bkupserializer.data, status=status.HTTP_201_CREATED)
                 else:
+                    Jobs(vm=vm,
+                         status='FAILED',
+                         function='Backup',
+                         timestamp=datetime.datetime.now(),
+                         hyper_type='ESX').save()
                     return Response(bkupserializer.data, status=status.HTTP_400_BAD_REQUEST)
 
             if hv == "hyperv":
+                vm = VM.objects.get(VM_id=str(request.data['VM_name']))
+                Jobs(vm=vm,
+                     status='IN PROGRESS',
+                     function='Backup',
+                     timestamp=datetime.datetime.now(),
+                     hyper_type='HyperV').save()
                 bkupserializer = BackupSerializer(data=request.data)
                 if bkupserializer.is_valid():
-                    vm = VM.objects.get(VM_id=str(request.data['VM_name']))
+
                     verList = backup_hyperv.main(ip, password, user, request.data['VM_name'], vm.profile.freq_count)
                     Backup(vm=vm,
                            backup_name=request.data['backup_name'],
@@ -155,8 +179,18 @@ def vm_list(request, hv, util, ip, password, user, vmname, bkupid=None, restoreN
                            destination=verList[1],
                            VM_name=str(request.data['VM_name']),
                            ).save()
+                    Jobs(vm=vm,
+                         status='SUCCESSFUL',
+                         function='Backup',
+                         timestamp=datetime.datetime.now(),
+                         hyper_type='HyperV').save()
                     return Response(bkupserializer.data, status=status.HTTP_201_CREATED)
                 else:
+                    Jobs(vm=vm,
+                         status='FAILED',
+                         function='Backup',
+                         timestamp=datetime.datetime.now(),
+                         hyper_type='HyperV').save()
                     return Response(bkupserializer.data, status=status.HTTP_400_BAD_REQUEST)
 
 
@@ -200,24 +234,56 @@ def vm_list(request, hv, util, ip, password, user, vmname, bkupid=None, restoreN
                 backups = Backup.objects.filter(vm=vm_obj)
                 for bk in backups:
                     bk.status = 'ACTIVE'
-                print "VM NAME: " + backups[0].vm.VM_id
+                #print "VM NAME: " + backups[0].vm.VM_id
                 serializer = BackupSerializer(backups, many=True)
                 return Response(serializer.data)
 
         elif request.method == 'POST':
             if hv == "kvm":
-                # (ip, username, password, VMID, bkupid, VMNAME):
+                vm = VM.objects.get(VM_id=vmname)
+                Jobs(vm=vm,
+                     status='IN PROGRESS',
+                     function='Restore',
+                     timestamp=datetime.datetime.now(),
+                     hyper_type='KVM').save()
                 resp = restore_kvm.main(ip, user, password, vmname, bkupid, restoreName)
+                Jobs(vm=vm,
+                     status='SUCCESSFUL',
+                     function='Restore',
+                     timestamp=datetime.datetime.now(),
+                     hyper_type='KVM').save()
                 return Response(resp, status=status.HTTP_201_CREATED,)
 
             if hv == "esx":
+                vm = VM.objects.get(VM_id=vmname)
+                Jobs(vm=vm,
+                     status='IN PROGRESS',
+                     function='Restore',
+                     timestamp=datetime.datetime.now(),
+                     hyper_type='ESX').save()
                 resp = restore_esx.main(ip, password, user, vmname, bkupid)
+                Jobs(vm=vm,
+                     status='SUCCESSFUL',
+                     function='Restore',
+                     timestamp=datetime.datetime.now(),
+                     hyper_type='ESX').save()
                 return Response(status=status.HTTP_201_CREATED)
 
             if hv == "hyperv":
                 # pdb.set_trace()
+                vm = VM.objects.get(VM_id=vmname)
+                Jobs(vm=vm,
+                     status='IN PROGRESS',
+                     function='Restore',
+                     timestamp=datetime.datetime.now(),
+                     hyper_type='HyperV').save()
                 restore_hyperv.main(ip, user, password, vmname, bkupid,
                                     'D')
+                Jobs(vm=vm,
+                     status='SUCCESSFUL',
+                     function='Restore',
+                     timestamp=datetime.datetime.now(),
+                     hyper_type='HyperV').save()
                 return Response(status=status.HTTP_201_CREATED)
 
 
@@ -234,7 +300,7 @@ def createPolicy(request, startDay, startMonth, startYear, endDay, endMonth, end
         return Response(serializer.data)
 
 
-def conPolicy(request, policyID, vmID):
+def conPolicy(policyID, vmID):
     policy = Profile.objects.get(pk=policyID)
     vm = VM.objects.get(VM_id=vmID)
     vm.profile = policy

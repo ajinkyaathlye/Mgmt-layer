@@ -75,16 +75,142 @@
 
 	 <script>
 
-           function OpenModal() {
+
+        var FAKEHEADERS1=["id", "hyper_type", "timestamp", "function","status", "vm"];
+        var REALHEADERS1=["SERIAL NO.", "HYPERVISOR", "TIMESTAMP", "FUNCTION", "STATUS", "VIRTUAL MACHINE ID"];
+        myDetails = [];
+        var flag= 0;
+        function getRealheader1(fakeheader)
+        {
+
+            for(var i=0;i<FAKEHEADERS1.length;i++)
+            {
+                //alert(fakeheader);
+                if(FAKEHEADERS1[i]==fakeheader)
+
+                    return i;
+            }
+            return -1;
+        }
+
+        function OpenModal() {
                	var modal = document.getElementById('policyModal');
 
 				// When the user clicks the button, open the modal 
 				modal.style.display = "block";
             	}
 
+           function jobDetails()
+           {
+
+               var xmlhttp = new XMLHttpRequest();
+                xmlhttp.open("GET", "http://127.0.0.1:8000/jobs/details/", true);
+                xmlhttp.onreadystatechange = function()
+                {
+                    if (this.readyState == 4 && this.status == 200)
+                    {
+                        myDetails=xmlhttp.responseText;
+                        alert(myDetails);
+                        //document.write(myList);
+                        //alert(myList.substring(1,myList.length-1));
+                        myDetails=myDetails.substring(1,myDetails.length-1);
+                        gg=myDetails.split("},");
+                        myDetails=[];
+                        //document.write(gg);
+                        for(var i=0;i<gg.length;i++)
+                        {
+                            if(i==gg.length-1)
+                            {
+                                myDetails.push(JSON.parse(gg[i]));
+                            }
+                            else
+                            myDetails.push(JSON.parse(gg[i]+'}'));
+
+                            //alert(gg[i]+'}');
+                            //alert(JSON.parse(gg[i]+'}'));
+                            //alert(myList[i]);
+                        }
+                        //document.write(myList);
+                        flag = 1;
+                        //buildDetailsTable('#detailsDataTable');
+                    }
+                };
+               xmlhttp.send(null);
+           }
+
+
+        function buildDetailsTable(selector) {
+            var table = document.getElementById("detailsDataTable");
+            while(table.rows.length>0){
+                    table.deleteRow(0);
+            }
+
+          var columns = addAllColumnHeadersDetails(selector);
+          //alert(columns);
+            var k=0;
+            //alert(myDetails.length);
+          for (var i = 0; i < myDetails.length; i++) {
+            var row$ = $('<tr class="trr"/>');
+            var flag=0;
+
+            var msg="";
+            for (var colIndex = 0; colIndex < columns.length; colIndex++) {
+              var cellValue = myDetails[i][columns[colIndex]];
+                //alert(cellValue);
+
+              if(flag==0)
+              {
+                msg=cellValue;
+                //alert(msg);
+                flag=1;
+              }
+              if (cellValue == null)
+                cellValue = "";
+              row$.append($('<td class="tdd"/>').html(cellValue));
+            }
+            $(selector).append(row$);
+          }
+
+        }
+
+
+  function addAllColumnHeadersDetails(selector) {
+      var columnSet = [];
+      var headerTr$ = $('<tr class="trr"/>');
+      var k = 0;
+      for (var i = 0; i < myDetails.length; i++) {
+          var rowHash = myDetails[i];
+
+          for (var key in rowHash) {
+              if ($.inArray(key, columnSet) == -1) {
+                  columnSet.push(key);
+                  var index = getRealheader1(key);
+
+                  if (index != -1)
+                      key = REALHEADERS1[index];
+                  //alert(key);
+                  headerTr$.append($('<th class="thh"/>').html(key));
+              }
+          }
+      }
+      $(selector).append(headerTr$);
+      //alert(columnSet);
+      return columnSet;
+  }
+
+
+        function showJobs()
+        {
+            jobDetails();
+            var modal = document.getElementById('jobsModal');
+            modal.style.display = "block";
+        }
+
+
+
+
 	       function createPolicy() {
 	        var xmlhttp = new XMLHttpRequest();
-	        //alert("http://127.0.0.1:8000/policy/create/startDay=" + document.getElementById("startDay").value + "&startMonth=" + document.getElementById("startMonth").value + "&startYear=" + document.getElementById("startYear").value + "&endDay=" + document.getElementById("endDay").value + "&endMonth=" + document.getElementById("endMonth").value+ "&endYear=" + document.getElementById("endYear").value + "&bckrotation=" + document.getElementById("bckrotation").value );
 	        var currentDate = $( "#startdatepicker" ).datepicker( "getDate" );
 			var startdate=document.getElementById("startdatepicker").value;
 			var startres=startdate.split("-"); 
@@ -163,8 +289,8 @@
 
 			<ul class="nav navbar-nav navbar-right">
                 <li class="active">
-					<a class="links" href="#" onclick="blur();">
-						<span class="glyphicon" aria-hidden="true"></span>&nbsp; Configuration
+					<a class="links" href="http://127.0.0.1:8000/jobs/">
+						<span class="glyphicon glyphicon-list-alt" aria-hidden="true"></span>&nbsp; View Log
 					</a>
 				</li>
 				<li class="active">
@@ -202,6 +328,16 @@
 		</div>
 	</div>
 
+
+    <div id="jobsModal" class="modal1">
+  <!-- Modal content -->
+	   <div class="modal-content1">
+		    <span class="close" id="closePol">&times;</span>
+		    <h2 style="">Jobs Details:</h2>
+            <table id="detailsDataTable" border="1"></table>
+		</div>
+	</div>
+
 	<!--<div class="col-md-3 column margintop20" style="margin-top: 50px; ">
 	    <ul class="nav nav-pills nav-stacked">
 		  <li class="active" ><a><strong>Hypervisors</strong></a></li>
@@ -210,8 +346,11 @@
 		  <li><a href="http://127.0.0.1:8000/config/hyperv/"><span class="glyphicon glyphicon-chevron-right"></span> HyperV</a></li>
 		 </ul>
 	</div> -->
+    <script>
 
 
+
+    </script>
 
 	{% block body %}
 	{% endblock %}

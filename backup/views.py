@@ -184,5 +184,7 @@ def jobDetails(request):
     jobs=models.Jobs.objects.all()
     ord_dict = JobsSerializer(jobs, many=True)
     JSON = json.dumps(ord_dict.data)
-    context = 
     return HttpResponse(JSON)
+
+def jobs(request):
+    return render(request, 'backup/jobs.html')

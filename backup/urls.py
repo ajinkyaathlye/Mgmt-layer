@@ -27,8 +27,9 @@ urlpatterns = [
     url(r'^policy/(?P<hyper>[a-z]+)/(?P<values>[A-Za-z0-9._@&%=:/,?-]+)', views.connectPolicy, name='connectPolicy'),
     url(r'^vm/(?P<hyper>[a-z]+)/restore/(?P<values>[A-Za-z0-9._@&%=:/, ?-]+)',views.restore, name='restore'),
     url(r'^config/(?P<hyper>[a-z]+)/getdetails/',views.getdetails, name='getdetails'),
-    url(r'^jobs/details/details/',views.jobDetails, name='jobDetails'),
-#url(r'^login/$', auth_views.login, name='login')
+    url(r'^jobs/details/',views.jobDetails, name='jobDetails'),
+    url(r'^jobs/',views.jobs, name='jobs'),
+    #url(r'^login/$', auth_views.login, name='login')
     #url(r'^', auth_views.login, {'template_name': 'backup/config.html'}, name='login'),
 ]
 

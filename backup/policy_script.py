@@ -25,7 +25,7 @@ def check_KVM():
     }
     for vm in vms_kvm:
         if vm.profile == None:
-            #print vm
+            print "In NONE: ", vm
             pass
         else:
 
@@ -64,7 +64,7 @@ def check_ESX():
     }
     for vm in vms_esx:
         if vm.profile == None:
-            print vm
+            #print vm
             pass
         else:
 
@@ -72,16 +72,18 @@ def check_ESX():
                 l = models.Backup.objects.filter(vm=vm).order_by('timestamp')
                 data = '{"VM_name": "' + vm.VM_id + '", "backup_name":"' + dt.strftime("%A %d %B %Y %I:%M:%S %p") + '"}'
                 if len(l) == 0:
-                    print l
+                    #print l
                     response = requests.post('http://127.0.0.1:8000/vm/esx/backup/servip=' + vm.details.ip_addr +
                                              '&servuser=' + vm.details.username + '&servpaswd=' + vm.details.password,
                                              headers=headers, data=data)
-                    print data
+                    #print data
+                    print "In L=0:"
                     print "================================="
                     print 'http://127.0.0.1:8000/vm/esx/backup/servip=' + vm.details.ip_addr + '&servuser=' + vm.details.username + '&servpaswd=' + vm.details.password
                 else:
                     backup = l[len(l) - 1]
                     # print l
+                    print "++++++++++++++In L != 0: ++++++++++++"
                     print backup
                     # print type(backup.timestamp), type(dt)
                     print (dt - backup.timestamp).days
@@ -106,7 +108,6 @@ def check_HyperV():
             #print vm
             pass
         else:
-
             if d >= vm.profile.start_date and d <= vm.profile.end_date:
                 l = models.Backup.objects.filter(vm=vm).order_by('timestamp')
                 data = '{"VM_name": "' + vm.VM_id + '", "backup_name":"' + dt.strftime("%A %d %B %Y %I:%M:%S %p") + '"}'
@@ -142,3 +143,4 @@ def main():
     except (SystemExit):
         print "cyka blyat"
     check_ESX()
+

@@ -27,8 +27,10 @@ def list_snapshot(vm, vm_name):
     try:
         snapshots = vm.snapshot.rootSnapshotList
     except AttributeError as e:
+        empty = []
         # mylogger.error("No snapshots found for {0}".format(vm_name))
         print "No snapshots found for {0}".format(vm_name)
+        return empty
         # sys.exit(1)
     d = collections.deque(snapshots)
     all_snapshots = []
