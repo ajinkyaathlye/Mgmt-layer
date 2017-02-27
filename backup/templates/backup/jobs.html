@@ -36,27 +36,29 @@
 
         #detailsDataTable tr:hover {background-color: #ddd;}
 
+
+
     </style>
 
-
-
-    <h2 onload="alert('OHIHIH');" style="text-align: center;">Jobs Details:</h2>
-    <table id="detailsDataTable" border="1"></table>
+    <h2>Hi</h2>
+    <table id="detailsDataTable" width="80%"></table>
 
      <script>
             jobDetails();
-            //buildDetailsTable('#detailsDataTable');
-            var cnt = 0;
-            function func() {
-                while(flag==0){
-                    cnt = cnt+ 1;
-                    if(cnt == 2)
-                        alert("HOO");
-                    continue;
-                }
+            var span1 = document.getElementsByClassName("close")[0];
+            var modalPol = document.getElementById('policyModal');
+            span1.onclick = function() {
+                //modalBack.style.display = "none";
+                modalPol.style.display = "none";
+            };
 
-                buildDetailsTable('#detailsDataTable');
+            window.onclick = function(event) {
+                if (event.target == modalPol) {
+                    modalPol.style.display = "none";
+                }
             }
+            //buildDetailsTable('#detailsDataTable');
+
      </script>
 
 

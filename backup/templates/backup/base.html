@@ -20,7 +20,21 @@
 	<script src="https://code.jquery.com/jquery-1.12.4.js"></script>
 	<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>		
 
+	<link href="https://fonts.googleapis.com/css?family=Oswald" rel="stylesheet">
+
     <style>
+
+    	form {
+            margin: 0 0 0 43%;
+            padding: 10px;
+            width: 20%;
+          }
+
+        input {
+            padding: 5px;
+            width: 90%;
+        }
+
     	.modal {
 		    display: none ; /* Hidden by default */
 		    position: fixed; /* Stay in place */
@@ -64,12 +78,12 @@
 		    text-decoration: none;
 	    	cursor: pointer;
 
-	 	}   
+	 	}
 
     </style>
-	
 
-		
+
+
 
 </head>
 
@@ -96,7 +110,7 @@
         function OpenModal() {
                	var modal = document.getElementById('policyModal');
 
-				// When the user clicks the button, open the modal 
+				// When the user clicks the button, open the modal
 				modal.style.display = "block";
             	}
 
@@ -213,18 +227,23 @@
 	        var xmlhttp = new XMLHttpRequest();
 	        var currentDate = $( "#startdatepicker" ).datepicker( "getDate" );
 			var startdate=document.getElementById("startdatepicker").value;
-			var startres=startdate.split("-"); 
+			var startres=startdate.split("-");
 			var currentDate = $( "#enddatepicker" ).datepicker( "getDate" );
 			var enddate=document.getElementById("enddatepicker").value;
-			var endres=enddate.split("-"); 
+			var endres=enddate.split("-");
 
-	        xmlhttp.open("GET", "http://127.0.0.1:8000/policy/create/startDay=" + startres[0] + "&startMonth=" + startres[1] + "&startYear=" + startres[2] + "&endDay=" + endres[0] + "&endMonth=" + endres[1] + "&endYear=" + endres[2] + "&bckrotation=" + document.getElementById("bckrotation").value, true);
+	        alert("Your policy has been created.");
+               document.getElementById('policyModal').style.display = "none";
+	        xmlhttp.open("GET", "http://127.0.0.1:8000/policy/create/startDay=" + startres[0] + "&startMonth=" +
+                    startres[1] + "&startYear=" + startres[2] + "&endDay=" + endres[0] + "&endMonth=" + endres[1] +
+                    "&endYear=" + endres[2] + "&bckrotation=" + document.getElementById("bckrotation").value +
+                    "&policyName=" + document.getElementById("policyName").value, true);
 
-	        xmlhttp.onreadystatechange = function() 
+	        xmlhttp.onreadystatechange = function()
 	        {
-	            if (this.readyState == 4 && this.status == 200) 
+	            if (this.readyState == 4 && this.status == 200)
 	            {
-	               
+
 	            }
 	        };
 
@@ -234,7 +253,7 @@
 
 <script>
   $( function() {
-    
+
 	$( "#startdatepicker" ).datepicker({
 	  dateFormat: "dd-mm-yy"
 	});
@@ -242,7 +261,7 @@
   } );
 
    $( function() {
-    
+
 	$( "#enddatepicker" ).datepicker({
 	  dateFormat: "dd-mm-yy"
 	});
@@ -253,7 +272,7 @@
 
 
 <body>
-	 
+
 
 	<nav class="navbar navbar-bg" >
 		<div class="container-fluid">
@@ -261,7 +280,10 @@
 		<!--Header-->
 		<div class="navbar-header">
 
-			<a class="navbarButtons navbar-brand" href="#">VM Management</a>
+			<a class="navbarButtons navbar-brand" href="http://127.0.0.1:8000/" style="font-family:Oswald;">
+				<span class="glyphicon glyphicon-home"></span>
+				<b>HOME</b>
+			</a>
 		</div>
 
 		<!--Items-->
@@ -270,27 +292,35 @@
 			<ul  class="nav navbar-nav" >
 				<li class="active" >
 					<a id="KVMlink" class=" links" href="http://127.0.0.1:8000/config/kvm/">
+						<img id="iconKVM" src="\static\backup\images\iconKVM.png" style="height:20px;width:20px;">
 						<b> KVM </b>
 					</a>
 				</li>
 				<li class="active">
 					<a id="ESXlink" class="links" href="http://127.0.0.1:8000/config/esx/">
+						<img id="iconESX" src="\static\backup\images\iconESX.png" style="height:20px;width:20px;">
 						<b> ESX </b>
 					</a>
 				</li>
                 <li class="active">
 					<a id="HYPERVlink" class="links" href="http://127.0.0.1:8000/config/hyperv/">
+						<img id="iconHYPERV" src="\static\backup\images\iconHYPERV.png" style="height:20px;width:20px;">
 						 <b> HyperV </b>
 					</a>
 				</li>
 			</ul>
 
-
+		<form class="navbar-form navbar-left" role="search" method="get" action="javascript:search()">
+				<div class="form-group">
+					<input type="text" id ="searchbar" class="form-control" name="q" value="">
+				</div>
+				<button type="button" class="btn btn-default" onclick="search();">Search</button>
+			</form>
 
 			<ul class="nav navbar-nav navbar-right">
                 <li class="active">
 					<a class="links" href="http://127.0.0.1:8000/jobs/">
-						<span class="glyphicon glyphicon-list-alt" aria-hidden="true"></span>&nbsp; View Log
+						<span class="glyphicon glyphicon-list-alt" aria-hidden="true"></span>&nbsp; Log
 					</a>
 				</li>
 				<li class="active">
@@ -298,16 +328,11 @@
 						<span class="glyphicon glyphicon-edit" aria-hidden="true"></span>&nbsp; Create Policy
 					</a>
 				</li>
-				<li class="active">
-					<a class="links" href="#">
-						<span class="glyphicon glyphicon-off" aria-hidden="true"></span>&nbsp; Logout
-					</a>
-				</li>
 			</ul>
 		</div>
 		</div>
 	</nav>
-	
+
 	<div id="policyModal" class="modal">
   <!-- Modal content -->
 	   <div class="modal-content">
@@ -316,6 +341,7 @@
 			<form,>
 				<fieldset>
 					<legend style="color:#337ab7"> Policy Parameters: </legend>
+						<p>Name: <input type="text" id="policyName"> </p>
 						<p>Start Date: <input type="text" id="startdatepicker" class="dateClass"></p>
 						<p>End Date: <input type="text" id="enddatepicker" class="dateClass"></p>
 						<p><b>Backup Rotation Count:</b></p>
@@ -324,7 +350,7 @@
                          <button type="button" class="button" onclick="createPolicy()" ><span>Submit</span></button>
                         </div>
 				</fieldset>
-			</form> 
+			</form>
 		</div>
 	</div>
 
@@ -356,6 +382,5 @@
 	{% endblock %}
 </body>
 </html>
-
 
 

@@ -26,14 +26,14 @@ body{
 
   .navbar{
     border-radius: 0;
-      border: thick;
-      border-color: #2e353d;
+    border: thick;
+    border-color: #2e353d;
     position: fixed;
     z-index: 2;
     top: 0;
     left: 0;
     right: 0;
-
+	border-bottom: 2px solid !important;
   }
 
   .navbar-brand{

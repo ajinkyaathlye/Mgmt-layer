@@ -29,6 +29,7 @@ urlpatterns = [
     url(r'^config/(?P<hyper>[a-z]+)/getdetails/',views.getdetails, name='getdetails'),
     url(r'^jobs/details/',views.jobDetails, name='jobDetails'),
     url(r'^jobs/',views.jobs, name='jobs'),
+    url(r'^$',views.homePG, name='homePG'),
     #url(r'^login/$', auth_views.login, name='login')
     #url(r'^', auth_views.login, {'template_name': 'backup/config.html'}, name='login'),
 ]

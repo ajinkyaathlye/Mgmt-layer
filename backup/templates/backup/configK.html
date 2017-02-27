@@ -14,7 +14,7 @@
         padding: 5px;
         width: 90%;
     }
-#excelDataTable, #backupListExcelDataTable, #detailsDataTable {
+#excelDataTable, #backupListExcelDataTable {
         font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
         border-collapse: collapse;
         width: 100%;
@@ -25,6 +25,7 @@
         border-spacing: 10px !important;*/
     }
     .trr{
+
         text-align: center;
     }
     .thh{
@@ -48,10 +49,6 @@
     #backupListExcelDataTable tr:nth-child(even){background-color: #f0f0f0;}
 
     #backupListExcelDataTable tr:hover {background-color: #ddd;}
-
-    #detailsDataTable tr:nth-child(even){background-color: #f0f0f0;}
-
-    #detailsDataTable tr:hover {background-color: #ddd;}
 
 
     .modal {
@@ -233,11 +230,13 @@ select option:hover {
 </style>
 <script type = "text/javascript">
 
+//icon change script----
+document.getElementById("iconKVM").src = "\\static\\backup\\images\\iconKVMblue.png";
+//icon changed.
 
 
-
- var FAKEHEADERS=["VM_id","VM_name","hyper_type","state","guest_name","ip","profile","details"];
-    var REALHEADERS=["VIRTUAL MACHINE ID","VIRTUAL MACHINE NAME","HYPERVISOR","STATE","GUEST NAME","IP","PROFILE","DETAILS"];
+ var FAKEHEADERS=["VM_id","VM_name","hyper_type","state","guest_name","ip","profile","details","backup_name","status"];
+    var REALHEADERS=["VIRTUAL MACHINE ID","VIRTUAL MACHINE NAME","HYPERVISOR","STATE","GUEST NAME","IP","PROFILE","DETAILS","BACKUP NAME","STATUS"];
 
     document.getElementById("KVMlink").style.backgroundColor='#FFFFFF';
     document.getElementById("KVMlink").style.color='#337ab7';
@@ -283,7 +282,7 @@ select option:hover {
     }
     var myList = [];
     var myBackups=[];
-
+    var autocompletelist=[];
 
 
     function list() {
@@ -321,6 +320,14 @@ select option:hover {
                 }
                 //document.write(myList);
                 buildHtmlTable('#excelDataTable');
+                for(var k=0;k<myList.length;k++)
+                {
+                    autocompletelist.push(myList[k]['VM_name']);
+                }
+
+                $("#searchbar").autocomplete(
+                    { source:  autocompletelist }
+                );
                 //xmlResponse=xmlhttp.responseXML;
                 //xmlDE=xmlResponse.documentElement;
                 //message = xmlDE.firstChild.data;
@@ -329,12 +336,42 @@ select option:hover {
         xmlhttp.send(null);
         document.getElementById("loader").style.display="block";
     }
+
+    function search()
+    {
+        var tblen= document.getElementById("excelDataTable").rows.length;
+
+        for(var i=1;i<tblen;i++)
+             document.getElementById("excelDataTable").rows[i].style.color="BLACK";
+
+         if(document.getElementById("searchbar").value.toString()=="")
+            return;
+
+        for(var i=1;i<tblen;i++)
+             document.getElementById("excelDataTable").rows[i].style.color="BLACK";
+        //alert(document.getElementById("searchbar").value.toString());
+        var tblen= document.getElementById("excelDataTable").rows.length;
+        for(var i=0;i<tblen;i++)
+        {
+            //alert("sadsd");
+            str=document.getElementById("excelDataTable").rows[i].cells[1].innerHTML;
+            if(str.toLowerCase().includes(document.getElementById("searchbar").value.toString().toLowerCase()))
+                document.getElementById("excelDataTable").rows[i].style.color="RED";
+        }
+    }
     function takeBackup() {
         var xmlhttp = new XMLHttpRequest();
         var IDstr = document.getElementById("policyList").value;
-        var ID=parseInt(IDstr);
-        //alert(policyParams[ID-1]['id']);
-        xmlhttp.open("GET", "http://127.0.0.1:8000/policy/kvm/policyID=" + policyParams[ID-1]['id'] + "&vmID=" + document.getElementById("VMName").value, true);
+        var count;
+        for(var i=0; i<policyParams.length;i++)
+        {
+            if(policyParams[i]['name']==IDstr)
+            {
+                count = i;
+                break;
+            }
+        }
+        xmlhttp.open("GET", "http://127.0.0.1:8000/policy/kvm/policyName=" + policyParams[count]['name'] + "&vmID=" + document.getElementById("VMName").value, true);
         //alert(JSON.stringify({VM_name: document.getElementById("VMName").value, backup_name: "ajinkya"}));
         //xmlhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
         xmlhttp.onreadystatechange = function()     
@@ -363,7 +400,8 @@ select option:hover {
   //alert(columns.length);
     var k=0;
   for (var i = 0; i < myList.length; i++) {
-    var row$ = $('<tr class="trr"/>');
+    var row$ = $('<tr  class="trr" />');
+
     var flag=0;
     
     var msg="";
@@ -394,6 +432,9 @@ select option:hover {
       row$.append($('<td class="tdd"/>').html(string));
       $(selector).append(row$);
   }
+
+
+
 }
 
   function buildBackupListTable(selector) {
@@ -498,9 +539,9 @@ function addAllColumnHeaders(myList, selector) {
       }
     }
   }
-  headerTr$.append($('<th class="thh"/>').html('Action'));
+  headerTr$.append($('<th class="thh"/>').html('ACTION'));
   $(selector).append(headerTr$);
-  headerTr$.append($('<th class="thh"/>').html('List Backups'));
+  headerTr$.append($('<th class="thh"/>').html('LIST BACKUPS'));
   return columnSet;
 }
 
@@ -515,12 +556,15 @@ function addAllColumnHeadersBackupList(myBackups, selector) {
     for (var key in rowHash) {
       if ($.inArray(key, columnSet) == -1) {
         columnSet.push(key);
-        
+        var index=getRealheader(key);
+
+        if(index!=-1)
+        key=REALHEADERS[index];
         headerTr$.append($('<th class="thh"/>').html(key));
       }
     }
   }
-   headerTr$.append($('<th class="thh"/>').html('Action'));
+   headerTr$.append($('<th class="thh"/>').html('ACTION'));
   $(selector).append(headerTr$);
   return columnSet;
   //alert(columnSet);
@@ -565,7 +609,7 @@ xmlhttp.onreadystatechange = function()
         var select = document.getElementById('policyList');
         for(var i=0;i<policyParams.length;i++){
             var option = document.createElement('option');
-            option.text = option.value = policyParams[i]['id'];
+            option.text = option.value = policyParams[i]['name'];
             select.options.add(option, 0);    
         }
         //alert(policyParams[0][1]);
@@ -653,7 +697,7 @@ function fillPolicyLabel(name){
     }
 }
 </script>
-
+<!--
 <form class="details" style="margin-top: 50px"> 
     <fieldset>
        <legend style="color:#337ab7">Openstack Configuration Details:</legend>
@@ -669,7 +713,7 @@ function fillPolicyLabel(name){
 
     </fieldset>
 </form>
-
+-->
 
 <br>
 <br>
@@ -681,13 +725,17 @@ function fillPolicyLabel(name){
 	<div class="content1">
     <div class="ball"></div>
         <br><br>
-    <p style="text-align: center"><b>LOADING...</b></p>
+    <p style="text-align:center;font-family:verdana;font-size:18px;color:#337ab7;">LOADING</p>
     </div>
 </div>
   </div>
 
 </div>
 
+<br> <br>
+    <fieldset>
+        <legend style="color:#337ab7" align="center">OpenStack Configuration Details:</legend>
+    </fieldset>
 
 <table id="excelDataTable"  style="width: 90%; margin-left: auto;margin-right: auto;"></table>
 
@@ -796,4 +844,5 @@ $(document).ready(function() {
 </script>
 
 {% endblock %}
+
 

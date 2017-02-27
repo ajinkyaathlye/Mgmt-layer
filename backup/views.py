@@ -141,7 +141,7 @@ def createPolicy(request, values):
     if request.method == 'GET':
         var = apis.createPolicy(request, parsed_dict['startDay'][0], parsed_dict['startMonth'][0],
                                 parsed_dict['startYear'][0], parsed_dict['endDay'][0], parsed_dict['endMonth'][0],
-                                parsed_dict['endYear'][0], parsed_dict['bckrotation'][0])
+                                parsed_dict['endYear'][0], parsed_dict['bckrotation'][0], parsed_dict['policyName'][0])
         return HttpResponse(json.dumps(var.data))
 
 
@@ -162,8 +162,10 @@ def connectPolicy(request, hyper, values):
     parsed_dict = urlparse.parse_qs(parsed.query)
     print parsed_dict
     if request.method == 'GET':
-        apis.conPolicy(request, parsed_dict['policyID'][0].strip('/'), parsed_dict['vmID'][0].strip('/'))
+        print parsed_dict['policyName'][0].strip('/')
+        apis.conPolicy(request, parsed_dict['policyName'][0].strip('/'), parsed_dict['vmID'][0].strip('/'))
         return HttpResponse("")
+
 
 def listBackups(request, hyper, values):
     """Lists the backups for a particular VM."""
@@ -186,5 +188,10 @@ def jobDetails(request):
     JSON = json.dumps(ord_dict.data)
     return HttpResponse(JSON)
 
+
 def jobs(request):
     return render(request, 'backup/jobs.html')
+
+
+def homePG(request):
+    return render(request, 'backup/homePg.html')

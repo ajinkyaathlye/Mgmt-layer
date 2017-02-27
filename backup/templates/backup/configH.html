@@ -240,6 +240,11 @@ select option:hover {
 </style>
 
 <script type = "text/javascript">
+
+//icon change script----
+document.getElementById("iconHYPERV").src = "\\static\\backup\\images\\iconHYPERVblue.png";
+//icon changed.
+
  var FAKEHEADERS=["VM_id","VM_name","hyper_type","state","guest_name","ip","profile","details"];
     var REALHEADERS=["VIRTUAL MACHINE ID","VIRTUAL MACHINE NAME","HYPERVISOR","STATE","GUEST NAME","IP","PROFILE","DETAILS"];
 
@@ -286,6 +291,7 @@ var ip,user,pass;
     }
     var myList = [];
     var myBackups=[];
+    var autocompletelist=[];
     function list() {
 
 var xmlhttp = new XMLHttpRequest();
@@ -300,7 +306,7 @@ var xmlhttp = new XMLHttpRequest();
             {
 		 document.getElementById("loader").style.display="none";	     
            myList=xmlhttp.responseText;
-                alert(xmlhttp.responseText);
+                //alert(xmlhttp.responseText);
                 //document.write(myList);
                 //alert(myList.substring(1,myList.length-1));
                 myList=myList.substring(1,myList.length-1);
@@ -322,20 +328,58 @@ var xmlhttp = new XMLHttpRequest();
                 }
                 //document.write(myList);
                 buildHtmlTable('#excelDataTable');
-                //xmlResponse=xmlhttp.responseXML;
-                //xmlDE=xmlResponse.documentElement;
-                //message = xmlDE.firstChild.data;
+                for(var k=0;k<myList.length;k++)
+                {
+                    autocompletelist.push(myList[k]['VM_name']);
+                }
+
+                $("#searchbar").autocomplete(
+                    { source:  autocompletelist }
+                );
             }
         };
         xmlhttp.send(null);
  document.getElementById("loader").style.display="block";
     }
+
+    function search()
+    {
+        alert("sadasd");
+         var tblen= document.getElementById("excelDataTable").rows.length;
+
+        for(var i=1;i<tblen;i++)
+             document.getElementById("excelDataTable").rows[i].style.color="BLACK";
+
+         if(document.getElementById("searchbar").value.toString()=="")
+            return;
+
+        for(var i=1;i<tblen;i++)
+             document.getElementById("excelDataTable").rows[i].style.color="BLACK";
+        //alert(document.getElementById("searchbar").value.toString());
+        var tblen= document.getElementById("excelDataTable").rows.length;
+        for(var i=0;i<tblen;i++)
+        {
+            //alert("sadsd");
+            str=document.getElementById("excelDataTable").rows[i].cells[1].innerHTML;
+            if(str.toLowerCase().includes(document.getElementById("searchbar").value.toString().toLowerCase()))
+                document.getElementById("excelDataTable").rows[i].style.color="RED";
+        }
+    }
+
     function takeBackup() {
         var xmlhttp = new XMLHttpRequest();
         var IDstr = document.getElementById("policyList").value;
-        var ID=parseInt(IDstr);
-        //alert(document.getElementById("VMName").value);
-        xmlhttp.open("GET", "http://127.0.0.1:8000/policy/hyperv/policyID=" + policyParams[ID-1]['id'] + "&vmID=" + document.getElementById("VMName").value, true);
+       // alert(IDstr);
+        var count;
+        for(var i=0; i<policyParams.length;i++)
+        {
+            if(policyParams[i]['name']==IDstr)
+            {
+                count = i;
+                break;
+            }
+        }
+        xmlhttp.open("GET", "http://127.0.0.1:8000/policy/hyperv/policyName=" + policyParams[i]['name'] + "&vmID=" + document.getElementById("VMName").value, true);
         //alert(JSON.stringify({VM_name: document.getElementById("VMName").value, backup_name: "ajinkya"}));
         //xmlhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
         xmlhttp.onreadystatechange = function()
@@ -540,7 +584,7 @@ xmlhttp.onreadystatechange = function()
         var select = document.getElementById('policyList');
         for(var i=0;i<policyParams.length;i++){
             var option = document.createElement('option');
-            option.text = option.value = policyParams[i]['id'];
+            option.text = option.value = policyParams[i]['name'];
             select.options.add(option, 0);
         }
         //alert(policyParams[0][1]);
@@ -553,19 +597,48 @@ xmlhttp.send(null);
 }*/
 }
 
-function listBackups(msg){
+function search()
+    {
+       var tblen= document.getElementById("excelDataTable").rows.length;
+        for(var i=1;i<tblen;i++)
+             document.getElementById("excelDataTable").rows[i].style.color="BLACK";
+       // alert((document.getElementById("searchbar").value.toString()));
+         if(document.getElementById("searchbar").value.toString()=="")
+            return;
 
+        for(var i=1;i<tblen;i++)
+             document.getElementById("excelDataTable").rows[i].style.color="BLACK";
+        //alert(document.getElementById("searchbar").value.toString());
+        var tblen= document.getElementById("excelDataTable").rows.length;
+        for(var i=0;i<tblen;i++)
+        {
+            //alert("sadsd");
+            str=document.getElementById("excelDataTable").rows[i].cells[1].innerHTML;
+            if(str.toLowerCase().includes(document.getElementById("searchbar").value.toString().toLowerCase()))
+                document.getElementById("excelDataTable").rows[i].style.color="RED";
+        }
+    }
+function listBackups(msg){
+    var Table = document.getElementById("backupListExcelDataTable");
+    Table.innerHTML = "";
     var xmlhttp = new XMLHttpRequest();
     xmlhttp.open("GET", "http://127.0.0.1:8000/vm/hyperv/listbackups/servip=" + document.getElementById("servip").value+ "&servuser=" + document.getElementById("servuser").value +"&servpaswd=" + document.getElementById("servpaswd").value + "&VMName=" + msg, true);
     xmlhttp.onreadystatechange = function()
     {
         if (this.readyState == 4 && this.status == 200)
         {
-		// document.getElementById("loader").style.display="none";         
-   myBackups=xmlhttp.responseText;
-            //alert(xmlhttp.responseText);
-            //document.write(myList);
-            //alert(myList.substring(1,myList.length-1));
+		    document.getElementById("loader").style.display="none";
+            myBackups=xmlhttp.responseText;
+            document.getElementById("TITLE").innerHTML="<b>BACKUP LIST</b>";
+
+            if(xmlhttp.responseText.length==2)
+            {
+                document.getElementById("TITLE").innerHTML="<b>NO BACKUPS FOUND</b>";
+                var modalOpen = document.getElementById('listBackupsModal');
+                //var span = document.getElementsByClassName("close")[0];
+                modalOpen.style.display = "block";
+                return;
+            }
             myBackups=myBackups.substring(1,myBackups.length-1);
             gg=myBackups.split("},");
             myBackups=[];
@@ -583,7 +656,7 @@ function listBackups(msg){
                 //alert(JSON.parse(gg[i]+'}'));
                 //alert(myList[i]);
             }
-            //alert(myBackups[0]['backup_name']);
+            //alert(myBackups);
             //document.write(myList);
             //xmlResponse=xmlhttp.responseXML;
             //alert("Asd");
@@ -598,6 +671,7 @@ function listBackups(msg){
         }
     };
     xmlhttp.send(null);
+	document.getElementById("loader").style.display="block";
 // document.getElementById("loader").style.display="block";
 
 
@@ -639,6 +713,7 @@ function restore(msg)
 
 }
 </script>
+    <!--
 <form class="details" style="margin-top: 50px">
     <fieldset>
         <legend style="color:#337ab7">HyperV Configuration Details:</legend>
@@ -653,6 +728,7 @@ function restore(msg)
         </div>
     </fieldset>
 </form>
+-->
 
 <br>
 <br>
@@ -663,12 +739,17 @@ function restore(msg)
 	<div class="content1">
     <div class="ball"></div>
         <br><br>
-    <p style="text-align: center"><b>LOADING...</b></p>
+     <p style="text-align:center;font-family:verdana;font-size:18px;color:#337ab7;">LOADING</p>
     </div>
 </div>
   </div>
 
 </div>
+
+    <br> <br>
+    <fieldset>
+        <legend style="color:#337ab7" align="center">HyperV Configuration Details:</legend>
+    </fieldset>
 <table id="excelDataTable" style="width: 90%; margin-left: auto;margin-right: auto;"></table>
 
 
@@ -701,6 +782,7 @@ function restore(msg)
 
   <div class="modal-content1">
     <span class="close" id="closeBack">&times;</span>
+      <div style="text-align: center"><span id="TITLE"><b>BACKUP LIST</b></span></div>
     <table id="backupListExcelDataTable" border="1"></table>
   </div>
 
@@ -765,7 +847,9 @@ $(document).ready(function() {
 				$('.ball, .ball1').toggleClass('stop');
 		});
 });
+
 </script>
 
 {% endblock %}
+
 

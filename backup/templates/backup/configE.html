@@ -239,9 +239,14 @@ select option:hover {
 </style>
 
 <script type = "text/javascript">
- var FAKEHEADERS=["VM_id","VM_name","hyper_type","state","guest_name","ip","profile","details"];
-    var REALHEADERS=["VIRTUAL MACHINE ID","VIRTUAL MACHINE NAME","HYPERVISOR","STATE","GUEST NAME","IP","PROFILE","DETAILS"];
-	document.getElementById("ESXlink").style.backgroundColor='#FFFFFF';
+
+//icon change script----
+document.getElementById("iconESX").src = "\\static\\backup\\images\\iconESXblue.png";
+//icon changed.
+
+var FAKEHEADERS=["VM_id","VM_name","hyper_type","state","guest_name","ip","profile","details","backup_name","status"];
+    var REALHEADERS=["VIRTUAL MACHINE ID","VIRTUAL MACHINE NAME","HYPERVISOR","STATE","GUEST NAME","IP","PROFILE","DETAILS","BACKUP NAME","STATUS"];
+document.getElementById("ESXlink").style.backgroundColor='#FFFFFF';
     document.getElementById("ESXlink").style.color='#337ab7';
 var ip,user,pass;
  getDetails();
@@ -284,10 +289,14 @@ function getRealheader(fakeheader)
     }
     var myList = [];
     var myBackups=[];
+    var autocompletelist=[];
     function list() {
-
-        var xmlhttp = new XMLHttpRequest();
-        xmlhttp.open("GET", "http://127.0.0.1:8000/vm/esx/list/servip=" + document.getElementById("servip").value+ "&servuser=" + document.getElementById("servuser").value +"&servpaswd=" + document.getElementById("servpaswd").value, true);
+var xmlhttp = new XMLHttpRequest();
+        if(ip!=null)
+            xmlhttp.open("GET", "http://127.0.0.1:8000/vm/esx/list/servip=" + ip+"&servuser=" + user +"&servpaswd=" + pass, true);
+        else
+            xmlhttp.open("GET", "http://127.0.0.1:8000/vm/esx/list/servip=" + document.getElementById("servip").value+ "&servuser=" + document.getElementById("servuser").value +"&servpaswd=" + document.getElementById("servpaswd").value, true);
+       
         xmlhttp.onreadystatechange = function()
         {
             if (this.readyState == 4 && this.status == 200)
@@ -319,17 +328,56 @@ function getRealheader(fakeheader)
                 //xmlResponse=xmlhttp.responseXML;
                 //xmlDE=xmlResponse.documentElement;
                 //message = xmlDE.firstChild.data;
+                for(var k=0;k<myList.length;k++)
+                {
+                    autocompletelist.push(myList[k]['VM_name']);
+                }
+
+                $("#searchbar").autocomplete(
+                    { source:  autocompletelist }
+                );
+
             }
         };
         xmlhttp.send(null);
 document.getElementById("loader").style.display="block";
+
+    }
+
+    function search()
+    {
+         var tblen= document.getElementById("excelDataTable").rows.length;
+        for(var i=1;i<tblen;i++)
+             document.getElementById("excelDataTable").rows[i].style.color="BLACK";
+
+         if(document.getElementById("searchbar").value.toString()=="")
+            return;
+
+        for(var i=1;i<tblen;i++)
+             document.getElementById("excelDataTable").rows[i].style.color="BLACK";
+        //alert(document.getElementById("searchbar").value.toString());
+        var tblen= document.getElementById("excelDataTable").rows.length;
+        for(var i=0;i<tblen;i++)
+        {
+            //alert("sadsd");
+            str=document.getElementById("excelDataTable").rows[i].cells[1].innerHTML;
+            if(str.toLowerCase().includes(document.getElementById("searchbar").value.toString().toLowerCase()))
+                document.getElementById("excelDataTable").rows[i].style.color="RED";
+        }
     }
     function takeBackup() {
         var xmlhttp = new XMLHttpRequest();
         var IDstr = document.getElementById("policyList").value;
-        var ID=parseInt(IDstr);
-        //alert(policyParams[ID-1]['id']);
-        xmlhttp.open("GET", "http://127.0.0.1:8000/policy/esx/policyID=" + policyParams[ID-1]['id'] + "&vmID=" + document.getElementById("VMName").value, true);
+        var count;
+        for(var i=0; i<policyParams.length;i++)
+        {
+            if(policyParams[i]['name']==IDstr)
+            {
+                count = i;
+                break;
+            }
+        }
+        xmlhttp.open("GET", "http://127.0.0.1:8000/policy/esx/policyName=" + policyParams[count]['name'] + "&vmID=" + document.getElementById("VMName").value, true);
         //alert(JSON.stringify({VM_name: document.getElementById("VMName").value, backup_name: "ajinkya"}));
         //xmlhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
         xmlhttp.onreadystatechange = function()
@@ -363,6 +411,7 @@ document.getElementById("loader").style.display="block";
 
     var msg="";
     for (var colIndex = 0; colIndex < columns.length; colIndex++) {
+        //alert(columns[colIndex]);
       var cellValue = myList[i][columns[colIndex]];
 
 
@@ -508,7 +557,10 @@ function addAllColumnHeadersBackupList(myBackups, selector) {
     for (var key in rowHash) {
       if ($.inArray(key, columnSet) == -1) {
         columnSet.push(key);
+        var index=getRealheader(key);
 
+        if(index!=-1)
+        key=REALHEADERS[index];
         headerTr$.append($('<th class="thh"/>').html(key));
 
       }
@@ -542,7 +594,7 @@ xmlhttp.onreadystatechange = function()
 {
    if (this.readyState == 4 && this.status == 200)
     {
-        //alert("ASDASD");
+        //alert(policyParams[0]['name']);
         policyParams=xmlhttp.responseText;
         policyParams=policyParams.substring(1,policyParams.length-1);
         gg=policyParams.split("},");
@@ -559,10 +611,10 @@ xmlhttp.onreadystatechange = function()
         var select = document.getElementById('policyList');
         for(var i=0;i<policyParams.length;i++){
             var option = document.createElement('option');
-            option.text = option.value = policyParams[i]['id'];
+            option.text = option.value = policyParams[i]['name'];
             select.options.add(option, 0);
         }
-        //alert(policyParams[0][1]);
+        //alert(policyParams[0]['name']);
 
     }
 }
@@ -573,18 +625,26 @@ xmlhttp.send(null);
 }
 
 function listBackups(msg){
-
+    var Table = document.getElementById("backupListExcelDataTable");
+    Table.innerHTML = "";
     var xmlhttp = new XMLHttpRequest();
     xmlhttp.open("GET", "http://127.0.0.1:8000/vm/esx/listbackups/servip=" + document.getElementById("servip").value+ "&servuser=" + document.getElementById("servuser").value +"&servpaswd=" + document.getElementById("servpaswd").value + "&VMName=" + msg, true);
     xmlhttp.onreadystatechange = function()
     {
         if (this.readyState == 4 && this.status == 200)
         {
-		document.getElementById("loader").style.display="none";
+		    document.getElementById("loader").style.display="none";
             myBackups=xmlhttp.responseText;
-            //alert(xmlhttp.responseText);
-            //document.write(myList);
-            //alert(myList.substring(1,myList.length-1));
+            document.getElementById("TITLE").innerHTML="<b>BACKUP LIST</b>";
+
+            if(xmlhttp.responseText.length==2)
+            {
+                document.getElementById("TITLE").innerHTML="<b>NO BACKUPS FOUND</b>";
+                var modalOpen = document.getElementById('listBackupsModal');
+                //var span = document.getElementsByClassName("close")[0];
+                modalOpen.style.display = "block";
+                return;
+            }
             myBackups=myBackups.substring(1,myBackups.length-1);
             gg=myBackups.split("},");
             myBackups=[];
@@ -617,14 +677,14 @@ function listBackups(msg){
         }
     };
     xmlhttp.send(null);
-	document.getElementById("loader").style.display="none";
+	document.getElementById("loader").style.display="block";
 
 
 }
 
 </script>
 
-
+<!--
 <form class="details" style="margin-top: 50px">
     <fieldset>
        <legend style="color:#337ab7">ESX Configuration Details:</legend>
@@ -639,6 +699,7 @@ function listBackups(msg){
         </div>
     </fieldset>
 </form>
+-->
 
 <br>
 <br>
@@ -649,14 +710,19 @@ function listBackups(msg){
 	<div class="content1">
     <div class="ball"></div>
         <br><br>
-    <p style="text-align: center"><b>LOADING...</b></p>
+    <p style="text-align:center;font-family:verdana;font-size:18px;color:#337ab7;">LOADING</p>
     </div>
 </div>
   </div>
 
 </div>
 
-<table id="excelDataTable" style="width: 90%; margin-left: auto;margin-right: auto;" ></table>
+<br> <br>
+    <fieldset>
+        <legend style="color:#337ab7" align="center">ESX Configuration Details:</legend>
+    </fieldset>
+
+<table id="excelDataTable" style="width: 95%; margin-left: auto;margin-right: auto;" ></table>
 
 
 <div id="myModal" class="modal">
@@ -688,6 +754,7 @@ function listBackups(msg){
 
   <div class="modal-content1">
     <span class="close" id="closeBack">&times;</span>
+      <div style="text-align: center"><span id="TITLE"><b>BACKUP LIST</b></span></div>
     <table id="backupListExcelDataTable" border="1"></table>
   </div>
 
@@ -752,7 +819,9 @@ $(document).ready(function() {
 				$('.ball, .ball1').toggleClass('stop');
 		});
 });
+
 </script>
 
 {% endblock %}
+
 

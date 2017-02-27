@@ -17,7 +17,7 @@ class newThread(threading.Thread):
 @csrf_exempt
 def check_KVM():
     vms_kvm = models.VM.objects.filter(hyper_type='KVM')
-    print vms_kvm
+    #print vms_kvm
     d = datetime.date.today()
     dt = datetime.datetime.today()
     headers = {
@@ -37,9 +37,6 @@ def check_KVM():
                     response = requests.post('http://127.0.0.1:8000/vm/kvm/backup/servip=' + vm.details.ip_addr +
                                              '&servuser=' + vm.details.username + '&servpaswd=' + vm.details.password,
                                              headers=headers, data=data)
-                    print data
-                    print "================================="
-                    print 'http://127.0.0.1:8000/vm/kvm/backup/servip=' + vm.details.ip_addr + '&servuser=' + vm.details.username + '&servpaswd=' + vm.details.password
                 else:
                     backup = l[len(l) - 1]
                     #print l
@@ -138,8 +135,6 @@ def main():
     hypThread = newThread(3, "HyperV Thread")
     try:
         hypThread.start()
-        print "In TRY"
-        print "..after HyperV Thread creation.."
     except (SystemExit):
         print "cyka blyat"
     check_ESX()
