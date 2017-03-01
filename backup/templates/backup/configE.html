@@ -355,14 +355,22 @@ document.getElementById("loader").style.display="block";
 
         for(var i=1;i<tblen;i++)
              document.getElementById("excelDataTable").rows[i].style.color="BLACK";
-        //alert(document.getElementById("searchbar").value.toString());
+        var flag=0;
         var tblen= document.getElementById("excelDataTable").rows.length;
         for(var i=0;i<tblen;i++)
         {
+
             //alert("sadsd");
             str=document.getElementById("excelDataTable").rows[i].cells[1].innerHTML;
             if(str.toLowerCase().includes(document.getElementById("searchbar").value.toString().toLowerCase()))
+            {
                 document.getElementById("excelDataTable").rows[i].style.color="RED";
+                if(flag==0)
+                {
+                    flag=1;
+                    document.getElementById("excelDataTable").rows[i-1].scrollIntoView(true);
+                }
+            }
         }
     }
     function takeBackup() {
@@ -384,7 +392,8 @@ document.getElementById("loader").style.display="block";
         {
             if (this.readyState == 4 && this.status == 200)
             {
-                alert(xmlhttp.responseText);
+                alert("Your policy has been submitted.");
+                document.getElementById("myModal").style.display = "none";
                 //xmlResponse=xmlhttp.responseXML;
                 //xmlDE=xmlResponse.documentElement;
                 //message = xmlDE.firstChild.data;
@@ -498,7 +507,7 @@ function restore(msg)
 {
     var xmlhttp = new XMLHttpRequest();
     msg=encodeURI(msg);
-    alert(msg);
+    //alert(msg);
     //alert("http://127.0.0.1:8000/vm/kvm/restore/backupid=" + msg + "&vmname=" + VMNAME);
     xmlhttp.open("POST", "http://127.0.0.1:8000/vm/esx/restore/backupname=" + msg, true);
 
@@ -506,15 +515,15 @@ function restore(msg)
     {
         if (this.readyState == 4 && this.status == 200)
         {
-            alert(xmlhttp.responseText);
-
-        }
-    };
+            //
 
     xmlhttp.send(null);
 
 
-}
+}alert(xmlhttp.responseText);
+
+        }
+    };
 
 
 
@@ -628,7 +637,7 @@ function listBackups(msg){
     var Table = document.getElementById("backupListExcelDataTable");
     Table.innerHTML = "";
     var xmlhttp = new XMLHttpRequest();
-    xmlhttp.open("GET", "http://127.0.0.1:8000/vm/esx/listbackups/servip=" + document.getElementById("servip").value+ "&servuser=" + document.getElementById("servuser").value +"&servpaswd=" + document.getElementById("servpaswd").value + "&VMName=" + msg, true);
+    xmlhttp.open("GET", "http://127.0.0.1:8000/vm/esx/listbackups/servip=" + ip+ "&servuser=" + user +"&servpaswd=" +pass + "&VMName=" + msg, true);
     xmlhttp.onreadystatechange = function()
     {
         if (this.readyState == 4 && this.status == 200)
@@ -768,16 +777,32 @@ var span3=document.getElementsByClassName("close")[2];
 var modalPol = document.getElementById('policyModal');
 var modalBack = document.getElementById('myModal');
 var modalbacklist=document.getElementById('listBackupsModal');
+var span4=document.getElementsByClassName("close")[3];
+
+
+span4.onclick = function() {
+    //modalBack.style.display = "none";
+    modalbacklist.style.display = "none";
+    modalPol.style.display = "none";
+    modalBack.style.display = "none";
+}
+
 span3.onclick = function() {
     //modalBack.style.display = "none";
     modalbacklist.style.display = "none";
+    modalPol.style.display = "none";
+    modalBack.style.display = "none";
 }
 span1.onclick = function() {
     //modalBack.style.display = "none";
+   modalbacklist.style.display = "none";
     modalPol.style.display = "none";
+    modalBack.style.display = "none";
 }
 
 span2.onclick = function() {
+     modalbacklist.style.display = "none";
+    modalPol.style.display = "none";
     modalBack.style.display = "none";
     //modalPol.style.display = "none";
 }
@@ -799,7 +824,7 @@ $(document).ready(function(event) {
     $('select').on('mouseenter', 'option', function(e) {
         var name=this.value;
         for(var i=0;i<policyParams.length;i++){
-        if(policyParams[i]['id']==name)
+        if(policyParams[i]['name']==name)
         {
             //alert(policyParams[i][1]);
             document.getElementById("startDate").innerHTML = policyParams[i]['start_date'];
@@ -823,5 +848,7 @@ $(document).ready(function() {
 </script>
 
 {% endblock %}
+
+
 
 

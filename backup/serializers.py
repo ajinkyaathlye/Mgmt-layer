@@ -2,10 +2,17 @@ from rest_framework import serializers
 from .models import VM, Backup, Profile, Jobs
 from django.contrib.auth.models import User
 
+
+class KVMSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = VM
+        fields = ('VM_id', 'VM_name', 'hyper_type', 'state', 'guest_name', 'ip', 'profile')
+
+
 class VMSerializer(serializers.ModelSerializer):
     class Meta:
         model = VM
-        fields = "__all__"
+        fields = ('VM_id', 'hyper_type', 'state', 'profile')
 
 
 class BackupSerializer(serializers.ModelSerializer):

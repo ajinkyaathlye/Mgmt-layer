@@ -8,6 +8,8 @@ class Details(models.Model):
     username = models.CharField(max_length=1000, blank=True)
     password = models.CharField(max_length=1000, blank=True)
 
+    def __str__(self):
+        return str(self.hyper_type)
 
 class Profile(models.Model):
     start_date = models.DateField()

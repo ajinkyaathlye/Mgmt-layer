@@ -28,7 +28,7 @@ class Policy(threading.Thread):
                 break
             else:
                 policy_script.main()
-            time.sleep(30)
+            time.sleep(90)
 
 
 exitFlag = 0

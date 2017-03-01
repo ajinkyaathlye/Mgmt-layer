@@ -378,7 +378,8 @@ document.getElementById("iconKVM").src = "\\static\\backup\\images\\iconKVMblue.
         {
             if (this.readyState == 4 && this.status == 200) 
             {
-                alert(xmlhttp.responseText);
+                alert("Your policy has been submitted.");
+                document.getElementById("myModal").style.display = "none";
                 //xmlResponse=xmlhttp.responseXML;
                 //xmlDE=xmlResponse.documentElement;
                 //message = xmlDE.firstChild.data;
@@ -627,7 +628,7 @@ function listBackups(msg){
     Table.innerHTML = "";
 
     var xmlhttp = new XMLHttpRequest();
-    xmlhttp.open("GET", "http://127.0.0.1:8000/vm/kvm/listbackups/servip=" + document.getElementById("servip").value+ "&servuser=" + document.getElementById("servuser").value +"&servpaswd=" + document.getElementById("servpaswd").value + "&VMName=" + msg, true);
+    xmlhttp.open("GET", "http://127.0.0.1:8000/vm/kvm/listbackups/servip=" + ip+ "&servuser=" + user +"&servpaswd=" + pass + "&VMName=" + msg, true);
     xmlhttp.onreadystatechange = function() 
     {
         if (this.readyState == 4 && this.status == 200) 
@@ -789,16 +790,32 @@ var span3=document.getElementsByClassName("close")[2];
 var modalPol = document.getElementById('policyModal');
 var modalBack = document.getElementById('myModal');
 var modalbacklist=document.getElementById('listBackupsModal');
+var span4=document.getElementsByClassName("close")[3];
+
+
+span4.onclick = function() {
+    //modalBack.style.display = "none";
+    modalbacklist.style.display = "none";
+    modalPol.style.display = "none";
+    modalBack.style.display = "none";
+}
+
 span3.onclick = function() {
     //modalBack.style.display = "none";
     modalbacklist.style.display = "none";
+    modalPol.style.display = "none";
+    modalBack.style.display = "none";
 }
 span1.onclick = function() {
     //modalBack.style.display = "none";
+   modalbacklist.style.display = "none";
     modalPol.style.display = "none";
+    modalBack.style.display = "none";
 }
 
 span2.onclick = function() {
+     modalbacklist.style.display = "none";
+    modalPol.style.display = "none";
     modalBack.style.display = "none";
     //modalPol.style.display = "none";
 }
@@ -820,7 +837,7 @@ $(document).ready(function(event) {
     $('select').on('mouseenter', 'option', function(e) {
         var name=this.value;
         for(var i=0;i<policyParams.length;i++){
-        if(policyParams[i]['id']==name)
+        if(policyParams[i]['name']==name)
         {
             //alert(policyParams[i][1]);
             document.getElementById("startDate").innerHTML = policyParams[i]['start_date'];

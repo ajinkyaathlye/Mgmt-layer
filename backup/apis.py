@@ -1,22 +1,11 @@
 from .models import VM, Backup, Profile, Jobs
-from .serializers import VMSerializer, BackupSerializer, ProfileSerializer
-from django.contrib.auth.models import User
-from rest_framework import permissions
-from rest_framework import generics
-from .permissions import IsOwnerOrReadOnly
+from .serializers import KVMSerializer, VMSerializer, BackupSerializer, ProfileSerializer
 from rest_framework.response import Response
-from rest_framework import renderers
-from rest_framework import viewsets
-from rest_framework.decorators import detail_route, api_view
+from rest_framework.decorators import api_view
 from rest_framework import status
-from django.shortcuts import render
-from rest_framework.authentication import SessionAuthentication, BasicAuthentication
-from rest_framework.permissions import IsAuthenticated
-from . import models, utils, utilsH, utilsK, utilsKB, utilsEB, utilsHB, backup_kvm, backup_hyperv, backup_esx, \
+from . import models, utils, utilsH, utilsK, utilsKB, utilsHB, backup_kvm, backup_hyperv, backup_esx, \
     restore_esx, restore_kvm, restore_hyperv
-from . import global_variables as gv
 import pdb, datetime
-import json
 
 
 @api_view(['GET', 'POST'])
@@ -25,7 +14,6 @@ def vm_list(request, hv, util, ip, password, user, vmname, bkupid=None, restoreN
         if request.method == 'GET':
             if hv == "kvm":
                 l = []
-                gv.kvm_ip = ip
                 list_VM = utilsK.main(ip, user, password)
                 print list_VM
                 for vm in list_VM:
@@ -52,7 +40,7 @@ def vm_list(request, hv, util, ip, password, user, vmname, bkupid=None, restoreN
                     print zz.profile, "========================", zz.VM_id
                     vms = VM.objects.get(hyper_type="KVM", VM_id=vm[0])
                     l.append(vms)
-                serializer = VMSerializer(l, many=True)
+                serializer = KVMSerializer(l, many=True)
                 return Response(serializer.data)
 
             elif hv == "esx":
@@ -61,6 +49,7 @@ def vm_list(request, hv, util, ip, password, user, vmname, bkupid=None, restoreN
                 # user="sumitt@ad2lab.com"
                 list_VM = utils.main(ip, password, user)
                 # print "IN VMLIST"
+                l = []
                 for vm in list_VM:
                     # d = models.Details(hyper_type='KVM', ip_addr=ip, username=user, password=password)
                     db, created = models.Details.objects.get_or_create(hyper_type='ESX', ip_addr=ip, username=user,
@@ -81,8 +70,9 @@ def vm_list(request, hv, util, ip, password, user, vmname, bkupid=None, restoreN
                                                                    )
                     if flag == False:
                         virt_mach.save()
-                vms = VM.objects.filter(hyper_type="ESX")
-                serializer = VMSerializer(vms, many=True)
+                    vms = VM.objects.get(hyper_type="ESX", VM_id=vm[0])
+                    l.append(vms)
+                serializer = VMSerializer(l, many=True)
                 return Response(serializer.data)
 
             elif hv == "hyperv":
@@ -107,7 +97,7 @@ def vm_list(request, hv, util, ip, password, user, vmname, bkupid=None, restoreN
                         if flag == False:
                             virt_mach.save()
                     vms = VM.objects.get(hyper_type="HyperV", VM_id=vm[0])
-                    #print vms.profile
+                    print vms.profile
                     l.append(vms)
                 serializer = VMSerializer(l, many=True)
                 return Response(serializer.data)
@@ -233,7 +223,7 @@ def vm_list(request, hv, util, ip, password, user, vmname, bkupid=None, restoreN
             elif hv == "esx":
                 # pdb.set_trace()
                 print "VM NAME: " + vmname
-                bkuplist = utilsEB.main(ip, password, user, vmname)
+                #bkuplist = utilsEB.main(ip, password, user, vmname)
                 vm_obj = VM.objects.get(VM_name=vmname)
                 backups = Backup.objects.filter(vm=vm_obj)
                 for bk in backups:
@@ -259,6 +249,7 @@ def vm_list(request, hv, util, ip, password, user, vmname, bkupid=None, restoreN
 
             if hv == "esx":
                 vm = VM.objects.get(VM_id=vmname)
+                print "IN API++++++++++++++" + vm.VM_id
                 j = Jobs(vm=vm,
                          status='IN PROGRESS',
                          function='Restore',

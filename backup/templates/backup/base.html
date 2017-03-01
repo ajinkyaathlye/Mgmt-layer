@@ -124,7 +124,7 @@
                     if (this.readyState == 4 && this.status == 200)
                     {
                         myDetails=xmlhttp.responseText;
-                        alert(myDetails);
+                        //alert(myDetails);
                         //document.write(myList);
                         //alert(myList.substring(1,myList.length-1));
                         myDetails=myDetails.substring(1,myDetails.length-1);
@@ -146,7 +146,7 @@
                         }
                         //document.write(myList);
                         flag = 1;
-                        //buildDetailsTable('#detailsDataTable');
+                        buildDetailsTable('#detailsDataTable');
                     }
                 };
                xmlhttp.send(null);
@@ -211,16 +211,6 @@
       //alert(columnSet);
       return columnSet;
   }
-
-
-        function showJobs()
-        {
-            jobDetails();
-            var modal = document.getElementById('jobsModal');
-            modal.style.display = "block";
-        }
-
-
 
 
 	       function createPolicy() {
