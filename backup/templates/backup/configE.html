@@ -151,13 +151,7 @@
         text-align: center;
         border-width: 2px !important;
         border-spacing: 10px !important;*/
-    }
-    .tdd{
-         border: 10px solid #ddd;
-    padding: 8px;
-    text-align: center;
-    align-content: center;
-    }
+
     #excelDataTable tr:nth-child(even){background-color: #f0f0f0;}
 
     #excelDataTable tr:hover {background-color: #ddd;}
@@ -171,7 +165,7 @@
         text-align: center;
         border-width: 2px !important;
         border-spacing: 10px !important;*/
-    }
+
     .modal {
     display: none; /* Hidden by default */
     position: fixed; /* Stay in place */
@@ -737,7 +731,6 @@ function listBackups(msg){
   <div class="modal-content">
     <span class="close" id="closeBack">&times;</span>
     <p>Backup VM: </p>
-    <form,>
         <fieldset>
             <legend style="color:#337ab7"> Options: </legend>
                 <p><b>VM Name:</b></p>
@@ -751,7 +744,6 @@ function listBackups(msg){
              <button type="button" class="button" onclick="takeBackup()" ><span>Submit</span></button>
         </div>
         </fieldset>
-    </form>
   </div>
 
 </div>
@@ -774,37 +766,48 @@ var span3=document.getElementsByClassName("close")[2];
 var modalPol = document.getElementById('policyModal');
 var modalBack = document.getElementById('myModal');
 var modalbacklist=document.getElementById('listBackupsModal');
+var modalAlert=document.getElementById('alertModal');
 var span4=document.getElementsByClassName("close")[3];
+//var span5=document.getElementsByClassName("close")[4];
 
+/*span5.onclick = function() {
+    alert("span5");
+    //modalAlert.style.display = "none";
+    modalbacklist.style.display = "none";
+    modalPol.style.display = "none";
+    modalBack.style.display = "none";
+
+
+};*/
 
 span4.onclick = function() {
-    //modalBack.style.display = "none";
+    modalAlert.style.display = "none";
     modalbacklist.style.display = "none";
     modalPol.style.display = "none";
     modalBack.style.display = "none";
-}
-
+};
 span3.onclick = function() {
-    //modalBack.style.display = "none";
+   modalAlert.style.display = "none";
     modalbacklist.style.display = "none";
     modalPol.style.display = "none";
     modalBack.style.display = "none";
-}
+};
 span1.onclick = function() {
-    //modalBack.style.display = "none";
-   modalbacklist.style.display = "none";
+    modalAlert.style.display = "none";
+    modalbacklist.style.display = "none";
     modalPol.style.display = "none";
     modalBack.style.display = "none";
-}
+};
 
 span2.onclick = function() {
      modalbacklist.style.display = "none";
     modalPol.style.display = "none";
     modalBack.style.display = "none";
-    //modalPol.style.display = "none";
-}
+    modalAlert.style.display = "none";
+};
 // When the user clicks anywhere outside of the modal, close it
 window.onclick = function(event) {
+    //alert("window");
     if (event.target == modalBack) {
         modalBack.style.display = "none";
     }
@@ -814,8 +817,10 @@ window.onclick = function(event) {
     if (event.target == modalbacklist) {
         modalbacklist.style.display = "none";
     }
-
-}
+    if (event.target == modalAlert) {
+        modalAlert.style.display = "none";
+    }
+};
 
 $(document).ready(function(event) {
     $('select').on('mouseenter', 'option', function(e) {

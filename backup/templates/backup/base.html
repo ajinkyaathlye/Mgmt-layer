@@ -221,9 +221,10 @@
 			var currentDate = $( "#enddatepicker" ).datepicker( "getDate" );
 			var enddate=document.getElementById("enddatepicker").value;
 			var endres=enddate.split("-");
-
-	        alert("Your policy has been created.");
+               //alert("Policy has been created.");
+               document.getElementById('message').innerHTML = "<strong>Your policy has been created</strong>";
                document.getElementById('policyModal').style.display = "none";
+               document.getElementById('alertModal').style.display = "block";
 	        xmlhttp.open("GET", "http://127.0.0.1:8000/policy/create/startDay=" + startres[0] + "&startMonth=" +
                     startres[1] + "&startYear=" + startres[2] + "&endDay=" + endres[0] + "&endMonth=" + endres[1] +
                     "&endYear=" + endres[2] + "&bckrotation=" + document.getElementById("bckrotation").value +
@@ -328,7 +329,6 @@
 	   <div class="modal-content">
 		    <span class="close" id="closePol">&times;</span>
 		    <p>Create a New Policy:</p>
-			<form,>
 				<fieldset>
 					<legend style="color:#337ab7"> Policy Parameters: </legend>
 						<p>Name: <input type="text" id="policyName"> </p>
@@ -340,19 +340,17 @@
                          <button type="button" class="button" onclick="createPolicy()" ><span>Submit</span></button>
                         </div>
 				</fieldset>
-			</form>
 		</div>
 	</div>
 
-
-    <div id="jobsModal" class="modal1">
+    <div id="alertModal" class="modal">
   <!-- Modal content -->
-	   <div class="modal-content1">
-		    <span class="close" id="closePol">&times;</span>
-		    <h2 style="">Jobs Details:</h2>
-            <table id="detailsDataTable" border="1"></table>
-		</div>
+	   <div class="modal-content">
+		    <span class="close" id="closeAlert">&times;</span>
+           <div style="text-align: center"><span id="message"></span></div>
+       	</div>
 	</div>
+
 
 	<!--<div class="col-md-3 column margintop20" style="margin-top: 50px; ">
 	    <ul class="nav nav-pills nav-stacked">
