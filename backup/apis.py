@@ -1,5 +1,5 @@
 from .models import VM, Backup, Profile, Jobs
-from .serializers import KVMSerializer, VMSerializer, BackupSerializer, ProfileSerializer
+from .serializers import KVMSerializer, ESXSerializer, HyperVSerializer, BackupSerializer, ProfileSerializer
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
 from rest_framework import status
@@ -72,7 +72,7 @@ def vm_list(request, hv, util, ip, password, user, vmname, bkupid=None, restoreN
                         virt_mach.save()
                     vms = VM.objects.get(hyper_type="ESX", VM_id=vm[0])
                     l.append(vms)
-                serializer = VMSerializer(l, many=True)
+                serializer = ESXSerializer(l, many=True)
                 return Response(serializer.data)
 
             elif hv == "hyperv":
@@ -99,7 +99,7 @@ def vm_list(request, hv, util, ip, password, user, vmname, bkupid=None, restoreN
                     vms = VM.objects.get(hyper_type="HyperV", VM_id=vm[0])
                     print vms.profile
                     l.append(vms)
-                serializer = VMSerializer(l, many=True)
+                serializer = HyperVSerializer(l, many=True)
                 return Response(serializer.data)
 
         elif request.method == 'POST':

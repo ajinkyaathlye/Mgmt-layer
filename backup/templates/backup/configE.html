@@ -361,7 +361,7 @@ document.getElementById("loader").style.display="block";
         {
 
             //alert("sadsd");
-            str=document.getElementById("excelDataTable").rows[i].cells[1].innerHTML;
+            str=document.getElementById("excelDataTable").rows[i].cells[0].innerHTML;
             if(str.toLowerCase().includes(document.getElementById("searchbar").value.toString().toLowerCase()))
             {
                 document.getElementById("excelDataTable").rows[i].style.color="RED";
@@ -515,15 +515,12 @@ function restore(msg)
     {
         if (this.readyState == 4 && this.status == 200)
         {
-            //
-
-    xmlhttp.send(null);
-
-
-}alert(xmlhttp.responseText);
-
+            //alert(xmlhttp.responseText);
+            alert("VM is restored.");
         }
     };
+     xmlhttp.send(null);
+};
 
 
 

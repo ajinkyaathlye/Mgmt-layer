@@ -5,14 +5,10 @@
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/db.sqlite3" afterPath="$PROJECT_DIR$/db.sqlite3" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/backup/apis.py" afterPath="$PROJECT_DIR$/backup/apis.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/backup/models.py" afterPath="$PROJECT_DIR$/backup/models.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/backup/backup_esx.py" afterPath="$PROJECT_DIR$/backup/backup_esx.py" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/backup/multi.py" afterPath="$PROJECT_DIR$/backup/multi.py" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/backup/serializers.py" afterPath="$PROJECT_DIR$/backup/serializers.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/backup/templates/backup/base.html" afterPath="$PROJECT_DIR$/backup/templates/backup/base.html" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/backup/templates/backup/configE.html" afterPath="$PROJECT_DIR$/backup/templates/backup/configE.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/backup/templates/backup/configH.html" afterPath="$PROJECT_DIR$/backup/templates/backup/configH.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/backup/templates/backup/configK.html" afterPath="$PROJECT_DIR$/backup/templates/backup/configK.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/backup/templates/backup/jobs.html" afterPath="$PROJECT_DIR$/backup/templates/backup/jobs.html" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/backup/views.py" afterPath="$PROJECT_DIR$/backup/views.py" />
     </list>
     <ignored path="GS_Management.iws" />
@@ -40,31 +36,19 @@
       <file leaf-file-name="models.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/backup/models.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="72">
+            <state relative-caret-position="18">
               <caret line="5" column="38" selection-start-line="5" selection-start-column="38" selection-end-line="5" selection-end-column="38" />
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="serializers.py" pinned="false" current-in-tab="false">
+      <file leaf-file-name="serializers.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/backup/serializers.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="216">
-              <caret line="14" column="24" selection-start-line="14" selection-start-column="24" selection-end-line="14" selection-end-column="24" />
+            <state relative-caret-position="234">
+              <caret line="15" column="0" selection-start-line="15" selection-start-column="0" selection-end-line="15" selection-end-column="0" />
               <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="configH.html" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/backup/templates/backup/configH.html">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="15894">
-              <caret line="883" column="0" selection-start-line="883" selection-start-column="0" selection-end-line="883" selection-end-column="0" />
-              <folding>
-                <marker date="1488197035821" expanded="true" signature="77:26417" ph="{%block body... %}" />
-              </folding>
             </state>
           </provider>
         </entry>
@@ -72,8 +56,18 @@
       <file leaf-file-name="configE.html" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/backup/templates/backup/configE.html">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="9558">
-              <caret line="531" column="63" selection-start-line="531" selection-start-column="63" selection-end-line="531" selection-end-column="63" />
+            <state relative-caret-position="567">
+              <caret line="518" column="37" selection-start-line="518" selection-start-column="37" selection-end-line="518" selection-end-column="37" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="urls.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/backup/urls.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="468">
+              <caret line="31" column="40" selection-start-line="31" selection-start-column="40" selection-end-line="31" selection-end-column="40" />
               <folding />
             </state>
           </provider>
@@ -82,7 +76,7 @@
       <file leaf-file-name="views.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/backup/views.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="1872">
+            <state relative-caret-position="1368">
               <caret line="114" column="38" selection-start-line="114" selection-start-column="38" selection-end-line="114" selection-end-column="38" />
               <folding>
                 <element signature="e#0#52#0" expanded="true" />
@@ -91,11 +85,11 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="apis.py" pinned="false" current-in-tab="true">
+      <file leaf-file-name="apis.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/backup/apis.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-3018">
-              <caret line="95" column="38" selection-start-line="95" selection-start-column="38" selection-end-line="95" selection-end-column="38" />
+            <state relative-caret-position="252">
+              <caret line="126" column="28" selection-start-line="126" selection-start-column="28" selection-end-line="126" selection-end-column="28" />
               <folding>
                 <element signature="e#0#45#0" expanded="true" />
               </folding>
@@ -116,8 +110,8 @@
       <file leaf-file-name="multi.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/backup/multi.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="612">
-              <caret line="36" column="5" selection-start-line="36" selection-start-column="5" selection-end-line="36" selection-end-column="5" />
+            <state relative-caret-position="504">
+              <caret line="30" column="24" selection-start-line="30" selection-start-column="24" selection-end-line="30" selection-end-column="24" />
               <folding />
             </state>
           </provider>
@@ -126,18 +120,8 @@
       <file leaf-file-name="backup_esx.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/backup/backup_esx.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="3672">
-              <caret line="214" column="12" selection-start-line="214" selection-start-column="12" selection-end-line="214" selection-end-column="12" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="jobs.html" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/backup/templates/backup/jobs.html">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="1026">
-              <caret line="57" column="52" selection-start-line="57" selection-start-column="52" selection-end-line="57" selection-end-column="52" />
+            <state relative-caret-position="735">
+              <caret line="251" column="26" selection-start-line="251" selection-start-column="26" selection-end-line="251" selection-end-column="26" />
               <folding />
             </state>
           </provider>
@@ -171,17 +155,17 @@
         <option value="$PROJECT_DIR$/GS_Management/urls.py" />
         <option value="$PROJECT_DIR$/backup/urls.py" />
         <option value="$PROJECT_DIR$/backup/admin.py" />
-        <option value="$PROJECT_DIR$/backup/multi.py" />
         <option value="$PROJECT_DIR$/backup/templates/backup/jobs.html" />
         <option value="$PROJECT_DIR$/backup/templates/backup/base.html" />
         <option value="$PROJECT_DIR$/backup/models.py" />
         <option value="$PROJECT_DIR$/backup/templates/backup/configH.html" />
         <option value="$PROJECT_DIR$/backup/templates/backup/configK.html" />
-        <option value="$PROJECT_DIR$/backup/backup_esx.py" />
         <option value="$PROJECT_DIR$/backup/views.py" />
-        <option value="$PROJECT_DIR$/backup/templates/backup/configE.html" />
-        <option value="$PROJECT_DIR$/backup/serializers.py" />
         <option value="$PROJECT_DIR$/backup/apis.py" />
+        <option value="$PROJECT_DIR$/backup/serializers.py" />
+        <option value="$PROJECT_DIR$/backup/templates/backup/configE.html" />
+        <option value="$PROJECT_DIR$/backup/multi.py" />
+        <option value="$PROJECT_DIR$/backup/backup_esx.py" />
       </list>
     </option>
   </component>
@@ -947,13 +931,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/backup/urls.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="558">
-          <caret line="31" column="40" selection-start-line="31" selection-start-column="40" selection-end-line="31" selection-end-column="40" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file:///usr/local/lib/python2.7/dist-packages/django/db/models/__init__.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
@@ -983,61 +960,10 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/backup/templates/backup/configK.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="15102">
-          <caret line="839" column="32" selection-start-line="839" selection-start-column="32" selection-end-line="839" selection-end-column="32" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/backup/templates/backup/jobs.html">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="1026">
           <caret line="57" column="52" selection-start-line="57" selection-start-column="52" selection-end-line="57" selection-end-column="52" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/backup/templates/backup/configH.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="15894">
-          <caret line="883" column="0" selection-start-line="883" selection-start-column="0" selection-end-line="883" selection-end-column="0" />
-          <folding>
-            <marker date="1488197035821" expanded="true" signature="77:26417" ph="{%block body... %}" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/backup/models.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="72">
-          <caret line="5" column="38" selection-start-line="5" selection-start-column="38" selection-end-line="5" selection-end-column="38" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/backup/views.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1872">
-          <caret line="114" column="38" selection-start-line="114" selection-start-column="38" selection-end-line="114" selection-end-column="38" />
-          <folding>
-            <element signature="e#0#52#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/backup/backup_esx.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="3672">
-          <caret line="214" column="12" selection-start-line="214" selection-start-column="12" selection-end-line="214" selection-end-column="12" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/backup/multi.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="612">
-          <caret line="36" column="5" selection-start-line="36" selection-start-column="5" selection-end-line="36" selection-end-column="5" />
           <folding />
         </state>
       </provider>
@@ -1050,29 +976,89 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/backup/models.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="18">
+          <caret line="5" column="38" selection-start-line="5" selection-start-column="38" selection-end-line="5" selection-end-column="38" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/backup/urls.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="468">
+          <caret line="31" column="40" selection-start-line="31" selection-start-column="40" selection-end-line="31" selection-end-column="40" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/backup/views.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1368">
+          <caret line="114" column="38" selection-start-line="114" selection-start-column="38" selection-end-line="114" selection-end-column="38" />
+          <folding>
+            <element signature="e#0#52#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/backup/apis.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="252">
+          <caret line="126" column="28" selection-start-line="126" selection-start-column="28" selection-end-line="126" selection-end-column="28" />
+          <folding>
+            <element signature="e#0#45#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/backup/multi.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="504">
+          <caret line="30" column="24" selection-start-line="30" selection-start-column="24" selection-end-line="30" selection-end-column="24" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/backup/backup_esx.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="735">
+          <caret line="251" column="26" selection-start-line="251" selection-start-column="26" selection-end-line="251" selection-end-column="26" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/backup/templates/backup/configH.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="297">
+          <caret line="704" column="16" selection-start-line="704" selection-start-column="9" selection-end-line="704" selection-end-column="16" />
+          <folding>
+            <marker date="1488197035821" expanded="true" signature="77:26417" ph="{%block body... %}" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/backup/templates/backup/configK.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="297">
+          <caret line="494" column="16" selection-start-line="494" selection-start-column="9" selection-end-line="494" selection-end-column="16" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/backup/templates/backup/configE.html">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="9558">
-          <caret line="531" column="63" selection-start-line="531" selection-start-column="63" selection-end-line="531" selection-end-column="63" />
+        <state relative-caret-position="567">
+          <caret line="518" column="37" selection-start-line="518" selection-start-column="37" selection-end-line="518" selection-end-column="37" />
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/backup/serializers.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="216">
-          <caret line="14" column="24" selection-start-line="14" selection-start-column="24" selection-end-line="14" selection-end-column="24" />
+        <state relative-caret-position="234">
+          <caret line="15" column="0" selection-start-line="15" selection-start-column="0" selection-end-line="15" selection-end-column="0" />
           <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/backup/apis.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-3018">
-          <caret line="95" column="38" selection-start-line="95" selection-start-column="38" selection-end-line="95" selection-end-column="38" />
-          <folding>
-            <element signature="e#0#45#0" expanded="true" />
-          </folding>
         </state>
       </provider>
     </entry>

@@ -6,13 +6,18 @@ from django.contrib.auth.models import User
 class KVMSerializer(serializers.ModelSerializer):
     class Meta:
         model = VM
-        fields = ('VM_id', 'VM_name', 'hyper_type', 'state', 'guest_name', 'ip', 'profile')
+        fields = ('VM_id', 'VM_name', 'hyper_type', 'state', 'profile')
 
 
-class VMSerializer(serializers.ModelSerializer):
+class ESXSerializer(serializers.ModelSerializer):
     class Meta:
         model = VM
-        fields = ('VM_id', 'hyper_type', 'state', 'profile')
+        fields = ('VM_name', 'hyper_type', 'guest_name', 'state', 'ip', 'profile')
+
+class HyperVSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = VM
+        fields = ('VM_name', 'hyper_type', 'state', 'profile')
 
 
 class BackupSerializer(serializers.ModelSerializer):

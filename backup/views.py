@@ -1,6 +1,6 @@
 from django.utils.decorators import method_decorator
 
-from .serializers import VMSerializer, ProfileSerializer, JobsSerializer
+from .serializers import KVMSerializer, ESXSerializer, HyperVSerializer, ProfileSerializer, JobsSerializer
 from django.shortcuts import render
 from rest_framework.authentication import SessionAuthentication, BasicAuthentication
 from rest_framework.permissions import IsAuthenticated

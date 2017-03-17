@@ -247,7 +247,6 @@ def main(ip, password, user, vm_name, snap_name, rot_cnt):
                 break
         if flag == 0:
             string = "Snapshot created successfully with the name as: " + snapshot_name
-            invoke_and_track(vm.CreateSnapshot(snapshot_name, description, dumpMemory, quiesce))
             VM = models.VM.objects.filter(hyper_type='ESX', VM_id=vm_name)
             db = models.Backup.objects.filter(vm=VM)
             if (len(db) >= rot_cnt):
@@ -255,3 +254,4 @@ def main(ip, password, user, vm_name, snap_name, rot_cnt):
                 for d in db:
                     models.Backup.objects.get(backup_name=d.backup_name).delete()
                 print "DELETED"
+            invoke_and_track(vm.CreateSnapshot(snapshot_name, description, dumpMemory, quiesce))
