@@ -1,9 +1,10 @@
 import os
 import requests
 import json
-
+import logging
 
 # ip="10.136.60.38"
+logger = logging.getLogger('log')
 
 def get_token(ip, username, password):
     """Get Openstack authentication token for all request opertaions"""
@@ -12,8 +13,8 @@ def get_token(ip, username, password):
 
     data = '{"auth": {"tenantName": "demo", "passwordCredentials": {"username": "' + username + '", "password":"' + password + '"}}}'
 
-    response = requests.post('http://' + ip + ':5000/v2.0/tokens', headers=headers, data=data)
-
+    response = requests.post('http://' + ip + ':5000/v2.0/tokens', headers=headers, data=data, timeout=10)
+    logger.info(response.text)
     parsed_response = json.loads(response.text)
 
     token = parsed_response['access']['token']['id']
@@ -32,7 +33,8 @@ def list_backups(ip, username, password, VMID):
     }
     string = 'http://' + ip + ':8774/v2.1/' + str(getProjectID(ip)) + '/images/detail'
     # print string
-    response = requests.get(string, headers=headers)
+    response = requests.get(string, headers=headers, timeout=10)
+    logger.info(response.text)
     parsed_json_response = json.loads(response.text)
     backupList = []
     for i in range(len(parsed_json_response['images'])):
@@ -56,8 +58,8 @@ def getProjectID(ip):
 
     data = '{"auth": {"tenantName": "demo", "passwordCredentials": {"username": "admin", "password":"root123"}}}'
 
-    response = requests.post('http://' + ip + ':5000/v2.0/tokens', headers=headers, data=data)
-
+    response = requests.post('http://' + ip + ':5000/v2.0/tokens', headers=headers, data=data, timeout=10)
+    logger.info(response.text)
     parsed_response = json.loads(response.text)
 
     token = parsed_response['access']['token']['id']
@@ -65,7 +67,8 @@ def getProjectID(ip):
         'User-Agent': 'python-keystoneclient',
         'Accept': 'application/json',
         'X-Auth-Token': token, }
-    response = requests.get('http://' + ip + ':35357/v2.0/tenants', headers=headers)
+    response = requests.get('http://' + ip + ':35357/v2.0/tenants', headers=headers, timeout=10)
+    logger.info(response.text)
     parsed_json_response = json.loads(response.text)
     # print parsed_json_response
     gg = parsed_json_response['tenants']
@@ -84,7 +87,9 @@ def getVMdetails(ip, username, password, VMID):
         'X-Auth-Token': get_token(ip, username, password),
     }
 
-    response = requests.get('http://10.136.60.38:8774/v2.1/' + getProjectID(ip) + '/servers/' + VMID, headers=headers)
+    response = requests.get('http://10.136.60.38:8774/v2.1/' + getProjectID(ip) + '/servers/' + VMID, headers=headers,
+                          timeout=10)
+    logger.info(response.text)
     # print response.text
     parsed_response = json.loads(response.text)
     # print parsed_response

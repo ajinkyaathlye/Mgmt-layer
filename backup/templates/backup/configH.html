@@ -256,7 +256,7 @@ var ip,user,pass;
     {
         //alert("HELLO");
         var xmlhttp = new XMLHttpRequest();
-        xmlhttp.open("GET", "http://127.0.0.1:8000/config/hyperv/getdetails", true);
+        xmlhttp.open("GET", "/config/hyperv/getdetails", true);
         xmlhttp.onreadystatechange = function()
         {
             if (this.readyState == 4 && this.status == 200)
@@ -292,16 +292,25 @@ var ip,user,pass;
     var myList = [];
     var myBackups=[];
     var autocompletelist=[];
+
     function list() {
 
-var xmlhttp = new XMLHttpRequest();
+        var xmlhttp = new XMLHttpRequest();
         if(ip!=null)
-            xmlhttp.open("GET", "http://127.0.0.1:8000/vm/hyperv/list/servip=" + ip+"&servuser=" + user +"&servpaswd=" + pass, true);
+            xmlhttp.open("GET", "/vm/hyperv/list/servip=" + ip+"&servuser=" + user +"&servpaswd=" + pass, true);
         else
-            xmlhttp.open("GET", "http://127.0.0.1:8000/vm/hyperv/list/servip=" + document.getElementById("servip").value+ "&servuser=" + document.getElementById("servuser").value +"&servpaswd=" + document.getElementById("servpaswd").value, true);
+            xmlhttp.open("GET", "/vm/hyperv/list/servip=" + document.getElementById("servip").value+ "&servuser=" + document.getElementById("servuser").value +"&servpaswd=" + document.getElementById("servpaswd").value, true);
         
         xmlhttp.onreadystatechange = function()
         {
+            if (this.readyState == 4 && this.status == 500)
+            {
+                document.getElementById("loader").style.display="none";
+                document.getElementById('message').innerHTML = "<strong>Internal Server Error. Try again later.</strong>";
+               document.getElementById('policyModal').style.display = "none";
+               document.getElementById('alertModal').style.display = "block";
+            }
+
             if (this.readyState == 4 && this.status == 200)
             {
 		 document.getElementById("loader").style.display="none";	     
@@ -379,11 +388,18 @@ var xmlhttp = new XMLHttpRequest();
                 break;
             }
         }
-        xmlhttp.open("GET", "http://127.0.0.1:8000/policy/hyperv/policyName=" + policyParams[i]['name'] + "&vmID=" + document.getElementById("VMName").value, true);
+        xmlhttp.open("GET", "/policy/hyperv/policyName=" + policyParams[i]['name'] + "&vmID=" + document.getElementById("VMName").value, true);
         //alert(JSON.stringify({VM_name: document.getElementById("VMName").value, backup_name: "ajinkya"}));
         //xmlhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
         xmlhttp.onreadystatechange = function()
         {
+            if (this.readyState == 4 && this.status == 500)
+            {
+                document.getElementById("loader").style.display="none";
+                document.getElementById('message').innerHTML = "<strong>Internal Server Error. Try again later.</strong>";
+               document.getElementById('policyModal').style.display = "none";
+               document.getElementById('alertModal').style.display = "block";
+            }
             if (this.readyState == 4 && this.status == 200)
             {
                 alert("Your policy has been submitted.");
@@ -563,7 +579,7 @@ modalOpen.style.display = "block";
 document.getElementById('VMName').value = msg;
 var xmlhttp = new XMLHttpRequest();
 //alert("HI");
-xmlhttp.open("GET", "http://127.0.0.1:8000/policy/list/", true);
+xmlhttp.open("GET", "/policy/list/", true);
 xmlhttp.onreadystatechange = function()
 {
    if (this.readyState == 4 && this.status == 200)
@@ -631,10 +647,17 @@ function listBackups(msg){
     var Table = document.getElementById("backupListExcelDataTable");
     Table.innerHTML = "";
     var xmlhttp = new XMLHttpRequest();
-    xmlhttp.open("GET", "http://127.0.0.1:8000/vm/hyperv/listbackups/servip=" + ip+ "&servuser=" + user +"&servpaswd=" +
+    xmlhttp.open("GET", "/vm/hyperv/listbackups/servip=" + ip+ "&servuser=" + user +"&servpaswd=" +
             pass + "&VMName=" + msg, true);
     xmlhttp.onreadystatechange = function()
     {
+      if (this.readyState == 4 && this.status == 500)
+        {
+            document.getElementById("loader").style.display="none";
+            document.getElementById('message').innerHTML = "<strong>Internal Server Error. Try again later.</strong>";
+           document.getElementById('policyModal').style.display = "none";
+           document.getElementById('alertModal').style.display = "block";
+        }
         if (this.readyState == 4 && this.status == 200)
         {
 		    document.getElementById("loader").style.display="none";
@@ -707,12 +730,19 @@ function restore(msg)
     alert("The VM is being restored.");
     var xmlhttp = new XMLHttpRequest();
     msg=encodeURI(msg);
-    alert(msg);
-    //alert("http://127.0.0.1:8000/vm/kvm/restore/backupid=" + msg + "&vmname=" + VMNAME);
-    xmlhttp.open("POST", "http://127.0.0.1:8000/vm/hyperv/restore/backupname=" + msg, true);
+    //alert(msg);
+    //alert("/vm/kvm/restore/backupid=" + msg + "&vmname=" + VMNAME);
+    xmlhttp.open("POST", "/vm/hyperv/restore/backupname=" + msg, true);
 
     xmlhttp.onreadystatechange = function()
     {
+      if (this.readyState == 4 && this.status == 500)
+        {
+            document.getElementById("loader").style.display="none";
+            document.getElementById('message').innerHTML = "<strong>Internal Server Error. Try again later.</strong>";
+           document.getElementById('policyModal').style.display = "none";
+           document.getElementById('alertModal').style.display = "block";
+        }
         if (this.readyState == 4 && this.status == 200)
         {
             alert(xmlhttp.responseText);
@@ -808,37 +838,48 @@ var span3=document.getElementsByClassName("close")[2];
 var modalPol = document.getElementById('policyModal');
 var modalBack = document.getElementById('myModal');
 var modalbacklist=document.getElementById('listBackupsModal');
+var modalAlert=document.getElementById('alertModal');
 var span4=document.getElementsByClassName("close")[3];
+//var span5=document.getElementsByClassName("close")[4];
 
+/*span5.onclick = function() {
+    alert("span5");
+    //modalAlert.style.display = "none";
+    modalbacklist.style.display = "none";
+    modalPol.style.display = "none";
+    modalBack.style.display = "none";
+
+
+};*/
 
 span4.onclick = function() {
-    //modalBack.style.display = "none";
+    modalAlert.style.display = "none";
     modalbacklist.style.display = "none";
     modalPol.style.display = "none";
     modalBack.style.display = "none";
-}
-
+};
 span3.onclick = function() {
-    //modalBack.style.display = "none";
+   modalAlert.style.display = "none";
     modalbacklist.style.display = "none";
     modalPol.style.display = "none";
     modalBack.style.display = "none";
-}
+};
 span1.onclick = function() {
-    //modalBack.style.display = "none";
-   modalbacklist.style.display = "none";
+    modalAlert.style.display = "none";
+    modalbacklist.style.display = "none";
     modalPol.style.display = "none";
     modalBack.style.display = "none";
-}
+};
 
 span2.onclick = function() {
      modalbacklist.style.display = "none";
     modalPol.style.display = "none";
     modalBack.style.display = "none";
-    //modalPol.style.display = "none";
-}
+    modalAlert.style.display = "none";
+};
 // When the user clicks anywhere outside of the modal, close it
 window.onclick = function(event) {
+    //alert("window");
     if (event.target == modalBack) {
         modalBack.style.display = "none";
     }
@@ -848,8 +889,10 @@ window.onclick = function(event) {
     if (event.target == modalbacklist) {
         modalbacklist.style.display = "none";
     }
-
-}
+    if (event.target == modalAlert) {
+        modalAlert.style.display = "none";
+    }
+};
 
 $(document).ready(function(event) {
     $('select').on('mouseenter', 'option', function(e) {
@@ -867,6 +910,25 @@ $(document).ready(function(event) {
         // this refers to the option so you can do this.value if you need..
     });
 });
+
+$(document).ready(function(event) {
+    $('select').on('mouseleave', function(e) {
+        //alert(document.getElementById('policyList').value);
+        var name=document.getElementById('policyList').value;
+        for(var i=0;i<policyParams.length;i++){
+        if(policyParams[i]['name']==name)
+        {
+            //alert(policyParams[i][1]);
+            document.getElementById("startDate").innerHTML = policyParams[i]['start_date'];
+            document.getElementById("endDate").innerHTML = policyParams[i]['end_date'];
+            document.getElementById("rotationCount").innerHTML = policyParams[i]['freq_count'];
+        }
+    }
+        //alert(this.value, 'Yeah');
+        // this refers to the option so you can do this.value if you need..
+    });
+});
+
 $(document).ready(function() {
 
 	$('.ball, .ball1').removeClass('stop');
@@ -874,6 +936,9 @@ $(document).ready(function() {
 				$('.ball, .ball1').toggleClass('stop');
 		});
 });
+
+
+//alert(document.cookie);
 
 </script>
 

@@ -248,7 +248,7 @@ function getDetails()
     {
         //alert("HELLO");
         var xmlhttp = new XMLHttpRequest();
-        xmlhttp.open("GET", "http://127.0.0.1:8000/config/esx/getdetails", true);
+        xmlhttp.open("GET", "/config/esx/getdetails", true);
         xmlhttp.onreadystatechange = function()
         {
             if (this.readyState == 4 && this.status == 200)
@@ -270,7 +270,7 @@ function getDetails()
         };
         xmlhttp.send(null);
 
-    }   
+    }
 function getRealheader(fakeheader)
     {
 
@@ -287,15 +287,22 @@ function getRealheader(fakeheader)
     function list() {
 var xmlhttp = new XMLHttpRequest();
         if(ip!=null)
-            xmlhttp.open("GET", "http://127.0.0.1:8000/vm/esx/list/servip=" + ip+"&servuser=" + user +"&servpaswd=" + pass, true);
+            xmlhttp.open("GET", "/vm/esx/list/servip=" + ip+"&servuser=" + user +"&servpaswd=" + pass, true);
         else
-            xmlhttp.open("GET", "http://127.0.0.1:8000/vm/esx/list/servip=" + document.getElementById("servip").value+ "&servuser=" + document.getElementById("servuser").value +"&servpaswd=" + document.getElementById("servpaswd").value, true);
-       
+            xmlhttp.open("GET", "/vm/esx/list/servip=" + document.getElementById("servip").value+ "&servuser=" + document.getElementById("servuser").value +"&servpaswd=" + document.getElementById("servpaswd").value, true);
+
         xmlhttp.onreadystatechange = function()
         {
+              if (this.readyState == 4 && this.status == 500)
+            {
+                document.getElementById("loader").style.display="none";
+                document.getElementById('message').innerHTML = "<strong>Internal Server Error. Try again later.</strong>";
+               document.getElementById('policyModal').style.display = "none";
+               document.getElementById('alertModal').style.display = "block";
+            }
             if (this.readyState == 4 && this.status == 200)
             {
-		document.getElementById("loader").style.display="none";       
+		document.getElementById("loader").style.display="none";
          myList=xmlhttp.responseText;
                 //alert(xmlhttp.responseText);
                 //document.write(myList);
@@ -379,11 +386,18 @@ document.getElementById("loader").style.display="block";
                 break;
             }
         }
-        xmlhttp.open("GET", "http://127.0.0.1:8000/policy/esx/policyName=" + policyParams[count]['name'] + "&vmID=" + document.getElementById("VMName").value, true);
+        xmlhttp.open("GET", "/policy/esx/policyName=" + policyParams[count]['name'] + "&vmID=" + document.getElementById("VMName").value, true);
         //alert(JSON.stringify({VM_name: document.getElementById("VMName").value, backup_name: "ajinkya"}));
         //xmlhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
         xmlhttp.onreadystatechange = function()
         {
+            if (this.readyState == 4 && this.status == 500)
+            {
+                document.getElementById("loader").style.display="none";
+                document.getElementById('message').innerHTML = "<strong>Internal Server Error. Try again later.</strong>";
+               document.getElementById('policyModal').style.display = "none";
+               document.getElementById('alertModal').style.display = "block";
+            }
             if (this.readyState == 4 && this.status == 200)
             {
                 alert("Your policy has been submitted.");
@@ -502,11 +516,18 @@ function restore(msg)
     var xmlhttp = new XMLHttpRequest();
     msg=encodeURI(msg);
     //alert(msg);
-    //alert("http://127.0.0.1:8000/vm/kvm/restore/backupid=" + msg + "&vmname=" + VMNAME);
-    xmlhttp.open("POST", "http://127.0.0.1:8000/vm/esx/restore/backupname=" + msg, true);
+    //alert("/vm/kvm/restore/backupid=" + msg + "&vmname=" + VMNAME);
+    xmlhttp.open("POST", "/vm/esx/restore/backupname=" + msg, true);
 
     xmlhttp.onreadystatechange = function()
     {
+      if (this.readyState == 4 && this.status == 500)
+        {
+            document.getElementById("loader").style.display="none";
+            document.getElementById('message').innerHTML = "<strong>Internal Server Error. Try again later.</strong>";
+           document.getElementById('policyModal').style.display = "none";
+           document.getElementById('alertModal').style.display = "block";
+        }
         if (this.readyState == 4 && this.status == 200)
         {
             //alert(xmlhttp.responseText);
@@ -589,9 +610,16 @@ modalOpen.style.display = "block";
 document.getElementById('VMName').value = msg;
 var xmlhttp = new XMLHttpRequest();
 //alert("HI");
-xmlhttp.open("GET", "http://127.0.0.1:8000/policy/list/", true);
+xmlhttp.open("GET", "/policy/list/", true);
 xmlhttp.onreadystatechange = function()
 {
+  if (this.readyState == 4 && this.status == 500)
+    {
+        document.getElementById("loader").style.display="none";
+        document.getElementById('message').innerHTML = "<strong>Internal Server Error. Try again later.</strong>";
+       document.getElementById('policyModal').style.display = "none";
+       document.getElementById('alertModal').style.display = "block";
+    }
    if (this.readyState == 4 && this.status == 200)
     {
         //alert(policyParams[0]['name']);
@@ -628,9 +656,16 @@ function listBackups(msg){
     var Table = document.getElementById("backupListExcelDataTable");
     Table.innerHTML = "";
     var xmlhttp = new XMLHttpRequest();
-    xmlhttp.open("GET", "http://127.0.0.1:8000/vm/esx/listbackups/servip=" + ip+ "&servuser=" + user +"&servpaswd=" +pass + "&VMName=" + msg, true);
+    xmlhttp.open("GET", "/vm/esx/listbackups/servip=" + ip+ "&servuser=" + user +"&servpaswd=" +pass + "&VMName=" + msg, true);
     xmlhttp.onreadystatechange = function()
     {
+      if (this.readyState == 4 && this.status == 500)
+        {
+            document.getElementById("loader").style.display="none";
+            document.getElementById('message').innerHTML = "<strong>Internal Server Error. Try again later.</strong>";
+           document.getElementById('policyModal').style.display = "none";
+           document.getElementById('alertModal').style.display = "block";
+        }
         if (this.readyState == 4 && this.status == 200)
         {
 		    document.getElementById("loader").style.display="none";
@@ -838,6 +873,26 @@ $(document).ready(function(event) {
         // this refers to the option so you can do this.value if you need..
     });
 });
+
+$(document).ready(function(event) {
+    $('select').on('mouseleave', function(e) {
+        //alert(document.getElementById('policyList').value);
+        var name=document.getElementById('policyList').value;
+        for(var i=0;i<policyParams.length;i++){
+        if(policyParams[i]['name']==name)
+        {
+            //alert(policyParams[i][1]);
+            document.getElementById("startDate").innerHTML = policyParams[i]['start_date'];
+            document.getElementById("endDate").innerHTML = policyParams[i]['end_date'];
+            document.getElementById("rotationCount").innerHTML = policyParams[i]['freq_count'];
+        }
+    }
+        //alert(this.value, 'Yeah');
+        // this refers to the option so you can do this.value if you need..
+    });
+});
+
+
 
 $(document).ready(function() {
 

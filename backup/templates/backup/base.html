@@ -16,7 +16,7 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<title>jQuery UI Datepicker - Default functionality</title>
 	<link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
-	<link rel="stylesheet" href="/resources/demos/style.css">
+	<!--<link rel="stylesheet" href="/resources/demos/style.css">-->
 	<script src="https://code.jquery.com/jquery-1.12.4.js"></script>
 	<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>		
 
@@ -89,6 +89,8 @@
 
 	 <script>
 
+         //document.cookie = 'csrftoken=;expires=Thu, 01 Jan 1970 00:00:01 GMT; path=/';
+        //alert(document.cookie);
 
         var FAKEHEADERS1=["id", "hyper_type", "timestamp", "function","status", "vm"];
         var REALHEADERS1=["SERIAL NO.", "HYPERVISOR", "TIMESTAMP", "FUNCTION", "STATUS", "VIRTUAL MACHINE ID"];
@@ -118,7 +120,7 @@
            {
 
                var xmlhttp = new XMLHttpRequest();
-                xmlhttp.open("GET", "http://127.0.0.1:8000/jobs/details/", true);
+                xmlhttp.open("GET", "/jobs/details/", true);
                 xmlhttp.onreadystatechange = function()
                 {
                     if (this.readyState == 4 && this.status == 200)
@@ -225,7 +227,7 @@
                document.getElementById('message').innerHTML = "<strong>Your policy has been created</strong>";
                document.getElementById('policyModal').style.display = "none";
                document.getElementById('alertModal').style.display = "block";
-	        xmlhttp.open("GET", "http://127.0.0.1:8000/policy/create/startDay=" + startres[0] + "&startMonth=" +
+	        xmlhttp.open("GET", "/policy/create/startDay=" + startres[0] + "&startMonth=" +
                     startres[1] + "&startYear=" + startres[2] + "&endDay=" + endres[0] + "&endMonth=" + endres[1] +
                     "&endYear=" + endres[2] + "&bckrotation=" + document.getElementById("bckrotation").value +
                     "&policyName=" + document.getElementById("policyName").value, true);
@@ -271,7 +273,7 @@
 		<!--Header-->
 		<div class="navbar-header">
 
-			<a class="navbarButtons navbar-brand" href="http://127.0.0.1:8000/" style="font-family:Oswald;">
+			<a class="navbarButtons navbar-brand" href="/" style="font-family:Oswald;">
 				<span class="glyphicon glyphicon-home"></span>
 				<b>HOME</b>
 			</a>
@@ -282,19 +284,19 @@
 
 			<ul  class="nav navbar-nav" >
 				<li class="active" >
-					<a id="KVMlink" class=" links" href="http://127.0.0.1:8000/config/kvm/">
+					<a id="KVMlink" class=" links" href="/config/kvm/">
 						<img id="iconKVM" src="\static\backup\images\iconKVM.png" style="height:20px;width:20px;">
 						<b> KVM </b>
 					</a>
 				</li>
 				<li class="active">
-					<a id="ESXlink" class="links" href="http://127.0.0.1:8000/config/esx/">
+					<a id="ESXlink" class="links" href="/config/esx/">
 						<img id="iconESX" src="\static\backup\images\iconESX.png" style="height:20px;width:20px;">
 						<b> ESX </b>
 					</a>
 				</li>
                 <li class="active">
-					<a id="HYPERVlink" class="links" href="http://127.0.0.1:8000/config/hyperv/">
+					<a id="HYPERVlink" class="links" href="/config/hyperv/">
 						<img id="iconHYPERV" src="\static\backup\images\iconHYPERV.png" style="height:20px;width:20px;">
 						 <b> HyperV </b>
 					</a>
@@ -310,7 +312,7 @@
 
 			<ul class="nav navbar-nav navbar-right">
                 <li class="active">
-					<a class="links" href="http://127.0.0.1:8000/jobs/">
+					<a class="links" href="/jobs/">
 						<span class="glyphicon glyphicon-list-alt" aria-hidden="true"></span>&nbsp; Log
 					</a>
 				</li>

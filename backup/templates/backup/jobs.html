@@ -42,20 +42,31 @@
 
     </style>
 
+    <h2>hi</h2>
+
     <table id="detailsDataTable" ></table>
 
      <script>
             jobDetails();
             var span1 = document.getElementsByClassName("close")[0];
             var modalPol = document.getElementById('policyModal');
+            var modalAlert=document.getElementById('alertModal');
+            var span4=document.getElementsByClassName("close")[1];
             span1.onclick = function() {
                 //modalBack.style.display = "none";
                 modalPol.style.display = "none";
+            };
+             span4.onclick = function() {
+                //modalBack.style.display = "none";
+                modalAlert.style.display = "none";
             };
 
             window.onclick = function(event) {
                 if (event.target == modalPol) {
                     modalPol.style.display = "none";
+                }
+                if (event.target == modalAlert) {
+                    modalAlert.style.display = "none";
                 }
             };
             //buildDetailsTable('#detailsDataTable');

@@ -39,6 +39,8 @@ def PrintVmInfo(vm, depth=1):
     summary = vm.summary
     global a
     l=[]
+    if summary.config.template == True:
+        return
     l.append(summary.config.name)
     if summary.config.vmPathName is not None and summary.config.vmPathName != "":
         l.append(summary.config.vmPathName)

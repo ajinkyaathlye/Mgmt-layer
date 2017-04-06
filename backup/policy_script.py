@@ -3,6 +3,8 @@ import datetime
 from django.views.decorators.csrf import csrf_exempt
 import requests
 import threading
+import global_variables as gv
+flag = 0
 
 # DEFINE THREAD CLASS AND FUNCTION
 class newThread(threading.Thread):
@@ -34,7 +36,7 @@ def check_KVM():
                 data = '{"VM_name": "' + vm.VM_id + '", "backup_name":"' + dt.strftime("%A %d %B %Y %I:%M:%S %p") + '"}'
                 if len(l) == 0:
                     #print l
-                    response = requests.post('http://127.0.0.1:8000/vm/kvm/backup/servip=' + vm.details.ip_addr +
+                    response = requests.post('http://' + gv.server_ip + '/vm/kvm/backup/servip=' + vm.details.ip_addr +
                                              '&servuser=' + vm.details.username + '&servpaswd=' + vm.details.password,
                                              headers=headers, data=data)
                 else:
@@ -46,7 +48,7 @@ def check_KVM():
                     if (dt - backup.timestamp).days == 0:
                         pass
                     else:
-                        requests.post('http://127.0.0.1:8000/vm/kvm/backup/servip=' + vm.details.ip_addr +
+                        requests.post('http://' + gv.server_ip + '/vm/kvm/backup/servip=' + vm.details.ip_addr +
                                       '&servuser=' + vm.details.username + '&servpaswd=' + vm.details.password,
                                       headers=headers, data=data)
 
@@ -70,13 +72,13 @@ def check_ESX():
                 data = '{"VM_name": "' + vm.VM_id + '", "backup_name":"' + dt.strftime("%A %d %B %Y %I:%M:%S %p") + '"}'
                 if len(l) == 0:
                     #print l
-                    response = requests.post('http://127.0.0.1:8000/vm/esx/backup/servip=' + vm.details.ip_addr +
+                    response = requests.post('http://' + gv.server_ip + '/vm/esx/backup/servip=' + vm.details.ip_addr +
                                              '&servuser=' + vm.details.username + '&servpaswd=' + vm.details.password,
                                              headers=headers, data=data)
                     #print data
                     print "In L=0:"
                     print "================================="
-                    print 'http://127.0.0.1:8000/vm/esx/backup/servip=' + vm.details.ip_addr + '&servuser=' + vm.details.username + '&servpaswd=' + vm.details.password
+                    print '/vm/esx/backup/servip=' + vm.details.ip_addr + '&servuser=' + vm.details.username + '&servpaswd=' + vm.details.password
                 else:
                     backup = l[len(l) - 1]
                     # print l
@@ -87,7 +89,7 @@ def check_ESX():
                     if (dt - backup.timestamp).days == 0:
                         pass
                     else:
-                        requests.post('http://127.0.0.1:8000/vm/esx/backup/servip=' + vm.details.ip_addr +
+                        requests.post('http://' + gv.server_ip + '/vm/esx/backup/servip=' + vm.details.ip_addr +
                                       '&servuser=' + vm.details.username + '&servpaswd=' + vm.details.password,
                                       headers=headers, data=data)
 
@@ -100,6 +102,7 @@ def check_HyperV():
     headers = {
         'Content-Type': 'application/json',
     }
+    global flag
     for vm in vms_hyperv:
         if vm.profile == None:
             #print vm
@@ -110,7 +113,8 @@ def check_HyperV():
                 data = '{"VM_name": "' + vm.VM_id + '", "backup_name":"' + dt.strftime("%A %d %B %Y %I:%M:%S %p") + '"}'
                 if len(l) == 0:
                     print l
-                    response = requests.post('http://127.0.0.1:8000/vm/hyperv/backup/servip=' + vm.details.ip_addr +
+                    flag = 1
+                    response = requests.post('http://' + gv.server_ip + '/vm/hyperv/backup/servip=' + vm.details.ip_addr +
                                              '&servuser=' + vm.details.username + '&servpaswd=' + vm.details.password,
                                              headers=headers, data=data)
                     print data
@@ -125,16 +129,18 @@ def check_HyperV():
                     if (dt - backup.timestamp).days == 0:
                         pass
                     else:
-                        requests.post('http://127.0.0.1:8000/vm/hyperv/backup/servip=' + vm.details.ip_addr +
+                        flag = 1
+                        requests.post('http://' + gv.server_ip + '/vm/hyperv/backup/servip=' + vm.details.ip_addr +
                                       '&servuser=' + vm.details.username + '&servpaswd=' + vm.details.password,
                                       headers=headers, data=data)
-
+    flag = 0
 
 def main():
     check_KVM()
     hypThread = newThread(3, "HyperV Thread")
     try:
-        hypThread.start()
+        if flag == 0:
+            hypThread.start()
     except (SystemExit):
         print "cyka blyat"
     check_ESX()

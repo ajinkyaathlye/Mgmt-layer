@@ -1,3 +1,4 @@
+from __future__ import print_function
 import winrm  # install library by: pip install pywinrm
 
 
@@ -11,7 +12,7 @@ def main(rmtip, usernm, passwd, bckDest):
 
     # add as trusted host on both machines
     # allowUnencrypted = True
-    print "asdasd"
+    print ("asdasd")
     currSession = winrm.Session(rmtip, auth=(usernm, passwd))
 
     # bckDest = raw_input("Enter the VM destination drive letter: ")
@@ -47,5 +48,6 @@ def main(rmtip, usernm, passwd, bckDest):
                         lineParams[1] = lineParams[1].replace(" ", "")
                         l.append(lineParams[1])
                 nameVerList.append(l)
-	print nameVerList
+    print (nameVerList)
+    print ("ajinkya")
     return nameVerList

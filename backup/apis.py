@@ -6,10 +6,11 @@ from rest_framework import status
 from . import models, utils, utilsH, utilsK, utilsKB, utilsHB, backup_kvm, backup_hyperv, backup_esx, \
     restore_esx, restore_kvm, restore_hyperv
 import pdb, datetime
-
+import logging
 
 @api_view(['GET', 'POST'])
 def vm_list(request, hv, util, ip, password, user, vmname, bkupid=None, restoreName=None, format=None):
+    logger = logging.getLogger('log')
     if util == 'backup':
         if request.method == 'GET':
             if hv == "kvm":
@@ -22,19 +23,20 @@ def vm_list(request, hv, util, ip, password, user, vmname, bkupid=None, restoreN
                                                                        password=password)
                     # print db
                     # print created
-
+                    print created
                     if created == False:
                         db.save()
+                        #print "HAHAHAHA"
                     virt_mach, flag = VM.objects.get_or_create(VM_name=vm[1],
                                                                details=db,
                                                                VM_id=vm[0],
                                                                hyper_type="KVM",
-                                                               state=vm[2],
+                                                               #state=vm[2],
                                                                guest_name="",
                                                                ip=ip,
                                                                )
-                    print "FLAG:: " , flag
                     if flag == False:
+                        virt_mach.state=vm[2]
                         virt_mach.save()
                     zz = models.VM.objects.get(VM_name=vm[1]);
                     print zz.profile, "========================", zz.VM_id
@@ -114,18 +116,27 @@ def vm_list(request, hv, util, ip, password, user, vmname, bkupid=None, restoreN
                 bkupserializer = BackupSerializer(data=request.data)
                 # print request.data
                 if bkupserializer.is_valid():
-                    bkupID = backup_kvm.main(ip, request.data['backup_name'], request.data['VM_name'],
-                                             vm.profile.freq_count, user, password)
-                    Backup(vm=vm,
-                           backup_name=request.data['backup_name'],
-                           bkupid=bkupID,
-                           VM_name=str(request.data['VM_name']),
-                           ).save()
+                    try:
+                        bkupID = backup_kvm.main(ip, request.data['backup_name'], request.data['VM_name'],
+                                                 vm.profile.freq_count, user, password)
+                        Backup(vm=vm,
+                               backup_name=request.data['backup_name'],
+                               bkupid=bkupID,
+                               VM_name=str(request.data['VM_name']),
+                               ).save()
+                        j.status = 'COMPLETED'
+                        j.timestamp = datetime.datetime.now()
+                        j.save()
+                        logger.info(Response(bkupserializer.data, status=status.HTTP_201_CREATED))
+                        return Response(bkupserializer.data, status=status.HTTP_201_CREATED)
+                    except Exception as e:
+                        print e
+                        j.status = 'FAILED: ' + e
+                        j.timestamp = datetime.datetime.now()
+                        j.save()
+                        logger.info(Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR))
+                        return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
                     # print request.data
-                    j.status = 'COMPLETED'
-                    j.timestamp = datetime.datetime.now()
-                    j.save()
-                    return Response(bkupserializer.data, status=status.HTTP_201_CREATED)
                 else:
                     j.status = 'FAILED'
                     j.timestamp = datetime.datetime.now()
@@ -142,17 +153,23 @@ def vm_list(request, hv, util, ip, password, user, vmname, bkupid=None, restoreN
                 j.save()
                 bkupserializer = BackupSerializer(data=request.data)
                 if bkupserializer.is_valid():
-
-                    backup_esx.main(ip, password, user, request.data['VM_name'], request.data['backup_name'],
-                                    vm.profile.freq_count)
-                    Backup(vm=vm,
-                           backup_name=request.data['backup_name'],
-                           VM_name=request.data['VM_name'],
-                           ).save()
-                    j.status = 'COMPLETED'
-                    j.timestamp = datetime.datetime.now()
-                    j.save()
-                    return Response(bkupserializer.data, status=status.HTTP_201_CREATED)
+                    try:
+                        backup_esx.main(ip, password, user, request.data['VM_name'], request.data['backup_name'],
+                                        vm.profile.freq_count)
+                        Backup(vm=vm,
+                               backup_name=request.data['backup_name'],
+                               VM_name=request.data['VM_name'],
+                               ).save()
+                        j.status = 'COMPLETED'
+                        j.timestamp = datetime.datetime.now()
+                        j.save()
+                        return Response(bkupserializer.data, status=status.HTTP_201_CREATED)
+                    except Exception as e:
+                        print e
+                        j.status = 'FAILED: ' + e
+                        j.timestamp = datetime.datetime.now()
+                        j.save()
+                        return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
                 else:
                     j.status = 'FAILED'
                     j.timestamp = datetime.datetime.now()
@@ -161,26 +178,32 @@ def vm_list(request, hv, util, ip, password, user, vmname, bkupid=None, restoreN
 
             if hv == "hyperv":
                 vm = VM.objects.get(VM_id=str(request.data['VM_name']))
-                j = Jobs(vm=vm,
+                j = Jobs.objects.get_or_create(vm=vm,
                          status='IN PROGRESS',
                          function='Backup',
                          timestamp=datetime.datetime.now(),
                          hyper_type='HyperV')
-                j.save()
                 bkupserializer = BackupSerializer(data=request.data)
                 if bkupserializer.is_valid():
-
-                    verList = backup_hyperv.main(ip, password, user, request.data['VM_name'], vm.profile.freq_count)
-                    Backup(vm=vm,
-                           backup_name=request.data['backup_name'],
-                           bkupid=verList[0],
-                           destination=verList[1],
-                           VM_name=str(request.data['VM_name']),
-                           ).save()
-                    j.status = 'COMPLETED'
-                    j.timestamp = datetime.datetime.now()
-                    j.save()
-                    return Response(bkupserializer.data, status=status.HTTP_201_CREATED)
+                    try:
+                        verList = backup_hyperv.main(ip, password, user, request.data['VM_name'], vm.profile.freq_count)
+                        Backup(vm=vm,
+                               backup_name=request.data['backup_name'],
+                               bkupid=verList[0],
+                               destination=verList[1],
+                               VM_name=str(request.data['VM_name']),
+                               ).save()
+                        j.status = 'COMPLETED'
+                        flag = 0
+                        j.timestamp = datetime.datetime.now()
+                        j.save()
+                        return Response(bkupserializer.data, status=status.HTTP_201_CREATED)
+                    except Exception as e:
+                        print e
+                        j.status = 'FAILED: ' + e
+                        j.timestamp = datetime.datetime.now()
+                        j.save()
+                        return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
                 else:
                     j.status = 'FAILED'
                     j.timestamp = datetime.datetime.now()
@@ -234,49 +257,70 @@ def vm_list(request, hv, util, ip, password, user, vmname, bkupid=None, restoreN
 
         elif request.method == 'POST':
             if hv == "kvm":
-                vm = VM.objects.get(VM_id=vmname)
-                j = Jobs(vm=vm,
-                         status='IN PROGRESS',
-                         function='Restore',
-                         timestamp=datetime.datetime.now(),
-                         hyper_type='KVM')
-                j.save()
-                resp = restore_kvm.main(ip, user, password, vmname, bkupid, restoreName)
-                j.status = 'COMPLETED'
-                j.timestamp=datetime.datetime.now()
-                j.save()
-                return Response(resp, status=status.HTTP_201_CREATED, )
+                try:
+                    vm = VM.objects.get(VM_id=vmname)
+                    j = Jobs(vm=vm,
+                             status='IN PROGRESS',
+                             function='Restore',
+                             timestamp=datetime.datetime.now(),
+                             hyper_type='KVM')
+                    j.save()
+                    resp = restore_kvm.main(ip, user, password, vmname, bkupid, restoreName)
+                    j.status = 'COMPLETED'
+                    j.timestamp=datetime.datetime.now()
+                    j.save()
+                    return Response(resp, status=status.HTTP_201_CREATED, )
+                except Exception as e:
+                    print e
+                    j.status = 'FAILED: ' + e
+                    j.timestamp = datetime.datetime.now()
+                    j.save()
+                    return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
             if hv == "esx":
-                vm = VM.objects.get(VM_id=vmname)
-                print "IN API++++++++++++++" + vm.VM_id
-                j = Jobs(vm=vm,
-                         status='IN PROGRESS',
-                         function='Restore',
-                         timestamp=datetime.datetime.now(),
-                         hyper_type='ESX')
-                j.save()
-                resp = restore_esx.main(ip, password, user, vmname, bkupid)
-                j.status = 'COMPLETED'
-                j.timestamp = datetime.datetime.now()
-                j.save()
-                return Response(status=status.HTTP_201_CREATED)
+                try:
+                    vm = VM.objects.get(VM_id=vmname)
+                    print "IN API++++++++++++++" + vm.VM_id
+                    j = Jobs(vm=vm,
+                             status='IN PROGRESS',
+                             function='Restore',
+                             timestamp=datetime.datetime.now(),
+                             hyper_type='ESX')
+                    j.save()
+                    resp = restore_esx.main(ip, password, user, vmname, bkupid)
+                    j.status = 'COMPLETED'
+                    j.timestamp = datetime.datetime.now()
+                    j.save()
+                    return Response(status=status.HTTP_201_CREATED)
+                except Exception as e:
+                    print e
+                    j.status = 'FAILED' + e
+                    j.timestamp = datetime.datetime.now()
+                    j.save()
+                    return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
             if hv == "hyperv":
                 # pdb.set_trace()
-                vm = VM.objects.get(VM_id=vmname)
-                j = Jobs(vm=vm,
-                         status='IN PROGRESS',
-                         function='Restore',
-                         timestamp=datetime.datetime.now(),
-                         hyper_type='HyperV')
-                j.save()
-                restore_hyperv.main(ip, user, password, vmname, bkupid,
-                                    'D')
-                j.status = 'COMPLETED'
-                j.timestamp = datetime.datetime.now()
-                j.save()
-                return Response(status=status.HTTP_201_CREATED)
+                try:
+                    vm = VM.objects.get(VM_id=vmname)
+                    j = Jobs(vm=vm,
+                             status='IN PROGRESS',
+                             function='Restore',
+                             timestamp=datetime.datetime.now(),
+                             hyper_type='HyperV')
+                    j.save()
+                    restore_hyperv.main(ip, user, password, vmname, bkupid,
+                                        'D')
+                    j.status = 'COMPLETED'
+                    j.timestamp = datetime.datetime.now()
+                    j.save()
+                    return Response(status=status.HTTP_201_CREATED)
+                except Exception as e:
+                    print e
+                    j.status = 'FAILED' + e
+                    j.timestamp = datetime.datetime.now()
+                    j.save()
+                    return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
 @api_view(['GET', 'POST'])

@@ -1,15 +1,19 @@
 from __future__ import unicode_literals
 from django.db import models
+from django import forms
+from django.forms import PasswordInput
 
 
 class Details(models.Model):
     hyper_type = models.CharField(max_length=1000, blank=True)
     ip_addr = models.CharField(max_length=1000, blank=True)
     username = models.CharField(max_length=1000, blank=True)
-    password = models.CharField(max_length=1000, blank=True)
+    password = models.CharField(max_length=128)
+    #password = forms.CharField(max_length=32, widget=forms.PasswordInput())
 
     def __str__(self):
         return str(self.hyper_type)
+
 
 class Profile(models.Model):
     start_date = models.DateField()
@@ -71,7 +75,7 @@ class DiffBackup(models.Model):
 
 
 class Jobs(models.Model):
-    vm = models.ForeignKey('VM', on_delete=models.CASCADE, )
+    vm = models.ForeignKey('VM', on_delete=models.CASCADE)
     hyper_type = models.CharField(max_length=100)
     timestamp = models.DateTimeField(blank=True)
     function = models.CharField(max_length=100)

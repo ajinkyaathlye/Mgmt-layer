@@ -5,11 +5,13 @@ from django.shortcuts import render
 from rest_framework.authentication import SessionAuthentication, BasicAuthentication
 from rest_framework.permissions import IsAuthenticated
 from . import models, utils, utilsH, utilsK, utilsKB, backup_kvm, backup_hyperv, backup_esx, apis
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpRequest
 import urlparse
-import json
+import json, datetime
 from django.views.decorators.csrf import csrf_exempt
+import logging
 
+logger = logging.getLogger('log')
 
 def config(request, hyper):
     """"Config calls URL for listing and Backup"""
@@ -55,46 +57,52 @@ def restore(request, hyper, values):
     parsed = urlparse.urlparse(temp)
     parsed_dict = urlparse.parse_qs(parsed.query)
     print parsed_dict
-    if hyper == 'kvm':
-        if request.method == 'POST':
-            bkupname = parsed_dict['backupname'][0]
-            # print bkupname
-            bkupid = models.Backup.objects.get(backup_name=bkupname).bkupid
-            # print bkupid
-            vm = models.Backup.objects.get(backup_name=bkupname).vm
-            vmid = vm.VM_id
-            # print vmid
-            resp = apis.vm_list(request, hyper, 'restore', vm.details.ip_addr, vm.details.password, vm.details.username,
-                                vmid, bkupid, parsed_dict['vmname'][0])
-            return HttpResponse(resp.data)
+    try:
+        if hyper == 'kvm':
+            if request.method == 'POST':
+                bkupname = parsed_dict['backupname'][0]
+                # print bkupname
+                bkupid = models.Backup.objects.get(backup_name=bkupname).bkupid
+                # print bkupid
+                vm = models.Backup.objects.get(backup_name=bkupname).vm
+                vmid = vm.VM_id
+                # print vmid
+                resp = apis.vm_list(request, hyper, 'restore', vm.details.ip_addr, vm.details.password, vm.details.username,
+                                    vmid, bkupid, parsed_dict['vmname'][0])
+                print resp.data
+                return HttpResponse(resp.data)
 
-    if hyper == 'hyperv':
-        if request.method == 'POST':
-            bkupname = parsed_dict['backupname'][0]
-            # print bkupname
-            bkupid = models.Backup.objects.get(backup_name=bkupname).bkupid
-            # print bkupid
-            vm = models.Backup.objects.get(backup_name=bkupname).vm
-            vmid = vm.VM_id
-            # print vmid
-            resp = apis.vm_list(request, hyper, 'restore', vm.details.ip_addr, vm.details.password, vm.details.username,
-                                vmid,
-                                bkupid)
+        if hyper == 'hyperv':
+            if request.method == 'POST':
+                bkupname = parsed_dict['backupname'][0]
+                # print bkupname
+                bkupid = models.Backup.objects.get(backup_name=bkupname).bkupid
+                # print bkupid
+                vm = models.Backup.objects.get(backup_name=bkupname).vm
+                vmid = vm.VM_id
+                # print vmid
+                resp = apis.vm_list(request, hyper, 'restore', vm.details.ip_addr, vm.details.password, vm.details.username,
+                                    vmid,
+                                    bkupid)
 
-            return HttpResponse(resp.data)
+                return HttpResponse(resp.data)
 
-    if hyper == 'esx':
-        if request.method == 'POST':
-            bkupname = parsed_dict['backupname'][0]
-            # print bkupname
-            vm = models.Backup.objects.get(backup_name=bkupname).vm
-            vmid = vm.VM_id
-            # print vmid
-            # print "ASFKJASLKDHAKSJFHKASFHKJASFGBKJASGKUGF"
-            resp = apis.vm_list(request, hyper, 'restore', vm.details.ip_addr, vm.details.password, vm.details.username,
-                                vmid, bkupname)
-            print "BELOW RESP CALL", resp.data
-            return HttpResponse(resp.data)
+        if hyper == 'esx':
+            if request.method == 'POST':
+                bkupname = parsed_dict['backupname'][0]
+                # print bkupname
+                vm = models.Backup.objects.get(backup_name=bkupname).vm
+                vmid = vm.VM_id
+                # print vmid
+                # print "ASFKJASLKDHAKSJFHKASFHKJASFGBKJASGKUGF"
+                resp = apis.vm_list(request, hyper, 'restore', vm.details.ip_addr, vm.details.password, vm.details.username,
+                                    vmid, bkupname)
+                print "BELOW RESP CALL", resp.data
+                return HttpResponse(resp.data)
+    except Exception as e:
+        print e
+        logger.info(e)
+        return HttpResponse(status=SystemError)
 
 
 @csrf_exempt
@@ -105,37 +113,50 @@ def configShow(request, hyper, values):
     parsed = urlparse.urlparse(temp)
     parsed_dict = urlparse.parse_qs(parsed.query)
     # print parsed_dict
-    if hyper == 'hyperv':
-        if request.method == 'GET':
-            # print parsed_dict['servip'][0].strip('/'), parsed_dict['servpaswd'][0], parsed_dict['servuser'][0]
-            var = apis.vm_list(request, hyper, "backup", parsed_dict['servip'][0].strip('/'),
-                               parsed_dict['servpaswd'][0], parsed_dict['servuser'][0], "")
-            # print json.dumps(var.data)
-            return HttpResponse(json.dumps(var.data))
-        elif request.method == 'POST':
-            apis.vm_list(request, hyper, "backup", parsed_dict['servip'][0].strip('/'), parsed_dict['servpaswd'][0],
-                         parsed_dict['servuser'][0], "")
-            return HttpResponse("")
-    elif hyper == 'esx':
-        if request.method == 'GET':
-            print parsed_dict['servip'][0], parsed_dict['servpaswd'][0], parsed_dict['servuser'][0].strip('/')
-            var = apis.vm_list(request, hyper, "backup", parsed_dict['servip'][0], parsed_dict['servpaswd'][0],
-                               parsed_dict['servuser'][0].strip('/'), "")
-            return HttpResponse(json.dumps(var.data))
-        elif request.method == 'POST':
-            apis.vm_list(request, hyper, "backup", parsed_dict['servip'][0], parsed_dict['servpaswd'][0],
-                         parsed_dict['servuser'][0], "")
-            return HttpResponse("")
-    elif hyper == 'kvm':
-        if request.method == 'GET':
-            var = apis.vm_list(request, hyper, "backup", parsed_dict['servip'][0].strip('/'),
-                               parsed_dict['servpaswd'][0], parsed_dict['servuser'][0], "")
-            print json.dumps(var.data)
-            return HttpResponse(json.dumps(var.data))
-        elif request.method == 'POST':
-            apis.vm_list(request, hyper, "backup", parsed_dict['servip'][0].strip('/'), parsed_dict['servpaswd'][0],
-                         parsed_dict['servuser'][0], "")
-            return HttpResponse("")
+    try:
+        if hyper == 'hyperv':
+            if request.method == 'GET':
+                # print parsed_dict['servip'][0].strip('/'), parsed_dict['servpaswd'][0], parsed_dict['servuser'][0]
+                var = apis.vm_list(request, hyper, "backup", parsed_dict['servip'][0].strip('/'),
+                                   parsed_dict['servpaswd'][0], parsed_dict['servuser'][0], "")
+                # print json.dumps(var.data)
+                return HttpResponse(json.dumps(var.data))
+            elif request.method == 'POST':
+                apis.vm_list(request, hyper, "backup", parsed_dict['servip'][0].strip('/'), parsed_dict['servpaswd'][0],
+                             parsed_dict['servuser'][0], "")
+                return HttpResponse("")
+        elif hyper == 'esx':
+            if request.method == 'GET':
+                print parsed_dict['servip'][0], parsed_dict['servpaswd'][0], parsed_dict['servuser'][0].strip('/')
+                var = apis.vm_list(request, hyper, "backup", parsed_dict['servip'][0], parsed_dict['servpaswd'][0],
+                                   parsed_dict['servuser'][0].strip('/'), "")
+                return HttpResponse(json.dumps(var.data))
+            elif request.method == 'POST':
+                apis.vm_list(request, hyper, "backup", parsed_dict['servip'][0], parsed_dict['servpaswd'][0],
+                             parsed_dict['servuser'][0], "")
+                return HttpResponse("")
+        elif hyper == 'kvm':
+            if request.method == 'GET':
+               #print "KACHRA"
+                var = apis.vm_list(request, hyper, "backup", parsed_dict['servip'][0].strip('/'),
+                                   parsed_dict['servpaswd'][0], parsed_dict['servuser'][0], "")
+                print json.dumps(var.data)
+                return HttpResponse(json.dumps(var.data))
+            elif request.method == 'POST':
+                apis.vm_list(request, hyper, "backup", parsed_dict['servip'][0].strip('/'), parsed_dict['servpaswd'][0],
+                             parsed_dict['servuser'][0], "")
+                return HttpResponse("")
+
+    except Exception as e:
+        print e
+        """j = models.Jobs(
+                 status='INTERNAL ERROR',
+                 function='List VMs',
+                 timestamp=datetime.datetime.now(),
+                 hyper_type=hyper)
+        j.save()"""
+        logger.info(e)
+        return HttpResponse(status=SystemError)
 
 
 def createPolicy(request, values):
@@ -180,12 +201,16 @@ def listBackups(request, hyper, values):
     parsed = urlparse.urlparse(temp)
     parsed_dict = urlparse.parse_qs(parsed.query)
     # print "Parsed Dict: ", parsed_dict['VMName'][0].strip('/')
-    if request.method == 'GET':
-        var = apis.vm_list(request, hyper, "restore", parsed_dict['servip'][0].strip('/'),
-                           parsed_dict['servpaswd'][0], parsed_dict['servuser'][0],
-                           parsed_dict['VMName'][0].strip('/'))
-        # print "LIST BACKUPS: ", var
-        return HttpResponse(json.dumps(var.data))
+    try:
+        if request.method == 'GET':
+            var = apis.vm_list(request, hyper, "restore", parsed_dict['servip'][0].strip('/'),
+                               parsed_dict['servpaswd'][0], parsed_dict['servuser'][0],
+                               parsed_dict['VMName'][0].strip('/'))
+            # print "LIST BACKUPS: ", var
+            return HttpResponse(json.dumps(var.data))
+    except Exception as e:
+        print e
+        return HttpResponse(status=SystemError)
 
 
 def jobDetails(request):
