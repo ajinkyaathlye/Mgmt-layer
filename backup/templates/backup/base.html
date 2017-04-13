@@ -89,7 +89,9 @@
 
 	 <script>
 
-         //document.cookie = 'csrftoken=;expires=Thu, 01 Jan 1970 00:00:01 GMT; path=/';
+         document.cookie = 'csrftoken=;expires=Thu, 01 Jan 1970 00:00:01 GMT; path=/';
+         document.cookie = 'sessionid=;expires=Thu, 01 Jan 1970 00:00:01 GMT; path=/';
+
         //alert(document.cookie);
 
         var FAKEHEADERS1=["id", "hyper_type", "timestamp", "function","status", "vm"];
@@ -224,9 +226,7 @@
 			var enddate=document.getElementById("enddatepicker").value;
 			var endres=enddate.split("-");
                //alert("Policy has been created.");
-               document.getElementById('message').innerHTML = "<strong>Your policy has been created</strong>";
-               document.getElementById('policyModal').style.display = "none";
-               document.getElementById('alertModal').style.display = "block";
+
 	        xmlhttp.open("GET", "/policy/create/startDay=" + startres[0] + "&startMonth=" +
                     startres[1] + "&startYear=" + startres[2] + "&endDay=" + endres[0] + "&endMonth=" + endres[1] +
                     "&endYear=" + endres[2] + "&bckrotation=" + document.getElementById("bckrotation").value +
@@ -234,9 +234,17 @@
 
 	        xmlhttp.onreadystatechange = function()
 	        {
+                if (this.readyState == 4 && this.status == 500)
+                {
+                    document.getElementById('message').innerHTML = "<strong>Policy name exists, use another name</strong>";
+                   document.getElementById('policyModal').style.display = "none";
+                   document.getElementById('alertModal').style.display = "block";
+                }
 	            if (this.readyState == 4 && this.status == 200)
 	            {
-
+                    document.getElementById('message').innerHTML = "<strong>Your policy has been created</strong>";
+                   document.getElementById('policyModal').style.display = "none";
+                   document.getElementById('alertModal').style.display = "block";
 	            }
 	        };
 

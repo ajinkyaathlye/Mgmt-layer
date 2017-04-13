@@ -165,11 +165,16 @@ def createPolicy(request, values):
     temp = temp + values
     parsed = urlparse.urlparse(temp)
     parsed_dict = urlparse.parse_qs(parsed.query)
-    if request.method == 'GET':
-        var = apis.createPolicy(request, parsed_dict['startDay'][0], parsed_dict['startMonth'][0],
-                                parsed_dict['startYear'][0], parsed_dict['endDay'][0], parsed_dict['endMonth'][0],
-                                parsed_dict['endYear'][0], parsed_dict['bckrotation'][0], parsed_dict['policyName'][0])
-        return HttpResponse(json.dumps(var.data))
+    try:
+        if request.method == 'GET':
+            var = apis.createPolicy(request, parsed_dict['startDay'][0], parsed_dict['startMonth'][0],
+                                    parsed_dict['startYear'][0], parsed_dict['endDay'][0], parsed_dict['endMonth'][0],
+                                    parsed_dict['endYear'][0], parsed_dict['bckrotation'][0], parsed_dict['policyName'][0])
+            return HttpResponse(json.dumps(var.data))
+    except Exception as e:
+        print e
+        logger.info(e)
+        return HttpResponse(status=SystemError)
 
 
 def listPolicies(request):

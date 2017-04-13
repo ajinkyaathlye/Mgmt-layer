@@ -326,12 +326,20 @@ def vm_list(request, hv, util, ip, password, user, vmname, bkupid=None, restoreN
 @api_view(['GET', 'POST'])
 def createPolicy(request, startDay, startMonth, startYear, endDay, endMonth, endYear, bckrotation, policyName,  format=None):
     if request.method == 'GET':
+        flag=0
         d = models.Profile()
         d.start_date = datetime.date(int(startYear), int(startMonth), int(startDay))
         d.end_date = datetime.date(int(endYear), int(endMonth), int(endDay))
         d.freq_count = int(bckrotation)
         d.del_count = 4
         d.name = policyName
+        list=Profile.objects.all()
+        print list
+        print policyName
+        for i in list:
+            print i.name
+            if(i.name == policyName):
+                raise Exception("Policy Exists")
         d.save()
         serializer = ProfileSerializer(d)
         return Response(serializer.data)

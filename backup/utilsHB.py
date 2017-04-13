@@ -49,5 +49,4 @@ def main(rmtip, usernm, passwd, bckDest):
                         l.append(lineParams[1])
                 nameVerList.append(l)
     print (nameVerList)
-    print ("ajinkya")
     return nameVerList
